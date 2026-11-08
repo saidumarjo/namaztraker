@@ -543,8 +543,11 @@ function dur(ms){ms=Math.max(0,ms);const s=Math.floor(ms/1000),h=Math.floor(s/36
 
 /* ---------- state ---------- */
 let todayYMD='', viewYMD='', TT=null, TOM=null, lastFired=store.get('fired','');
-function compute(){for(const k in WCACHE)delete WCACHE[k];const L=loc();todayYMD=ymdIn(Date.now(),L.tz);if(!viewYMD||viewYMD>todayYMD)viewYMD=todayYMD;
-  TT=prayerTimes(todayYMD,L.lat,L.lng,S.method,S.asr);TOM=prayerTimes(addDays(todayYMD,1),L.lat,L.lng,S.method,S.asr);}
+function compute(){for(const k in WCACHE)delete WCACHE[k];const L=loc();todayYMD=ymdIn(Date.now(),L.tz);
+  TT=prayerTimes(todayYMD,L.lat,L.lng,S.method,S.asr);TOM=prayerTimes(addDays(todayYMD,1),L.lat,L.lng,S.method,S.asr);if(!viewYMD||viewYMD>todayYMD)viewYMD=prayerDay();}
+/* prayer day runs from Fajr to the next Fajr: before Fajr, Isha still belongs to yesterday */
+function prayerDay(){return Date.now()<TT.fajr?addDays(todayYMD,-1):todayYMD}
+let lastPD='';
 
 const $=id=>document.getElementById(id);
 const ICON={
@@ -595,10 +598,9 @@ function rowHTML(ymd,p,W,now,opts){
 }
 function renderList(){
   const L=loc(),W=windowsFor(viewYMD),now=Date.now(),isToday=viewYMD===todayYMD;
-  $('dayLbl').innerHTML=(isToday?'Имрӯз':WD[wday(viewYMD)])+'<small>'+dayLabel(viewYMD)+(isToday?' · '+WD[wday(viewYMD)]:'')+'</small>';
+  const act=viewYMD===prayerDay();$('dayLbl').innerHTML=(act?'Имрӯз':WD[wday(viewYMD)])+'<small>'+dayLabel(viewYMD)+(act?' · '+WD[wday(viewYMD)]:'')+'</small>';
   $('nextDay').disabled=isToday;
-  const cur=isToday?currentKey(now):null;let html='';
-  if(isToday){const y=addDays(todayYMD,-1),yW=windowsFor(y);if(now<yW.isha[1])html+=rowHTML(y,P[5],yW,now,{label:'Хуфтани дирӯз',cur:true});}
+  const cur=isToday?currentKey(now):(viewYMD===addDays(todayYMD,-1)&&now>=W.isha[0]&&now<W.isha[1]?'isha':null);let html='';
   html+=P.map(p=>p.skip?'<div class="prow muted"><div class="tm num">'+hm(W.t.sunrise,L.tz)+'</div><div><div class="nm">'+p.n+' <span class="ar">'+p.ar+'</span></div><div class="sub">Охири вақти Бомдод</div></div><div></div></div>':rowHTML(viewYMD,p,W,now,{cur:p.k===cur})).join('');
   $('plist').innerHTML=html;
   renderSummary();
@@ -746,7 +748,7 @@ function fillPrefs(){
   const curTz=(S.custom&&S.custom.tz)||loc().tz;$('cTz').innerHTML=tzs.map(t=>'<option'+(t===curTz?' selected':'')+'>'+t+'</option>').join('');
   if(S.custom){$('cLat').value=S.custom.lat;$('cLng').value=S.custom.lng}
 }
-function applyChange(){compute();viewYMD=todayYMD;renderAll()}
+function applyChange(){compute();viewYMD=prayerDay();lastPD=viewYMD;renderAll()}
 $('selCity').onchange=e=>{const v=e.target.value;if(v==='custom'){$('customBox').hidden=false;if(S.custom){S.city='custom';save();applyChange()}return}
   $('customBox').hidden=true;S.city=v;const c=CITY[v];S.method=c.method;S.asr=c.asr;$('selMethod').value=S.method;$('selAsr').value=String(S.asr);save();applyChange();toast('Шаҳр: '+c.name)};
 $('selMethod').onchange=e=>{S.method=e.target.value;save();applyChange()};
@@ -795,7 +797,8 @@ window.ntHeading=function(h){heading=h;if(!$('v-qibla').hidden){const t=Date.now
 /* ---------- tick ---------- */
 let lastMinute=-1;
 function tick(){const L=loc(),now=Date.now();
-  if(ymdIn(now,L.tz)!==todayYMD){const prevDay=todayYMD,wasToday=viewYMD===todayYMD;compute();if(wasToday)viewYMD=todayYMD;renderAll();const ys=daySum(prevDay,now);if(ys.pct!=null)toast('Ҷамъбасти дирӯз: '+ys.pct+'% · дар вақташ '+ys.ontime+' аз 5');}
+  if(ymdIn(now,L.tz)!==todayYMD){compute();renderAll();}
+  const pd=prayerDay();if(lastPD&&pd!==lastPD){const old=lastPD;if(viewYMD===old)viewYMD=pd;renderAll();const ys=daySum(old,now);if(ys.pct!=null)toast('Ҷамъбасти рӯзи гузашта: '+ys.pct+'% · дар вақташ '+ys.ontime+' аз 5');}lastPD=pd;
   renderHero();
   const m=Math.floor(now/60000);if(m!==lastMinute){lastMinute=m;if(!$('v-qibla').hidden)renderQibla();if(autoQaza(now)){renderStats();renderQaza()}if(!$('v-today').hidden)renderList()}
   for(const p of TRACK){const t=TT[p.k];if(now>=t&&now-t<60000){const id=todayYMD+p.k;if(lastFired!==id){lastFired=id;store.set('fired',id);toast('Вақти намози '+p.n+' расид');if(S.sound)chime(1);renderList();}}}
@@ -813,7 +816,7 @@ function tick(){const L=loc(),now=Date.now();
     else{el.style.transform='translateY(-70px)';el.style.opacity=0}});
 })();
 
-compute();if(!FIRST){FIRST=todayYMD;store.set('first',FIRST)}autoQaza(Date.now());fillPrefs();renderAll();route();setInterval(tick,1000);
+compute();if(!FIRST){FIRST=todayYMD;store.set('first',FIRST)}lastPD=prayerDay();autoQaza(Date.now());fillPrefs();renderAll();route();setInterval(tick,1000);
 })();
 </script>
 </body></html>
