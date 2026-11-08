@@ -1,0 +1,819 @@
+<!doctype html><html lang="tg"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style></head><body><title>NamozTraker</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Noto+Sans:wght@400;500;600;700&family=Noto+Serif:wght@500;600;700&display=swap">
+<style>
+/* Layout: one-column app shell (max 560px) — next-prayer hero, day's prayer list, stats; fixed bottom tab bar */
+:root{
+  --bg:#EDF1F4; --surface:#FFFFFF; --ink:#13202A; --muted:#5A6A77; --line:#D7DFE6;
+  --accent:#1D4F8A; --accent-soft:#E2EAF4; --gold:#9C711B; --gold-soft:#F3EAD5;
+  --ok:#2B7A57; --ok-soft:#DCEFE5; --late:#7A57A8; --late-soft:#ECE5F5; --warn:#B0502A; --warn-soft:#F6E3D9;
+  --hero:#173F6E; --on-hero:#F3F6FA; --hero-muted:rgba(243,246,250,.72); --hero-gold:#E5BF6A; --hero-line:rgba(243,246,250,.22);
+  --f-display:'Noto Serif',Georgia,'Times New Roman',serif;
+  --f-body:'Noto Sans',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+  --f-ar:'Amiri','Noto Naskh Arabic','Geeza Pro',serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0C141E; --surface:#142030; --ink:#E6ECF2; --muted:#93A3B2; --line:#243447;
+  --accent:#88AFE6; --accent-soft:#1B2E46; --gold:#DDB45E; --gold-soft:#2C2616;
+  --ok:#64C699; --ok-soft:#14302A; --late:#B69BE3; --late-soft:#2A2140; --warn:#E8916A; --warn-soft:#3A2219;
+  --hero:#12294A; --on-hero:#EEF3F8; --hero-muted:rgba(238,243,248,.7); --hero-gold:#E5BF6A; --hero-line:rgba(238,243,248,.18);
+  color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0C141E; --surface:#142030; --ink:#E6ECF2; --muted:#93A3B2; --line:#243447;
+  --accent:#88AFE6; --accent-soft:#1B2E46; --gold:#DDB45E; --gold-soft:#2C2616;
+  --ok:#64C699; --ok-soft:#14302A; --late:#B69BE3; --late-soft:#2A2140; --warn:#E8916A; --warn-soft:#3A2219;
+  --hero:#12294A; --on-hero:#EEF3F8; --hero-muted:rgba(238,243,248,.7); --hero-gold:#E5BF6A; --hero-line:rgba(238,243,248,.18);
+  color-scheme:dark}
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.5;-webkit-tap-highlight-color:transparent}
+button,select,input{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:8px}
+.num{font-variant-numeric:tabular-nums}
+.ar{font-family:var(--f-ar);direction:rtl}
+
+.app{max-width:560px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:10px calc(92px + env(safe-area-inset-bottom,0px))}
+
+.top{display:flex;justify-content:space-between;align-items:center;gap:12px;padding-block:6px 14px}
+.brand{display:flex;align-items:center;gap:10px;min-width:0}
+.brand svg{width:30px;height:30px;color:var(--gold);flex:none}
+.brand b{font-family:var(--f-display);font-size:21px;font-weight:700;letter-spacing:-.01em}
+.place{text-decoration:none;color:inherit;display:flex;flex-direction:column;align-items:flex-end;background:none;border:0;padding:4px 0;text-align:right;min-width:0}
+.place .city{font-weight:600;font-size:14px;display:flex;align-items:center;gap:4px}
+.place .city svg{width:14px;height:14px;color:var(--accent)}
+.place .hij{font-size:12px;color:var(--muted)}
+
+h2.sec{font-family:var(--f-display);font-size:17px;font-weight:600;margin:24px 0 10px;display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+h2.sec small{font-family:var(--f-body);font-size:12.5px;font-weight:500;color:var(--muted)}
+
+/* hero */
+.hero{background:var(--hero);color:var(--on-hero);border-radius:22px;padding:20px 20px 18px;position:relative;overflow:hidden}
+.hero::before{content:"";position:absolute;inset:0;opacity:.09;pointer-events:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='56' viewBox='0 0 56 56'%3E%3Cg fill='none' stroke='%23fff' stroke-width='1'%3E%3Crect x='16' y='16' width='24' height='24'/%3E%3Crect x='16' y='16' width='24' height='24' transform='rotate(45 28 28)'/%3E%3Ccircle cx='28' cy='28' r='5'/%3E%3C/g%3E%3C/svg%3E");
+  background-size:56px 56px;mask-image:linear-gradient(120deg,transparent 30%,#000 100%);-webkit-mask-image:linear-gradient(120deg,transparent 30%,#000 100%)}
+.hero>*{position:relative}
+.eyebrow{font-size:11.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--hero-muted);font-weight:600}
+.hero-row{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;margin-top:6px;flex-wrap:wrap}
+.hero-name{font-family:var(--f-display);font-size:36px;font-weight:700;line-height:1.1;display:flex;align-items:baseline;gap:12px}
+.hero-name .ar{font-size:24px;color:var(--hero-gold);font-weight:400}
+.hero-at{font-size:14px;color:var(--hero-muted);margin-top:2px}
+.hero-at b{color:var(--on-hero);font-weight:600}
+.count{text-align:right}
+.count .t{font-size:34px;font-weight:600;line-height:1;letter-spacing:-.01em}
+.count .l{font-size:12px;color:var(--hero-muted);margin-top:4px}
+.nowline{margin-top:14px;font-size:13px;color:var(--hero-muted)}
+.nowline b{color:var(--on-hero);font-weight:600}
+
+.track{margin-top:16px;position:relative;height:38px}
+.track .bar{position:absolute;left:0;right:0;top:14px;height:4px;border-radius:2px;background:var(--hero-line)}
+.track .fill{position:absolute;left:0;top:14px;height:4px;border-radius:2px;background:var(--hero-gold)}
+.track .tick{position:absolute;top:10px;width:2px;height:12px;background:var(--on-hero);opacity:.55;transform:translateX(-1px);border-radius:1px}
+.track .tick span{position:absolute;top:15px;left:50%;transform:translateX(-50%);font-size:10px;white-space:nowrap;color:var(--hero-muted)}
+.track .me{position:absolute;top:9px;width:14px;height:14px;border-radius:50%;background:var(--hero-gold);box-shadow:0 0 0 4px rgba(229,191,106,.25);transform:translateX(-7px)}
+
+/* day nav */
+.daynav{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:22px 0 10px}
+.daynav .lbl{font-family:var(--f-display);font-size:17px;font-weight:600;text-align:center;flex:1;min-width:0}
+.daynav .lbl small{display:block;font-family:var(--f-body);font-size:12px;color:var(--muted);font-weight:500}
+.iconbtn{width:38px;height:38px;border-radius:12px;border:1px solid var(--line);background:var(--surface);display:grid;place-items:center;flex:none}
+.iconbtn svg{width:18px;height:18px}
+.iconbtn:disabled{opacity:.35;cursor:default}
+
+/* prayer list */
+.plist{background:var(--surface);border:1px solid var(--line);border-radius:18px;overflow:hidden}
+.prow{display:grid;grid-template-columns:62px minmax(0,1fr) auto;align-items:center;gap:10px;padding:12px 12px 12px 14px;border-top:1px solid var(--line)}
+.prow:first-child{border-top:0}
+.prow .tm{font-size:19px;font-weight:600}
+.prow .nm{font-weight:600;font-size:15px;line-height:1.25;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.prow .nm .ar{font-size:15px;color:var(--muted);font-weight:400}
+.prow .sub{font-size:12px;color:var(--muted)}
+.prow.cur{background:var(--accent-soft)}
+.pill{font-size:10.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:2px 7px;border-radius:999px;background:var(--accent);color:var(--surface)}
+.prow.muted .tm,.prow.muted .nm{color:var(--muted);font-weight:500}
+.seg{display:flex;gap:4px}
+.seg button{border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:6px 8px;font-size:12px;font-weight:600;color:var(--muted);display:flex;align-items:center;gap:4px;min-height:34px}
+.seg button svg{width:14px;height:14px}
+.seg button[aria-pressed="true"].s-ontime{background:var(--ok-soft);border-color:var(--ok);color:var(--ok)}
+.seg button[aria-pressed="true"].s-jamaat{background:var(--gold-soft);border-color:var(--gold);color:var(--gold)}
+.seg button[aria-pressed="true"].s-missed{background:var(--warn-soft);border-color:var(--warn);color:var(--warn)}
+.seg button:disabled{opacity:.4;cursor:default}
+.wait{font-size:12px;color:var(--muted);padding-right:4px}
+@media (max-width:400px){.seg button .tx{display:none}.seg button{padding:6px 9px}}
+
+/* stats */
+.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.stat{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:12px}
+.stat .v{font-size:24px;font-weight:700;line-height:1.1}
+.stat .k{font-size:12px;color:var(--muted);margin-top:2px}
+.week{margin-top:10px;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:14px;display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px}
+.wd{display:flex;flex-direction:column;align-items:center;gap:6px}
+.wd .dots{display:flex;flex-direction:column;gap:3px;width:100%;max-width:34px}
+.wd .dots i{display:block;height:7px;border-radius:3px;background:var(--line)}
+.wd .dots i.ontime{background:var(--ok)} .wd .dots i.jamaat{background:var(--gold)} .wd .dots i.missed{background:var(--warn)}
+.wd .dl{font-size:11px;color:var(--muted);font-weight:600}
+.wd.today .dl{color:var(--accent)}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--muted);margin-top:8px}
+.legend span{display:flex;align-items:center;gap:5px}
+.legend i{width:10px;height:10px;border-radius:3px;display:inline-block}
+
+/* generic card */
+.card{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:16px}
+.note{font-size:13px;color:var(--muted)}
+.btn{border:1px solid var(--line);background:var(--surface);border-radius:12px;padding:10px 14px;font-weight:600;font-size:14px}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--surface)}
+.btn.ghost{background:transparent}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+
+/* qaza */
+.qlist{background:var(--surface);border:1px solid var(--line);border-radius:18px;overflow:hidden}
+.qrow{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center;padding:12px 14px;border-top:1px solid var(--line)}
+.qrow:first-child{border-top:0}
+.qrow .nm{font-weight:600}
+.qrow .nm small{display:block;font-weight:400;font-size:12px;color:var(--muted)}
+.stepper{display:flex;align-items:center;gap:6px}
+.stepper button{width:36px;height:36px;border-radius:11px;border:1px solid var(--line);background:var(--surface);font-size:18px;font-weight:600;display:grid;place-items:center}
+.stepper .v{min-width:46px;text-align:center;font-weight:700;font-size:17px}
+.stepper .pay{width:auto;padding:0 10px;font-size:13px;background:var(--ok-soft);border-color:var(--ok);color:var(--ok)}
+.qsum{display:flex;justify-content:space-between;gap:12px;align-items:flex-end;flex-wrap:wrap}
+.qsum .big{font-size:32px;font-weight:700;line-height:1}
+.prog{height:8px;border-radius:4px;background:var(--line);overflow:hidden;margin-top:12px}
+.prog i{display:block;height:100%;background:var(--ok);border-radius:4px}
+.field{display:flex;flex-direction:column;gap:4px;min-width:0}
+.field label{font-size:12.5px;color:var(--muted);font-weight:600}
+.field input,.field select{border:1px solid var(--line);background:var(--bg);border-radius:11px;padding:9px 10px;width:100%;min-width:0}
+.grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+
+/* qibla */
+.compass{display:grid;place-items:center;padding:8px 0 4px}
+.compass svg{width:min(78vw,300px);height:auto;max-width:100%}
+.qinfo{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:12px}
+
+/* tasbeh */
+.dhikr{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none}
+.dhikr::-webkit-scrollbar{display:none}
+.chip{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:7px 13px;font-size:13px;font-weight:600;white-space:nowrap}
+.chip[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--surface)}
+.tap{display:block;margin:18px auto 8px;width:min(72vw,270px);aspect-ratio:1;max-width:100%;border-radius:50%;border:0;background:none;position:relative;padding:0;touch-action:manipulation;user-select:none;-webkit-user-select:none}
+.tap svg{position:absolute;inset:0;width:100%;height:100%}
+.tap .in{position:absolute;inset:14px;border-radius:50%;background:var(--surface);border:1px solid var(--line);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;transition:transform .08s}
+.tap:active .in{transform:scale(.97)}
+.tap .c{font-size:56px;font-weight:700;line-height:1}
+.tap .of{font-size:13px;color:var(--muted)}
+.tap .arx{font-size:26px;color:var(--gold);line-height:1.4}
+.tasmeta{text-align:center;font-size:13px;color:var(--muted)}
+
+/* nav */
+.nav{position:fixed;left:0;right:0;bottom:0;z-index:20;background:var(--surface);border-top:1px solid var(--line);
+  padding-left:max(8px,env(safe-area-inset-left,0px));padding-right:max(8px,env(safe-area-inset-right,0px));padding-block:6px calc(6px + env(safe-area-inset-bottom,0px))}
+.nav .in{max-width:560px;margin:0 auto;display:grid;grid-template-columns:repeat(5,minmax(0,1fr))}
+.nav a{display:flex;flex-direction:column;align-items:center;gap:2px;text-decoration:none;color:var(--muted);font-size:11px;font-weight:600;padding:6px 2px;border-radius:12px}
+.nav a svg{width:22px;height:22px}
+.nav a[aria-current="page"]{color:var(--accent)}
+.nav a[aria-current="page"] svg{color:var(--accent)}
+
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(84px + env(safe-area-inset-bottom,0px));background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:12px;font-size:14px;font-weight:600;z-index:30;max-width:calc(100% - 32px);text-align:center;box-shadow:0 8px 24px rgba(0,0,0,.2)}
+.switch{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.switch input{width:46px;height:26px;appearance:none;-webkit-appearance:none;background:var(--line);border-radius:999px;position:relative;cursor:pointer;flex:none;transition:background .15s}
+.switch input::after{content:"";position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:var(--surface);transition:left .15s}
+.switch input:checked{background:var(--accent)}
+.switch input:checked::after{left:23px}
+.stack{display:flex;flex-direction:column;gap:12px}
+.confirm{margin-top:10px;padding:12px;border-radius:12px;background:var(--warn-soft);color:var(--ink);font-size:13.5px}
+
+.prow .end{font-size:11.5px;color:var(--muted);margin-top:1px}
+.prow{grid-template-columns:58px minmax(0,1fr) auto}
+.st{color:var(--muted)} .st.ok{color:var(--ok)} .st.late{color:var(--late)} .st.bad{color:var(--warn)} .st.open{color:var(--accent);font-weight:600}
+.tedit{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted);margin-top:6px}
+.tedit input{width:7.5em;border:1px solid var(--line);background:var(--bg);border-radius:8px;padding:3px 6px;font-size:13px;font-variant-numeric:tabular-nums;min-width:0}
+.wd .dots i.late{background:var(--late)} .wd .dots i.none{background:var(--warn);opacity:.4} .wd .dots i.open{background:var(--accent);opacity:.4}
+.sum{display:grid;grid-template-columns:auto minmax(0,1fr);gap:16px 18px;align-items:center}
+.ring{position:relative;width:118px;aspect-ratio:1}
+.ring svg{position:absolute;inset:0;width:100%;height:100%}
+.ring>div{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+.ring b{font-size:28px;line-height:1}
+.ring span{font-size:10.5px;color:var(--muted);margin-top:3px;max-width:80px;line-height:1.2}
+.sumlist{display:flex;flex-direction:column;gap:7px;font-size:13.5px;min-width:0}
+.sumlist>div{display:flex;align-items:center;gap:8px}
+.sumlist i{width:10px;height:10px;border-radius:3px;flex:none}
+.sumlist b{margin-left:auto;font-size:15px}
+.sumlist .subrow{padding-left:14px;color:var(--muted);font-size:12.5px}
+.sumfoot{grid-column:1/-1;border-top:1px solid var(--line);padding-top:12px;display:flex;flex-direction:column;gap:4px}
+.sumfoot p{margin:0}
+.sumfoot #sMsg{font-weight:600}
+@media (max-width:340px){.sum{grid-template-columns:1fr}.ring{margin:0 auto}}
+
+.seg button[aria-pressed="true"].s-late,.seg button.s-late[aria-pressed="true"]{background:var(--late-soft);border-color:var(--late);color:var(--late)}
+.seg button.s-late:not([aria-pressed="true"]):not(:disabled){border-color:var(--late);color:var(--late)}
+.chip-st{font-size:12px;font-weight:700;padding:5px 10px;border-radius:999px;white-space:nowrap}
+.chip-st.ontime{background:var(--ok-soft);color:var(--ok)} .chip-st.jamaat{background:var(--gold-soft);color:var(--gold)}
+.chip-st.late{background:var(--late-soft);color:var(--late)} .chip-st.missed{background:var(--warn-soft);color:var(--warn)}
+.wbar{position:relative;height:6px;border-radius:3px;background:var(--ok-soft);margin-top:8px;max-width:240px;overflow:visible}
+.wbar b{position:absolute;top:0;height:100%;border-radius:3px}
+.wbar .z1{left:0;background:var(--gold);opacity:.55} .wbar .z3{background:var(--late);opacity:.5}
+.wbar i{position:absolute;top:-3px;width:3px;height:12px;border-radius:2px;background:var(--ink);transform:translateX(-1px)}
+.seg button .tx{display:inline!important}
+
+
+/* compact pass */
+html{overscroll-behavior-y:contain}
+.hero{padding:16px 16px 12px;border-radius:20px}
+.hero-name{font-size:30px}.hero-name .ar{font-size:21px}
+.count .t{font-size:28px}
+.nowline{margin-top:10px;font-size:12.5px}
+.track{margin-top:10px;height:34px}
+.daynav{margin:16px 0 8px}
+.prow{grid-template-columns:52px minmax(0,1fr) auto;gap:10px;padding:10px 10px 10px 12px}
+.prow .tm{font-size:17px}
+.prow .end{font-size:11px}
+.prow .nm{font-size:14.5px}
+.prow .nm .ar{font-size:14px}
+.prow .sub{font-size:12px;line-height:1.35;margin-top:1px}
+.seg{flex-direction:row!important;gap:6px}
+.seg button{width:40px;height:40px;min-height:0;padding:0!important;justify-content:center;border-radius:12px}
+.seg button svg{width:18px;height:18px}
+.seg button .tx{display:none!important}
+.chip-st{font-size:11px;padding:4px 9px}
+.wbar{height:4px;margin-top:6px;max-width:200px}
+.wbar i{top:-2px;height:8px}
+.pill{font-size:9.5px;padding:1px 6px}
+h2.sec{margin:20px 0 8px}
+.sum{display:grid;grid-template-columns:auto minmax(0,1fr);gap:12px 16px;align-items:center;padding:14px}
+.ring{width:88px}
+.ring b{font-size:21px}
+.ring span{font-size:10px;margin-top:2px}
+.sumgrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px;text-align:center}
+.sumgrid div{display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 0;border-radius:10px;background:var(--bg)}
+.sumgrid b{font-size:20px;line-height:1.1}
+.sumgrid span{font-size:11px;color:var(--muted)}
+.sumfoot{grid-column:1/-1;border-top:1px solid var(--line);padding-top:10px;display:flex;flex-direction:column;gap:3px}
+.sumfoot p{margin:0}
+.sumfoot #sMsg{font-weight:600;font-size:13.5px}
+details summary{font-size:12.5px;color:var(--accent);cursor:pointer;font-weight:600;margin-top:2px}
+details p{margin-top:4px!important}
+.stats{gap:8px}.stat{padding:10px 12px}.stat .v{font-size:20px}
+.week{padding:12px;margin-top:8px}
+.ptr{position:fixed;left:50%;top:calc(env(safe-area-inset-top,0px) + 8px);z-index:25;width:38px;height:38px;margin-left:-19px;border-radius:50%;background:var(--surface);border:1px solid var(--line);box-shadow:0 4px 14px rgba(0,0,0,.15);display:grid;place-items:center;color:var(--accent);transform:translateY(-70px);opacity:0;pointer-events:none}
+.ptr svg{width:20px;height:20px}
+.ptr.spin svg{animation:sp .7s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<div class="app">
+  <header class="top">
+    <div class="brand">
+      <svg viewBox="0 0 32 32" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.6"><rect x="8" y="8" width="16" height="16"/><rect x="8" y="8" width="16" height="16" transform="rotate(45 16 16)"/><circle cx="16" cy="16" r="3.2"/></g></svg>
+      <b>NamozTraker</b>
+    </div>
+    <a class="place" href="#prefs" id="placeBtn">
+      <span class="city"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21Z"/><circle cx="12" cy="9.5" r="2.5"/></svg><span id="cityName">—</span></span>
+      <span class="hij" id="hijri">—</span>
+    </a>
+  </header>
+
+  <!-- TODAY -->
+  <section id="v-today">
+    <div class="hero" aria-live="polite">
+      <div class="eyebrow">Намози навбатӣ</div>
+      <div class="hero-row">
+        <div>
+          <div class="hero-name"><span id="nextName">—</span><span class="ar" id="nextAr"></span></div>
+          <div class="hero-at">Оғоз: <b class="num" id="nextAt">—</b></div>
+        </div>
+        <div class="count">
+          <div class="t num" id="countdown">--:--:--</div>
+          <div class="l">то оғози намоз</div>
+        </div>
+      </div>
+      <div class="nowline" id="nowLine"></div>
+      <div class="track" id="track" aria-hidden="true"></div>
+    </div>
+
+    <div class="daynav">
+      <button class="iconbtn" id="prevDay" aria-label="Рӯзи гузашта"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg></button>
+      <div class="lbl" id="dayLbl">—</div>
+      <button class="iconbtn" id="nextDay" aria-label="Рӯзи оянда"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg></button>
+    </div>
+    <div class="plist" id="plist"></div>
+
+    <h2 class="sec" id="sumTitle">Ҷамъбасти рӯз</h2>
+    <div class="card sum">
+      <div class="ring"><svg viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="44" fill="none" stroke="var(--line)" stroke-width="9"/><circle id="sumRing" cx="50" cy="50" r="44" fill="none" stroke="var(--ok)" stroke-width="9" stroke-linecap="round" transform="rotate(-90 50 50)" stroke-dasharray="276.5" stroke-dashoffset="276.5"/></svg><div><b class="num" id="sumPct">—</b><span>бандагӣ</span></div></div>
+      <div class="sumgrid">
+        <div><b class="num" id="sOn" style="color:var(--ok)">0</b><span>ба вақт</span></div>
+        <div><b class="num" id="sJam" style="color:var(--gold)">0</b><span>ҷамоат</span></div>
+        <div><b class="num" id="sLate" style="color:var(--late)">0</b><span>дер</span></div>
+        <div><b class="num" id="sMiss" style="color:var(--warn)">0</b><span>қазо</span></div>
+      </div>
+      <div class="sumfoot"><p id="sMsg"></p><p class="note"><span id="sAvg"></span> <span id="sPendRow">Ҳанӯз вақт ҳаст: <b class="num" id="sPend">0</b></span></p>
+        <details><summary>Қоидаҳои ҳисоб</summary><p class="note">Ҷамоат — 30 дақиқаи аввали вақт. Хондам — то 30 дақиқа пеш аз намози дигар. Дер — 30 дақиқаи охир. Пас аз он худкор қазо. Фоиз: ба вақт ва ҷамоат 100%, дер 50%, қазо 0%.</p></details></div>
+    </div>
+
+    <h2 class="sec">Натиҷаҳо <small id="weekRange"></small></h2>
+    <div class="stats">
+      <div class="stat"><div class="v num" id="stStreak">0</div><div class="k">рӯзи пурра (5/5)</div></div>
+      <div class="stat"><div class="v num" id="stWeek">0/35</div><div class="k">дар вақташ, 7 рӯз</div></div>
+      <div class="stat"><div class="v num" id="stJam">0</div><div class="k">бо ҷамоат</div></div>
+    </div>
+    <div class="week" id="week"></div>
+    <div class="legend">
+      <span><i style="background:var(--ok)"></i>Ба вақт</span>
+      <span><i style="background:var(--gold)"></i>Бо ҷамоат</span>
+      <span><i style="background:var(--late)"></i>Дер хонда</span>
+      <span><i style="background:var(--warn)"></i>Қазо / нахонда</span>
+      <span><i style="background:var(--line)"></i>Қайд нашуд</span>
+    </div>
+  </section>
+
+  <!-- QAZA -->
+  <section id="v-qaza" hidden>
+    <h2 class="sec" style="margin-top:4px">Намозҳои қазо</h2>
+    <div class="card">
+      <div class="qsum">
+        <div><div class="big num" id="qTotal">0</div><div class="note">намози боқимонда</div></div>
+        <div style="text-align:right"><div class="num" style="font-size:20px;font-weight:700;color:var(--ok)" id="qPaid">0</div><div class="note">адо шуд</div></div>
+      </div>
+      <div class="prog"><i id="qBar" style="width:0%"></i></div>
+    </div>
+    <h2 class="sec">Ҳар намоз <small>«Адо» — як қазо хонда шуд</small></h2>
+    <div class="qlist" id="qlist"></div>
+
+    <h2 class="sec">Ҳисоби тахминӣ</h2>
+    <div class="card stack">
+      <div class="note">Агар намозҳои солҳои гузаштаро нахонда бошед, муддатро ворид кунед. Ба ҳар намоз (бо витр) ҳамон қадар рӯз илова мешавад.</div>
+      <div class="grid3">
+        <div class="field"><label for="eY">Сол</label><input id="eY" type="number" min="0" inputmode="numeric" value="0"></div>
+        <div class="field"><label for="eM">Моҳ</label><input id="eM" type="number" min="0" inputmode="numeric" value="0"></div>
+        <div class="field"><label for="eD">Рӯз</label><input id="eD" type="number" min="0" inputmode="numeric" value="0"></div>
+      </div>
+      <div class="row"><button class="btn primary" id="eAdd">Илова кардан</button><span class="note num" id="ePrev"></span></div>
+      <div class="row"><button class="btn ghost" id="qReset">Тоза кардани ҳисоб</button></div>
+      <div id="qConfirm" hidden class="confirm">
+        Ҳамаи рақамҳои қазо ба сифр бармегарданд. Боварӣ доред?
+        <div class="row" style="margin-top:8px"><button class="btn" id="qResetYes">Ҳа, тоза кун</button><button class="btn ghost" id="qResetNo">Не</button></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- QIBLA -->
+  <section id="v-qibla" hidden>
+    <h2 class="sec" style="margin-top:4px">Қибланамо <small id="qbCity"></small></h2>
+    <div class="card">
+      <div class="compass" id="compass"></div>
+      <p id="qbHint" style="text-align:center;margin:6px 0 0;font-size:14.5px"></p>
+      <div class="qinfo">
+        <div class="stat"><div class="v num" id="qbDeg">—</div><div class="k">аз самти шимол</div></div>
+        <div class="stat"><div class="v num" id="qbKm">—</div><div class="k">то Каъба</div></div>
+      </div>
+      <p class="note" id="qbHelp" style="margin:12px 0 0"></p>
+    </div>
+  </section>
+
+  <!-- TASBEH -->
+  <section id="v-tasbeh" hidden>
+    <h2 class="sec" style="margin-top:4px">Тасбеҳ <small class="num" id="tsToday"></small></h2>
+    <div class="dhikr" id="dhikr" role="group" aria-label="Зикр"></div>
+    <button class="tap" id="tapBtn" aria-label="Шумор">
+      <svg viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="47" fill="none" stroke="var(--line)" stroke-width="3"/><circle id="tsRing" cx="50" cy="50" r="47" fill="none" stroke="var(--gold)" stroke-width="3" stroke-linecap="round" transform="rotate(-90 50 50)" stroke-dasharray="295.3" stroke-dashoffset="295.3"/></svg>
+      <span class="in"><span class="arx ar" id="tsAr"></span><span class="c num" id="tsCount">0</span><span class="of num" id="tsOf">аз 33</span></span>
+    </button>
+    <div class="tasmeta" id="tsName"></div>
+    <div class="row" style="justify-content:center;margin-top:14px">
+      <div class="dhikr" id="targets" role="group" aria-label="Ҳадаф"></div>
+    </div>
+    <div class="row" style="justify-content:center;margin-top:12px"><button class="btn" id="tsReset">Аз нав</button></div>
+  </section>
+
+  <!-- PREFS -->
+  <section id="v-prefs" hidden>
+    <h2 class="sec" style="margin-top:4px">Танзимот</h2>
+    <div class="card stack">
+      <div class="field"><label for="selCity">Шаҳр</label><select id="selCity"></select></div>
+      <div class="row"><button class="btn" id="gpsBtn">Муайян кардан аз GPS</button><span class="note" id="gpsMsg"></span></div>
+      <div id="customBox" class="stack" hidden>
+        <div class="grid2">
+          <div class="field"><label for="cLat">Арзи ҷуғрофӣ</label><input id="cLat" type="number" step="0.0001" inputmode="decimal"></div>
+          <div class="field"><label for="cLng">Тӯли ҷуғрофӣ</label><input id="cLng" type="number" step="0.0001" inputmode="decimal"></div>
+        </div>
+        <div class="field"><label for="cTz">Минтақаи вақт</label><select id="cTz"></select></div>
+        <button class="btn primary" id="cSave">Нигоҳ доштан</button>
+      </div>
+    </div>
+    <h2 class="sec">Тарзи ҳисоб</h2>
+    <div class="card stack">
+      <div class="field"><label for="selMethod">Усули ҳисоби Бомдод ва Хуфтан</label><select id="selMethod"></select></div>
+      <div class="field"><label for="selAsr">Вақти Аср</label>
+        <select id="selAsr"><option value="2">Ҳанафӣ (сояи ду баробар)</option><option value="1">Шофеъӣ, Моликӣ, Ҳанбалӣ</option></select></div>
+      <div class="note">Ҳангоми иваз кардани шаҳр усули маъмули он минтақа худкор интихоб мешавад. Агар масҷиди наздиктон вақти дигар эълон кунад, усулро иваз кунед.</div>
+    </div>
+    <h2 class="sec">Огоҳӣ</h2>
+    <div class="card stack">
+      <label class="switch" id="nNotifRow" hidden><span><b>Огоҳӣ дар оғози намоз</b><br><span class="note">Ҳатто вақте ки барнома баста аст.</span></span><input type="checkbox" id="nNotify"></label>
+      <label class="switch" id="nRemindRow" hidden><span><b>Ёдрас 30 дақиқа пеш аз қазо</b><br><span class="note">Агар намоз ҳанӯз қайд нашуда бошад.</span></span><input type="checkbox" id="nRemind"></label>
+      <label class="switch" id="webSoundRow"><span><b>Садои огоҳӣ</b><br><span class="note">Вақте ки барнома кушода аст, дар оғози ҳар намоз садо медиҳад.</span></span><input type="checkbox" id="sound"></label>
+      <button class="btn" id="testSound">Санҷиши садо</button>
+    </div>
+    <h2 class="sec">Маълумот</h2>
+    <div class="card stack">
+      <div class="note">Ҳамаи қайдҳо танҳо дар ҳамин дастгоҳ нигоҳ дошта мешаванд.</div>
+      <button class="btn ghost" id="wipe">Тоза кардани ҳамаи қайдҳо</button>
+      <div id="wipeConfirm" hidden class="confirm">Ҳамаи қайдҳои намоз, қазо ва тасбеҳ пок мешаванд.
+        <div class="row" style="margin-top:8px"><button class="btn" id="wipeYes">Ҳа, пок кун</button><button class="btn ghost" id="wipeNo">Не</button></div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<nav class="nav" aria-label="Бахшҳо"><div class="in">
+  <a href="#today" data-v="today"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>Имрӯз</a>
+  <a href="#qaza" data-v="qaza"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>Қазо</a>
+  <a href="#qibla" data-v="qibla"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="m15.5 8.5-2 5-5 2 2-5 5-2Z"/></svg>Қибла</a>
+  <a href="#tasbeh" data-v="tasbeh"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="5" r="2"/><circle cx="17" cy="9" r="2"/><circle cx="17" cy="15" r="2"/><circle cx="12" cy="19" r="2"/><circle cx="7" cy="15" r="2"/><circle cx="7" cy="9" r="2"/></svg>Тасбеҳ</a>
+  <a href="#prefs" data-v="prefs"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12M20 18h0"/><circle cx="16" cy="6" r="2"/><circle cx="10" cy="12" r="2"/><circle cx="18" cy="18" r="2"/></svg>Танзимот</a>
+</div></nav>
+<div class="ptr" id="ptr" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M20 12a8 8 0 1 1-2.34-5.66"/><path d="M20 4v5h-5"/></svg></div>
+<div class="toast" id="toast" hidden></div>
+
+<script>
+(function(){
+'use strict';
+/* ---------- data ---------- */
+const CITIES=[
+ {g:'Аморати Муттаҳидаи Араб',l:[['dubai','Дубай',25.2048,55.2708,'Asia/Dubai','dubai',1],['abudhabi','Абу-Даби',24.4539,54.3773,'Asia/Dubai','dubai',1],['sharjah','Шарҷа',25.3463,55.4209,'Asia/Dubai','dubai',1]]},
+ {g:'Тоҷикистон',l:[['dushanbe','Душанбе',38.5598,68.7870,'Asia/Dushanbe','mwl',2],['khujand','Хуҷанд',40.2826,69.6222,'Asia/Dushanbe','mwl',2],['kulob','Кӯлоб',37.9146,69.7845,'Asia/Dushanbe','mwl',2],['bokhtar','Бохтар',37.8364,68.7806,'Asia/Dushanbe','mwl',2],['istaravshan','Истаравшан',39.9108,69.0016,'Asia/Dushanbe','mwl',2],['panjakent','Панҷакент',39.4952,67.6093,'Asia/Dushanbe','mwl',2],['khorog','Хоруғ',37.4897,71.5530,'Asia/Dushanbe','mwl',2],['hisor','Ҳисор',38.5263,68.5512,'Asia/Dushanbe','mwl',2]]},
+ {g:'Осиёи Марказӣ',l:[['tashkent','Тошканд',41.2995,69.2401,'Asia/Tashkent','mwl',2],['samarkand','Самарқанд',39.6542,66.9597,'Asia/Samarkand','mwl',2],['bukhara','Бухоро',39.7681,64.4556,'Asia/Samarkand','mwl',2],['almaty','Алмаато',43.2389,76.8897,'Asia/Almaty','mwl',2],['bishkek','Бишкек',42.8746,74.5698,'Asia/Bishkek','mwl',2],['kabul','Кобул',34.5553,69.2075,'Asia/Kabul','karachi',2],['mazar','Мазори Шариф',36.7090,67.1109,'Asia/Kabul','karachi',2]]},
+ {g:'Русия',l:[['moscow','Маскав',55.7558,37.6173,'Europe/Moscow','mwl',2],['spb','Санкт-Петербург',59.9343,30.3351,'Europe/Moscow','mwl',2],['kazan','Қазон',55.7963,49.1088,'Europe/Moscow','mwl',2],['yekaterinburg','Екатеринбург',56.8389,60.6057,'Asia/Yekaterinburg','mwl',2],['novosibirsk','Новосибирск',55.0084,82.9357,'Asia/Novosibirsk','mwl',2]]},
+ {g:'Ховари Миёна',l:[['mecca','Макка',21.4225,39.8262,'Asia/Riyadh','umm',1],['medina','Мадина',24.4672,39.6024,'Asia/Riyadh','umm',1],['riyadh','Риёз',24.7136,46.6753,'Asia/Riyadh','umm',1],['doha','Доҳа',25.2854,51.5310,'Asia/Qatar','qatar',1],['kuwait','Кувайт',29.3759,47.9774,'Asia/Kuwait','kuwait',1],['muscat','Масқат',23.5880,58.3829,'Asia/Muscat','mwl',1],['tehran','Теҳрон',35.6892,51.3890,'Asia/Tehran','mwl',1],['istanbul','Истанбул',41.0082,28.9784,'Europe/Istanbul','diyanet',2],['ankara','Анқара',39.9334,32.8597,'Europe/Istanbul','diyanet',2],['cairo','Қоҳира',30.0444,31.2357,'Africa/Cairo','egypt',1]]},
+ {g:'Осиёи Ҷанубӣ ва Шарқӣ',l:[['karachi','Карочӣ',24.8607,67.0011,'Asia/Karachi','karachi',2],['lahore','Лоҳур',31.5204,74.3587,'Asia/Karachi','karachi',2],['delhi','Деҳлӣ',28.6139,77.2090,'Asia/Kolkata','karachi',2],['dhaka','Дакка',23.8103,90.4125,'Asia/Dhaka','karachi',2],['kl','Куала-Лумпур',3.1390,101.6869,'Asia/Kuala_Lumpur','jakim',1],['jakarta','Ҷакарта',-6.2088,106.8456,'Asia/Jakarta','jakim',1]]},
+ {g:'Аврупо ва Амрико',l:[['london','Лондон',51.5074,-0.1278,'Europe/London','mwl',1],['berlin','Берлин',52.5200,13.4050,'Europe/Berlin','mwl',1],['paris','Париж',48.8566,2.3522,'Europe/Paris','mwl',1],['newyork','Ню-Йорк',40.7128,-74.0060,'America/New_York','isna',1],['toronto','Торонто',43.6532,-79.3832,'America/Toronto','isna',1],['chicago','Чикаго',41.8781,-87.6298,'America/Chicago','isna',1]]}
+];
+const CITY={};CITIES.forEach(g=>g.l.forEach(c=>CITY[c[0]]={id:c[0],name:c[1],lat:c[2],lng:c[3],tz:c[4],method:c[5],asr:c[6]}));
+const METHODS={
+ mwl:{n:'Лигаи ҷаҳонии исломӣ (MWL) · 18° / 17°',f:18,i:17},
+ dubai:{n:'Дубай (АМА) · 18.2° / 18.2°',f:18.2,i:18.2},
+ umm:{n:'Умм-ул-Қуро, Макка · 18.5° / 90 дақ',f:18.5,im:90},
+ qatar:{n:'Қатар · 18° / 90 дақ',f:18,im:90},
+ kuwait:{n:'Кувайт · 18° / 17.5°',f:18,i:17.5},
+ karachi:{n:'Донишгоҳи Карочӣ · 18° / 18°',f:18,i:18},
+ diyanet:{n:'Диёнати Туркия · 18° / 17°',f:18,i:17},
+ egypt:{n:'Идораи умумии Миср · 19.5° / 17.5°',f:19.5,i:17.5},
+ jakim:{n:'Малайзия ва Индонезия · 20° / 18°',f:20,i:18},
+ isna:{n:'ISNA, Амрикои Шимолӣ · 15° / 15°',f:15,i:15}
+};
+const P=[
+ {k:'fajr',n:'Бомдод',ar:'الفجر'},
+ {k:'sunrise',n:'Тулӯъи офтоб',ar:'الشروق',skip:true},
+ {k:'dhuhr',n:'Пешин',ar:'الظهر'},
+ {k:'asr',n:'Аср',ar:'العصر'},
+ {k:'maghrib',n:'Шом',ar:'المغرب'},
+ {k:'isha',n:'Хуфтан',ar:'العشاء'}
+];
+const TRACK=P.filter(p=>!p.skip);
+const QK=[['fajr','Бомдод','2 ракъат фарз'],['dhuhr','Пешин','4 ракъат фарз'],['asr','Аср','4 ракъат фарз'],['maghrib','Шом','3 ракъат фарз'],['isha','Хуфтан','4 ракъат фарз'],['witr','Витр','3 ракъат воҷиб']];
+const MONTHS=['январ','феврал','март','апрел','май','июн','июл','август','сентябр','октябр','ноябр','декабр'];
+const HMONTHS=['муҳаррам','сафар','рабеъ-ул-аввал','рабеъ-ус-сонӣ','ҷумод-ул-аввал','ҷумод-ус-сонӣ','раҷаб','шаъбон','рамазон','шаввол','зулқаъда','зулҳиҷҷа'];
+const WD=['Якшанбе','Душанбе','Сешанбе','Чоршанбе','Панҷшанбе','Ҷумъа','Шанбе'];
+const WD2=['Як','Ду','Се','Чр','Пн','Ҷм','Шн'];
+const DHIKR=[
+ {n:'Субҳоналлоҳ',ar:'سُبْحَانَ ٱللَّٰهِ',m:'Аллоҳ пок аст'},
+ {n:'Алҳамдулиллоҳ',ar:'ٱلْحَمْدُ لِلَّٰهِ',m:'Ҳамд барои Аллоҳ аст'},
+ {n:'Аллоҳу акбар',ar:'ٱللَّٰهُ أَكْبَرُ',m:'Аллоҳ бузургтар аст'},
+ {n:'Ло илоҳа иллаллоҳ',ar:'لَا إِلَٰهَ إِلَّا ٱللَّٰهُ',m:'Ҷуз Аллоҳ маъбуде нест'},
+ {n:'Астағфируллоҳ',ar:'أَسْتَغْفِرُ ٱللَّٰهَ',m:'Аз Аллоҳ омурзиш мехоҳам'},
+ {n:'Салавот',ar:'ٱللَّٰهُمَّ صَلِّ عَلَىٰ مُحَمَّدٍ',m:'Дуруд бар Паёмбар ﷺ'}
+];
+const TARGETS=[33,99,100,1000];
+
+/* ---------- storage ---------- */
+const store={get(k,d){try{const v=localStorage.getItem('nt.'+k);return v==null?d:JSON.parse(v)}catch(e){return d}},set(k,v){try{localStorage.setItem('nt.'+k,JSON.stringify(v))}catch(e){}}};
+let S=Object.assign({city:'dubai',custom:null,method:'dubai',asr:1,sound:false,notify:true,remind:true},store.get('settings',{}));
+const NATIVE=(typeof window.NT==='object'&&window.NT)?window.NT:null;
+let LOG=store.get('log',{});let FIRST=store.get('first','');if(!store.get('firstTs',0))store.set('firstTs',Date.now());
+let QZ=Object.assign({fajr:0,dhuhr:0,asr:0,maghrib:0,isha:0,witr:0,paid:0},store.get('qaza',{}));
+let TS=Object.assign({d:0,target:33,count:0,day:'',total:0},store.get('tasbeh',{}));
+const save=()=>{store.set('settings',S);store.set('log',LOG);store.set('qaza',QZ);store.set('tasbeh',TS)};
+
+function loc(){ if(S.city==='custom'&&S.custom) return S.custom; return CITY[S.city]||CITY.dubai; }
+
+/* ---------- astronomy (PrayTimes algorithm) ---------- */
+const dtr=d=>d*Math.PI/180, rtd=r=>r*180/Math.PI;
+const sin=d=>Math.sin(dtr(d)),cos=d=>Math.cos(dtr(d)),tan=d=>Math.tan(dtr(d));
+const asin=x=>rtd(Math.asin(x)),acos=x=>rtd(Math.acos(x)),atan2=(y,x)=>rtd(Math.atan2(y,x)),acot=x=>rtd(Math.atan(1/x));
+const fix=(a,b)=>{a=a-b*Math.floor(a/b);return a<0?a+b:a};
+function julian(y,m,d){if(m<=2){y-=1;m+=12}const A=Math.floor(y/100),B=2-A+Math.floor(A/4);return Math.floor(365.25*(y+4716))+Math.floor(30.6001*(m+1))+d+B-1524.5}
+function sunPos(jd){const D=jd-2451545,g=fix(357.529+.98560028*D,360),q=fix(280.459+.98564736*D,360),L=fix(q+1.915*sin(g)+.020*sin(2*g),360),e=23.439-.00000036*D;
+  const RA=atan2(cos(e)*sin(L),cos(L))/15;return{decl:asin(sin(e)*sin(L)),eqt:q/15-fix(RA,24)}}
+function prayerTimes(ymd,lat,lng,mKey,asrF){
+  const [y,m,d]=ymd.split('-').map(Number), M=METHODS[mKey]||METHODS.mwl;
+  const jd0=julian(y,m,d)-lng/(15*24);
+  const mid=t=>fix(12-sunPos(jd0+t).eqt,24);
+  const angT=(a,t,ccw)=>{const dc=sunPos(jd0+t).decl,n=mid(t),ti=acos((-sin(a)-sin(dc)*sin(lat))/(cos(dc)*cos(lat)))/15;return n+(ccw?-ti:ti)};
+  const asrT=(f,t)=>{const dc=sunPos(jd0+t).decl;return angT(-acot(f+tan(Math.abs(lat-dc))),t)};
+  let T={fajr:5,sunrise:6,dhuhr:12,asr:13,sunset:18,isha:18};
+  for(let it=0;it<2;it++){const p={};for(const k in T)p[k]=(isNaN(T[k])?{fajr:5,sunrise:6,dhuhr:12,asr:13,sunset:18,isha:18}[k]:T[k])/24;
+    T={fajr:angT(M.f,p.fajr,true),sunrise:angT(.833,p.sunrise,true),dhuhr:mid(p.dhuhr),asr:asrT(asrF,p.asr),sunset:angT(.833,p.sunset),isha:M.im?null:angT(M.i,p.isha)};}
+  if(M.im) T.isha=T.sunset+M.im/60;
+  // high latitude: angle-based
+  const night=fix(T.sunrise-T.sunset,24);
+  const fp=M.f/60*night; if(isNaN(T.fajr)||fix(T.sunrise-T.fajr,24)>fp) T.fajr=T.sunrise-fp;
+  if(!M.im){const ip=M.i/60*night; if(isNaN(T.isha)||fix(T.isha-T.sunset,24)>ip) T.isha=T.sunset+ip;}
+  T.dhuhr+=1/60;
+  const base=Date.UTC(y,m-1,d),out={};
+  const map={fajr:T.fajr,sunrise:T.sunrise,dhuhr:T.dhuhr,asr:T.asr,maghrib:T.sunset,isha:T.isha};
+  for(const k in map){out[k]=Math.round((base+(map[k]-lng/15)*3600e3)/60000)*60000;}
+  return out;
+}
+
+/* ---------- time helpers ---------- */
+const fmtCache={};
+function fmt(tz,opts,locale){const key=tz+JSON.stringify(opts)+(locale||'');if(!fmtCache[key])fmtCache[key]=new Intl.DateTimeFormat(locale||'en-GB',Object.assign({timeZone:tz},opts));return fmtCache[key]}
+function hm(ms,tz){const p=fmt(tz,{hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).formatToParts(new Date(ms));const h=p.find(x=>x.type==='hour').value,m=p.find(x=>x.type==='minute').value;return (h==='24'?'00':h)+':'+m}
+function ymdIn(ms,tz){const p=fmt(tz,{year:'numeric',month:'2-digit',day:'2-digit'},'en-CA').formatToParts(new Date(ms));const g=t=>p.find(x=>x.type===t).value;return g('year')+'-'+g('month')+'-'+g('day')}
+function minsIn(ms,tz){const [h,m]=hm(ms,tz).split(':').map(Number);return h*60+m}
+function addDays(ymd,n){const [y,m,d]=ymd.split('-').map(Number);return new Date(Date.UTC(y,m-1,d+n)).toISOString().slice(0,10)}
+function wday(ymd){const [y,m,d]=ymd.split('-').map(Number);return new Date(Date.UTC(y,m-1,d)).getUTCDay()}
+function dayLabel(ymd){const [y,m,d]=ymd.split('-').map(Number);return d+' '+MONTHS[m-1]+' '+y}
+function hijri(ymd){try{const [y,m,d]=ymd.split('-').map(Number);const p=new Intl.DateTimeFormat('en-u-ca-islamic-umalqura-nu-latn',{day:'numeric',month:'numeric',year:'numeric',timeZone:'UTC'}).formatToParts(new Date(Date.UTC(y,m-1,d,12)));
+  const g=t=>parseInt((p.find(x=>x.type===t)||{}).value,10);const hm_=g('month');if(!hm_)return'';return g('day')+' '+HMONTHS[hm_-1]+' '+g('year')+' ҳ.қ.'}catch(e){return''}}
+function dur(ms){ms=Math.max(0,ms);const s=Math.floor(ms/1000),h=Math.floor(s/3600),m=Math.floor(s%3600/60),x=s%60;return h+':'+String(m).padStart(2,'0')+':'+String(x).padStart(2,'0')}
+
+/* ---------- state ---------- */
+let todayYMD='', viewYMD='', TT=null, TOM=null, lastFired=store.get('fired','');
+function compute(){for(const k in WCACHE)delete WCACHE[k];const L=loc();todayYMD=ymdIn(Date.now(),L.tz);if(!viewYMD||viewYMD>todayYMD)viewYMD=todayYMD;
+  TT=prayerTimes(todayYMD,L.lat,L.lng,S.method,S.asr);TOM=prayerTimes(addDays(todayYMD,1),L.lat,L.lng,S.method,S.asr);}
+
+const $=id=>document.getElementById(id);
+const ICON={
+ ontime:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="m5 12 5 5 9-10"/></svg>',
+ jamaat:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="8" cy="8" r="3"/><circle cx="16" cy="8" r="3"/><path d="M3 20c0-3 2.2-5 5-5s5 2 5 5M11 20c0-3 2.2-5 5-5s5 2 5 5"/></svg>',
+ missed:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>'
+};
+const LBL={ontime:'Хондам',jamaat:'Ҷамоат',missed:'Қазо'};
+
+/* ---------- today view ---------- */
+function renderHeader(){const L=loc();$('cityName').textContent=L.name;$('hijri').textContent=hijri(todayYMD);}
+const WCACHE={};
+function windowsFor(ymd){const L=loc(),key=ymd+'|'+L.lat+'|'+L.lng+'|'+S.method+'|'+S.asr;if(WCACHE[key])return WCACHE[key];
+  const t=prayerTimes(ymd,L.lat,L.lng,S.method,S.asr),n=prayerTimes(addDays(ymd,1),L.lat,L.lng,S.method,S.asr);
+  return WCACHE[key]={t,fajr:[t.fajr,t.sunrise],dhuhr:[t.dhuhr,t.asr],asr:[t.asr,t.maghrib],maghrib:[t.maghrib,t.isha],isha:[t.isha,n.fajr]}}
+function rec(ymd,k){const v=(LOG[ymd]||{})[k];if(!v)return null;if(typeof v==='string')return v==='jamaat'?{s:'ontime',j:true}:{s:v};return v}
+function stateOf(ymd,k,W,now){const r=rec(ymd,k);if(r)return r.s;if(now<W[k][0])return'future';if(now<W[k][1])return'open';return'none'}
+function fm(m){m=Math.max(0,Math.round(m));if(m<60)return m+' дақ';const h=Math.floor(m/60),r=m%60;return h+' соат'+(r?' '+r+' дақ':'')}
+function ms2hm(ms){return ms==null?'':hm(ms,loc().tz)}
+function hm2ms(ymd,k,val,W){if(!val)return null;const [h,m]=val.split(':').map(Number),target=h*60+m,st=W[k][0],sm=minsIn(st,loc().tz);
+  let diff=target-sm;if(diff<0&&(k==='isha'||diff<-720))diff+=1440;if(diff<0)return -1;return st+diff*60000}
+const MIN30=30*60000;
+function statusLine(ymd,k,W,now,st){const r=rec(ymd,k),w=W[k],tz=loc().tz;
+  if(st==='ontime'){const d=r.at!=null?' · '+hm(r.at,tz)+(r.at-w[0]<60000?' · аввали вақт':' · +'+fm((r.at-w[0])/60000)):'';return'<span class="st ok">'+(r.j?'Ҷамоат':'Ба вақт')+d+'</span>'}
+  if(st==='late')return'<span class="st late">Дер хонда шуд'+(r.at!=null?' · '+hm(r.at,tz):'')+'</span>';
+  if(st==='missed')return'<span class="st bad">Вақт гузашт</span>';
+  if(st==='open'){const jL=w[0]+MIN30-now,oL=w[1]-MIN30-now;
+    if(jL>0)return'<span class="st open">Ҷамоат: '+fm(jL/60000)+'</span> · <span class="st">ба вақт то '+hm(w[1]-MIN30,tz)+'</span>';
+    if(oL>0)return'<span class="st open">Ба вақт: '+fm(oL/60000)+' боқӣ</span>';
+    return'<span class="st late">Дер · '+fm((w[1]-now)/60000)+' то қазо</span>';}
+  if(st==='none')return'<span class="st">Қайд нашуд</span>';
+  return'<span class="st">баъд аз '+fm((w[0]-now)/60000)+'</span>'}
+function rowHTML(ymd,p,W,now,opts){
+  const L=loc(),w=W[p.k],st=stateOf(ymd,p.k,W,now),r=rec(ymd,p.k),fri=wday(ymd)===5,name=opts.label||((p.k==='dhuhr'&&fri)?'Ҷумъа':p.n);
+  const open=now>=w[0]&&now<w[1];let right='';
+  if(st==='future'||open){
+    const jOn=open&&now<w[0]+MIN30, late=open&&now>=w[1]-MIN30;
+    const jP=!!(r&&r.j), oP=!!(r&&!r.j&&r.s!=='missed');
+    const jDis=!(jOn||jP)||!open, oDis=!open;
+    right='<div class="seg">'+
+     '<button class="s-jamaat" data-y="'+ymd+'" data-p="'+p.k+'" data-a="jamaat" aria-pressed="'+jP+'"'+(jDis?' disabled':'')+' title="Бо ҷамоат">'+ICON.jamaat+'<span class="tx">Ҷамоат</span></button>'+
+     '<button class="'+(late&&!oP?'s-late':'s-ontime')+(oP&&r.s==='late'?' s-late':'')+'" data-y="'+ymd+'" data-p="'+p.k+'" data-a="read" aria-pressed="'+oP+'"'+(oDis?' disabled':'')+' title="'+((late&&!oP)||(oP&&r.s==='late')?'Дер хондам':'Хондам')+'" aria-label="'+((late&&!oP)||(oP&&r.s==='late')?'Дер хондам':'Хондам')+'">'+ICON.ontime+'<span class="tx"></span></button></div>';}
+  else if(r){right='<span class="chip-st '+(r.j?'jamaat':r.s)+'">'+(r.j?'Ҷамоат':r.s==='ontime'?'Ба вақт':r.s==='late'?'Дер':'Қазо')+'</span>';}
+  let extra='';if(open&&!r){const pc=Math.min(100,(now-w[0])/(w[1]-w[0])*100),jm=Math.min(100,MIN30/(w[1]-w[0])*100),lm=Math.max(0,100-jm);
+    extra='<div class="wbar"><b class="z1" style="width:'+jm.toFixed(1)+'%"></b><b class="z3" style="left:'+lm.toFixed(1)+'%;width:'+jm.toFixed(1)+'%"></b><i style="left:'+pc.toFixed(1)+'%"></i></div>'}
+  return'<div class="prow'+(opts.cur?' cur':'')+'"><div><div class="tm num">'+hm(w[0],L.tz)+'</div><div class="end num">то '+hm(w[1],L.tz)+'</div></div>'+
+    '<div style="min-width:0"><div class="nm">'+name+' <span class="ar">'+p.ar+'</span>'+(opts.cur?' <span class="pill">Ҳоло</span>':'')+'</div><div class="sub">'+statusLine(ymd,p.k,W,now,st)+'</div>'+extra+'</div>'+right+'</div>';
+}
+function renderList(){
+  const L=loc(),W=windowsFor(viewYMD),now=Date.now(),isToday=viewYMD===todayYMD;
+  $('dayLbl').innerHTML=(isToday?'Имрӯз':WD[wday(viewYMD)])+'<small>'+dayLabel(viewYMD)+(isToday?' · '+WD[wday(viewYMD)]:'')+'</small>';
+  $('nextDay').disabled=isToday;
+  const cur=isToday?currentKey(now):null;let html='';
+  if(isToday){const y=addDays(todayYMD,-1),yW=windowsFor(y);if(now<yW.isha[1])html+=rowHTML(y,P[5],yW,now,{label:'Хуфтани дирӯз',cur:true});}
+  html+=P.map(p=>p.skip?'<div class="prow muted"><div class="tm num">'+hm(W.t.sunrise,L.tz)+'</div><div><div class="nm">'+p.n+' <span class="ar">'+p.ar+'</span></div><div class="sub">Охири вақти Бомдод</div></div><div></div></div>':rowHTML(viewYMD,p,W,now,{cur:p.k===cur})).join('');
+  $('plist').innerHTML=html;
+  renderSummary();
+}
+function currentKey(now){let c=null;if(now>=TT.fajr&&now<TT.sunrise)c='fajr';else if(now>=TT.dhuhr&&now<TT.asr)c='dhuhr';else if(now>=TT.asr&&now<TT.maghrib)c='asr';else if(now>=TT.maghrib&&now<TT.isha)c='maghrib';else if(now>=TT.isha)c='isha';return c}
+function nextPrayer(now){for(const p of P){if(TT[p.k]>now)return{p,t:TT[p.k]}}return{p:P[0],t:TOM.fajr}}
+function renderHero(){
+  const L=loc(),now=Date.now(),n=nextPrayer(now),fri=wday(todayYMD)===5,W=windowsFor(todayYMD);
+  $('nextName').textContent=(n.p.k==='dhuhr'&&fri)?'Ҷумъа':n.p.n;$('nextAr').textContent=n.p.ar;
+  $('nextAt').textContent=hm(n.t,L.tz)+(n.t===TOM.fajr?' (пагоҳ)':'');
+  $('countdown').textContent=dur(n.t-now);
+  // yesterday's isha window still open before fajr
+  const yW=windowsFor(addDays(todayYMD,-1));
+  let line='';
+  if(now<TT.fajr&&now<yW.isha[1]){line='Ҳоло: <b>Хуфтан</b> · то '+hm(yW.isha[1],L.tz)+' · боқӣ '+fm((yW.isha[1]-now)/60000);}
+  else if(now>=TT.sunrise&&now<TT.dhuhr){line='Ҳоло: вақти чошт · '+hm(now,L.tz);}
+  else{const c=currentKey(now),cp=P.find(p=>p.k===c);if(cp){const nm=(c==='dhuhr'&&fri)?'Ҷумъа':cp.n;line='Ҳоло: <b>'+nm+'</b> · то '+hm(W[c][1],L.tz)+' · боқӣ '+fm((W[c][1]-now)/60000);}}
+  $('nowLine').innerHTML=line;
+  const pos=ms=>(minsIn(ms,L.tz)/1440*100).toFixed(2)+'%', nowP=pos(now);
+  $('track').innerHTML='<div class="bar"></div><div class="fill" style="width:'+nowP+'"></div>'+
+   (()=>{let last=-99;return TRACK.map(p=>{const x=minsIn(TT[p.k],L.tz)/14.4,show=x-last>=7;if(show)last=x;return'<div class="tick" style="left:'+x.toFixed(2)+'%">'+(show?'<span>'+p.n.slice(0,3)+'</span>':'')+'</div>'}).join('')})()+
+   '<div class="me" style="left:'+nowP+'"></div>';
+}
+function daySum(ymd,now){const W=windowsFor(ymd),o={ontime:0,jamaat:0,late:0,missed:0,pending:0,eligible:0,delay:[]};
+  TRACK.forEach(p=>{const st=stateOf(ymd,p.k,W,now),r=rec(ymd,p.k);if(st!=='future')o.eligible++;
+    if(st==='ontime'){o.ontime++;if(r.j)o.jamaat++;if(r.at!=null)o.delay.push((r.at-W[p.k][0])/60000)}
+    else if(st==='late')o.late++;else if(st==='missed'||st==='none')o.missed++;else o.pending++;});
+  const settledOpen=TRACK.filter(p=>stateOf(ymd,p.k,W,now)==='open').length;
+  const denom=o.eligible-settledOpen;
+  o.pct=denom>0?Math.round((o.ontime+o.late*.5)/denom*100):null;
+  o.final=o.pending===0;return o}
+function renderSummary(){
+  const now=Date.now(),s=daySum(viewYMD,now),isToday=viewYMD===todayYMD;
+  $('sumTitle').textContent=isToday&&!s.final?'Ҷамъбасти имрӯз (то ҳол)':'Ҷамъбасти рӯз';
+  const pct=s.pct==null?0:s.pct;$('sumPct').textContent=s.pct==null?'—':pct+'%';
+  $('sumRing').setAttribute('stroke-dashoffset',(276.5*(1-pct/100)).toFixed(1));
+  $('sumRing').setAttribute('stroke',pct>=80?'var(--ok)':pct>=50?'var(--gold)':'var(--warn)');
+  $('sOn').textContent=s.ontime;$('sJam').textContent=s.jamaat;$('sLate').textContent=s.late;$('sMiss').textContent=s.missed;$('sPend').textContent=s.pending;
+  $('sPendRow').hidden=!s.pending;
+  const avg=s.delay.length?s.delay.reduce((a,b)=>a+b,0)/s.delay.length:null;
+  $('sAvg').textContent=avg==null?'':'Ба ҳисоби миёна намоз '+(avg<1?'дар аввали вақт':fm(avg)+' пас аз оғози вақт')+' хонда шуд.';
+  let msg='';if(s.pct==null)msg='Ҳанӯз ягон намоз ба охир нарасидааст.';
+  else if(pct===100)msg='Офарин! Ҳамаи намозҳо дар вақташ хонда шуданд.';
+  else if(pct>=80)msg='Хеле хуб. Каме бештар диққат диҳед, то 100% шавад.';
+  else if(pct>=50)msg='Намозҳоро дар аввали вақт хонед, то фоиз баланд шавад.';
+  else msg='Қазоҳоро адо кунед ва фардо аз Бомдод оғоз кунед.';
+  $('sMsg').textContent=msg;
+}
+function onTimeCount(ymd){const W=windowsFor(ymd);return TRACK.filter(p=>stateOf(ymd,p.k,W,Date.now())==='ontime').length}
+function renderStats(){
+  let streak=0,d=todayYMD;
+  if(onTimeCount(d)<5)d=addDays(d,-1);
+  while(onTimeCount(d)===5){streak++;d=addDays(d,-1);if(streak>3650)break}
+  let wk=0,jam=0,html='';const now=Date.now();
+  for(let i=6;i>=0;i--){const y=addDays(todayYMD,-i),W=windowsFor(y);
+    html+='<div class="wd'+(i===0?' today':'')+'"><div class="dots">'+TRACK.map(p=>{const st=stateOf(y,p.k,W,now),r=rec(y,p.k);if(st==='ontime'){wk++;if(r.j)jam++}
+      return'<i class="'+(st==='none'&&y<FIRST?'':st==='ontime'&&r.j?'jamaat':st)+'"></i>'}).join('')+'</div><div class="dl">'+WD2[wday(y)]+'</div></div>';}
+  $('week').innerHTML=html;$('stStreak').textContent=streak;$('stWeek').textContent=wk+'/35';$('stJam').textContent=jam;
+  const a=addDays(todayYMD,-6).split('-'),b=todayYMD.split('-');$('weekRange').textContent=(+a[2])+' '+MONTHS[a[1]-1]+' – '+(+b[2])+' '+MONTHS[b[1]-1];
+}
+function setRecAt(ymd,k,v){const r=LOG[ymd]||(LOG[ymd]={});if(v)r[k]=v;else delete r[k];if(!Object.keys(r).length)delete LOG[ymd];}
+function autoQaza(now){let changed=[];const fts=store.get('firstTs',0);
+  for(let i=8;i>=0;i--){const y=addDays(todayYMD,-i);if(y<addDays(FIRST,-1))continue;const W=windowsFor(y);
+    TRACK.forEach(p=>{if(!rec(y,p.k)&&now>=W[p.k][1]&&W[p.k][1]>fts){setRecAt(y,p.k,{s:'missed',auto:true});QZ[p.k]++;changed.push(p.n)}});}
+  if(changed.length){save();toast('Вақт гузашт — қазо қайд шуд: '+changed.join(', '));return true}return false}
+$('plist').addEventListener('click',e=>{const b=e.target.closest('button[data-p]');if(!b||b.disabled)return;const y=b.dataset.y,k=b.dataset.p,a=b.dataset.a,W=windowsFor(y),now=Date.now(),w=W[k],prev=rec(y,k);
+  if(now<w[0]||now>=w[1])return;
+  const wantJ=a==='jamaat';
+  if(prev&&prev.s!=='missed'&&!!prev.j===wantJ){setRecAt(y,k,null)}
+  else{if(wantJ&&now>=w[0]+MIN30){toast('Вақти ҷамоат (30 дақиқа) гузашт');return}
+    const s=now<w[1]-MIN30?'ontime':'late';setRecAt(y,k,{s,j:wantJ&&s==='ontime',at:now});
+    toast(wantJ?'Бо ҷамоат қайд шуд':s==='late'?'Дер хонда қайд шуд':'Дар вақташ қайд шуд');}
+  save();renderList();renderStats();renderQaza();nativeSync();
+  const sm=daySum(y,now);if(sm.final&&sm.pct!=null)toast('Ҷамъбасти рӯз: '+sm.pct+'%');
+});
+$('prevDay').onclick=()=>{viewYMD=addDays(viewYMD,-1);renderList()};
+$('nextDay').onclick=()=>{if(viewYMD<todayYMD){viewYMD=addDays(viewYMD,1);renderList()}};
+
+/* ---------- qaza ---------- */
+function renderQaza(){
+  const tot=QK.reduce((a,[k])=>a+QZ[k],0);$('qTotal').textContent=tot.toLocaleString('ru-RU');$('qPaid').textContent=QZ.paid.toLocaleString('ru-RU');
+  const all=tot+QZ.paid;$('qBar').style.width=(all?QZ.paid/all*100:0).toFixed(1)+'%';
+  $('qlist').innerHTML=QK.map(([k,n,s])=>'<div class="qrow"><div class="nm">'+n+'<small>'+s+'</small></div><div class="stepper"><button data-q="'+k+'" data-a="-1" aria-label="Кам кардан">−</button><span class="v num">'+QZ[k].toLocaleString('ru-RU')+'</span><button data-q="'+k+'" data-a="1" aria-label="Зиёд кардан">+</button><button class="pay" data-q="'+k+'" data-a="pay"'+(QZ[k]?'':' disabled')+'>Адо</button></div></div>').join('');
+}
+$('qlist').addEventListener('click',e=>{const b=e.target.closest('button[data-q]');if(!b)return;const k=b.dataset.q,a=b.dataset.a;
+  if(a==='pay'){if(QZ[k]>0){QZ[k]--;QZ.paid++;toast('Як қазои '+QK.find(x=>x[0]===k)[1]+' адо шуд')}}
+  else QZ[k]=Math.max(0,QZ[k]+Number(a));
+  save();renderQaza();});
+function estDays(){const y=+$('eY').value||0,m=+$('eM').value||0,d=+$('eD').value||0;return Math.max(0,Math.round(y*354.37+m*29.53+d))}
+['eY','eM','eD'].forEach(id=>$(id).addEventListener('input',()=>{const n=estDays();$('ePrev').textContent=n?n.toLocaleString('ru-RU')+' рӯз → '+(n*6).toLocaleString('ru-RU')+' намоз':''}));
+$('eAdd').onclick=()=>{const n=estDays();if(!n)return;QK.forEach(([k])=>QZ[k]+=n);save();renderQaza();toast((n*6).toLocaleString('ru-RU')+' намоз ба қазо илова шуд');['eY','eM','eD'].forEach(id=>$(id).value=0);$('ePrev').textContent=''};
+$('qReset').onclick=()=>{$('qConfirm').hidden=false};$('qResetNo').onclick=()=>{$('qConfirm').hidden=true};
+$('qResetYes').onclick=()=>{QK.forEach(([k])=>QZ[k]=0);QZ.paid=0;save();renderQaza();$('qConfirm').hidden=true;toast('Ҳисоби қазо тоза шуд')};
+
+/* ---------- qibla ---------- */
+const KAABA=[21.4225,39.8262];let heading=null;
+function qiblaInfo(){const L=loc(),dl=L.lng-KAABA[1];
+  const b=fix(atan2(sin(-dl)*cos(KAABA[0]),cos(L.lat)*sin(KAABA[0])-sin(L.lat)*cos(KAABA[0])*cos(-dl)),360);
+  const R=6371,dLat=dtr(KAABA[0]-L.lat),dLn=dtr(KAABA[1]-L.lng),h=Math.sin(dLat/2)**2+Math.cos(dtr(L.lat))*Math.cos(dtr(KAABA[0]))*Math.sin(dLn/2)**2;
+  return{b,km:2*R*Math.asin(Math.sqrt(h))}}
+function sunAzAlt(ms,lat,lng){const jd=ms/864e5+2440587.5,sp=sunPos(jd),ut=(ms%864e5)/36e5,H=fix((ut+lng/15+sp.eqt-12)*15+180,360)-180,d=sp.decl;
+  const alt=asin(sin(lat)*sin(d)+cos(lat)*cos(d)*cos(H)),az=fix(atan2(sin(H),cos(H)*sin(lat)-tan(d)*cos(lat))+180,360);return{az,alt}}
+function renderQibla(){const q=qiblaInfo(),L=loc(),now=Date.now(),sun=sunAzAlt(now,L.lat,L.lng),up=sun.alt>2;
+  $('qbCity').textContent=L.name;$('qbDeg').textContent=q.b.toFixed(1)+'°';$('qbKm').textContent=Math.round(q.km).toLocaleString('ru-RU')+' км';
+  let ticks='';for(let i=0;i<360;i+=10){const big=i%30===0;ticks+='<line x1="150" y1="'+(big?22:26)+'" x2="150" y2="32" stroke="var(--muted)" stroke-width="'+(big?1.6:1)+'" transform="rotate('+i+' 150 150)"/>'}
+  const lab=[['Шимол',0],['Шарқ',90],['Ҷануб',180],['Ғарб',270]].map(([t,a])=>{const x=150+100*Math.sin(dtr(a)),y=150-100*Math.cos(dtr(a))+4;return'<text x="'+x.toFixed(1)+'" y="'+y.toFixed(1)+'" text-anchor="middle" font-size="12" font-weight="700" fill="'+(a===0?'var(--warn)':'var(--muted)')+'">'+t+'</text>'}).join('');
+  const sunG=up?'<g transform="rotate('+sun.az.toFixed(1)+' 150 150)"><line x1="150" y1="150" x2="150" y2="62" stroke="var(--muted)" stroke-width="1.5" stroke-dasharray="4 4"/><g transform="translate(150 50)"><circle r="9" fill="var(--hero-gold)"/>'+[0,45,90,135,180,225,270,315].map(r=>'<line x1="0" y1="-12" x2="0" y2="-16" stroke="var(--hero-gold)" stroke-width="2" stroke-linecap="round" transform="rotate('+r+')"/>').join('')+'</g></g>':'';
+  const live=heading!=null,qd=live?fix(q.b-heading+180,360)-180:0,aligned=live&&Math.abs(qd)<4;
+  if(aligned&&!window._qa){window._qa=1;try{navigator.vibrate&&navigator.vibrate(60)}catch(e){}}if(!aligned)window._qa=0;
+  $('compass').innerHTML='<svg viewBox="0 0 300 300" role="img" aria-label="Самти қибла '+q.b.toFixed(0)+' дараҷа аз шимол">'+
+   '<circle cx="150" cy="150" r="136" fill="var(--bg)" stroke="'+(live&&aligned?'var(--ok)':'var(--line)')+'" stroke-width="'+(live&&aligned?5:2)+'"/><g transform="rotate('+(live?-heading:0).toFixed(1)+' 150 150)">'+ticks+lab+sunG+
+   '<g transform="rotate('+q.b+' 150 150)"><line x1="150" y1="150" x2="150" y2="52" stroke="var(--gold)" stroke-width="4" stroke-linecap="round"/>'+
+   '<rect x="138" y="30" width="24" height="24" rx="3" fill="var(--ink)"/><rect x="138" y="37" width="24" height="3.5" fill="var(--gold)"/></g></g>'+
+   (live?'<path d="M150 4 l9 14 h-18z" fill="'+(aligned?'var(--ok)':'var(--accent)')+'"/>':'')+'<circle cx="150" cy="150" r="7" fill="var(--accent)"/></svg>';
+  const deg=Math.round(q.b);
+  if(live){$('qbHint').innerHTML=aligned?'<b style="color:var(--ok)">Шумо рӯ ба қибла ҳастед</b>':'Телефонро ҳамвор нигоҳ доред ва ба '+(qd>0?'<b>рост</b>':'<b>чап</b>')+' гардонед: <b>'+Math.round(Math.abs(qd))+'°</b>';
+    $('qbHelp').innerHTML='Компаси зинда кор мекунад. Агар нодуруст нишон диҳад, телефонро чанд бор бо шакли рақами 8 ҳаракат диҳед ва аз ашёи оҳанин дур шавед.';return}
+  if(up){const diff=fix(q.b-sun.az+180,360)-180,ad=Math.round(Math.abs(diff));
+    $('qbHint').innerHTML='<b>Бо офтоб:</b> рӯ ба офтоб истед. Қибла '+(ad<5?'<b>рост дар самти офтоб</b> аст.':'аз офтоб <b>'+ad+'° ба '+(diff>0?'рост':'чап')+'</b> аст'+(ad>=80&&ad<=100?', тақрибан дар самти китфи '+(diff>0?'рост':'чап'):ad>150?', қариб дар пушти шумо':'')+'.');}
+  else $('qbHint').innerHTML='Ҳоло офтоб нест. Компаси телефонро кушоед ва ба <b>'+deg+'°</b> рӯ кунед ('+(deg>225&&deg<315?'тарафи ғарб':deg>=315||deg<45?'тарафи шимол':deg<135?'тарафи шарқ':'тарафи ҷануб')+').';
+  $('qbHelp').innerHTML='Компаси зинда дар веб-версия кор намекунад: браузер ба саҳифа сенсори телефонро намедиҳад. Роҳи осон: барномаи <b>Compass</b>-и телефонро кушоед ва ба <b>'+deg+'°</b> рӯ кунед. Дар версияи APK компас худкор кор мекунад.';
+}
+/* ---------- tasbeh ---------- */
+function renderTasbeh(){
+  if(TS.day!==todayYMD){TS.day=todayYMD;TS.total=0}
+  const D=DHIKR[TS.d]||DHIKR[0];
+  $('dhikr').innerHTML=DHIKR.map((x,i)=>'<button class="chip" data-d="'+i+'" aria-pressed="'+(i===TS.d)+'">'+x.n+'</button>').join('');
+  $('targets').innerHTML=TARGETS.map(t=>'<button class="chip num" data-t="'+t+'" aria-pressed="'+(t===TS.target)+'">'+t+'</button>').join('');
+  $('tsAr').textContent=D.ar;$('tsCount').textContent=TS.count;$('tsOf').textContent='аз '+TS.target;$('tsName').textContent=D.n+' — '+D.m;
+  $('tsToday').textContent='Имрӯз: '+TS.total.toLocaleString('ru-RU');
+  const frac=(TS.count%TS.target)/TS.target||(TS.count&&TS.count%TS.target===0?1:0);$('tsRing').setAttribute('stroke-dashoffset',(295.3*(1-frac)).toFixed(1));
+}
+$('tapBtn').addEventListener('click',()=>{TS.count++;TS.total++;try{navigator.vibrate&&navigator.vibrate(TS.count%TS.target===0?[60,40,60]:8)}catch(e){}
+  if(TS.count%TS.target===0){toast(TS.target+' бор — '+DHIKR[TS.d].n);chime(.5)}save();renderTasbeh()});
+$('dhikr').addEventListener('click',e=>{const b=e.target.closest('[data-d]');if(!b)return;TS.d=+b.dataset.d;TS.count=0;save();renderTasbeh()});
+$('targets').addEventListener('click',e=>{const b=e.target.closest('[data-t]');if(!b)return;TS.target=+b.dataset.t;TS.count=0;save();renderTasbeh()});
+$('tsReset').onclick=()=>{TS.count=0;save();renderTasbeh()};
+
+/* ---------- prefs ---------- */
+function fillPrefs(){
+  $('selCity').innerHTML=CITIES.map(g=>'<optgroup label="'+g.g+'">'+g.l.map(c=>'<option value="'+c[0]+'">'+c[1]+'</option>').join('')+'</optgroup>').join('')+'<optgroup label="Дигар"><option value="custom">'+(S.custom?S.custom.name:'Ҷойи худам (координатҳо)')+'</option></optgroup>';
+  $('selCity').value=S.city;$('customBox').hidden=S.city!=='custom';
+  $('selMethod').innerHTML=Object.entries(METHODS).map(([k,m])=>'<option value="'+k+'">'+m.n+'</option>').join('');$('selMethod').value=S.method;$('selAsr').value=String(S.asr);$('sound').checked=!!S.sound;
+  let tzs=[];try{tzs=Intl.supportedValuesOf('timeZone')}catch(e){tzs=[...new Set(Object.values(CITY).map(c=>c.tz))]}
+  const curTz=(S.custom&&S.custom.tz)||loc().tz;$('cTz').innerHTML=tzs.map(t=>'<option'+(t===curTz?' selected':'')+'>'+t+'</option>').join('');
+  if(S.custom){$('cLat').value=S.custom.lat;$('cLng').value=S.custom.lng}
+}
+function applyChange(){compute();viewYMD=todayYMD;renderAll()}
+$('selCity').onchange=e=>{const v=e.target.value;if(v==='custom'){$('customBox').hidden=false;if(S.custom){S.city='custom';save();applyChange()}return}
+  $('customBox').hidden=true;S.city=v;const c=CITY[v];S.method=c.method;S.asr=c.asr;$('selMethod').value=S.method;$('selAsr').value=String(S.asr);save();applyChange();toast('Шаҳр: '+c.name)};
+$('selMethod').onchange=e=>{S.method=e.target.value;save();applyChange()};
+$('selAsr').onchange=e=>{S.asr=+e.target.value;save();applyChange()};
+$('sound').onchange=e=>{S.sound=e.target.checked;save();if(S.sound)chime(.8)};
+$('testSound').onclick=()=>{if(NATIVE&&NATIVE.testNotify)NATIVE.testNotify();else chime(1)};
+if(NATIVE){$('nNotifRow').hidden=false;$('nRemindRow').hidden=false;$('webSoundRow').hidden=true;$('testSound').textContent='Санҷиши огоҳӣ';}
+$('nNotify').checked=S.notify!==false;$('nRemind').checked=S.remind!==false;
+$('nNotify').onchange=e=>{S.notify=e.target.checked;save();nativeSync()};$('nRemind').onchange=e=>{S.remind=e.target.checked;save();nativeSync()};
+$('cSave').onclick=()=>{const lat=parseFloat($('cLat').value),lng=parseFloat($('cLng').value);if(isNaN(lat)||isNaN(lng)||Math.abs(lat)>90||Math.abs(lng)>180){toast('Координатҳоро дуруст ворид кунед');return}
+  S.custom={name:'Ҷойи ман ('+lat.toFixed(2)+', '+lng.toFixed(2)+')',lat,lng,tz:$('cTz').value};S.city='custom';save();fillPrefs();applyChange();toast('Ҷой нигоҳ дошта шуд')};
+$('gpsBtn').onclick=()=>{$('gpsMsg').textContent='Ҷустуҷӯ…';
+  if(!navigator.geolocation){$('gpsMsg').textContent='GPS дастрас нест. Шаҳрро интихоб кунед.';return}
+  navigator.geolocation.getCurrentPosition(p=>{const lat=+p.coords.latitude.toFixed(4),lng=+p.coords.longitude.toFixed(4);let tz='UTC';try{tz=Intl.DateTimeFormat().resolvedOptions().timeZone}catch(e){}
+    S.custom={name:'Ҷойи ман (GPS)',lat,lng,tz};S.city='custom';save();fillPrefs();applyChange();$('gpsMsg').textContent='Ёфт шуд';},
+   ()=>{$('gpsMsg').textContent='GPS иҷозат дода нашуд. Шаҳрро аз рӯйхат интихоб кунед.'},{timeout:8000});};
+$('wipe').onclick=()=>{$('wipeConfirm').hidden=false};$('wipeNo').onclick=()=>{$('wipeConfirm').hidden=true};
+$('wipeYes').onclick=()=>{LOG={};QZ={fajr:0,dhuhr:0,asr:0,maghrib:0,isha:0,witr:0,paid:0};TS.count=0;TS.total=0;save();$('wipeConfirm').hidden=true;renderAll();toast('Ҳамаи қайдҳо пок шуданд')};
+
+/* ---------- sound ---------- */
+let AC=null;
+function chime(vol){try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();const t=AC.currentTime;
+  [[523.25,0],[659.25,.35],[783.99,.7]].forEach(([f,d])=>{const o=AC.createOscillator(),g=AC.createGain();o.type='sine';o.frequency.value=f;g.gain.setValueAtTime(0,t+d);g.gain.linearRampToValueAtTime(.18*vol,t+d+.03);g.gain.exponentialRampToValueAtTime(.0001,t+d+1.6);o.connect(g).connect(AC.destination);o.start(t+d);o.stop(t+d+1.7)})}catch(e){}}
+
+/* ---------- toast ---------- */
+let tT;function toast(m){const t=$('toast');t.textContent=m;t.hidden=false;clearTimeout(tT);tT=setTimeout(()=>t.hidden=true,2600)}
+
+/* ---------- routing ---------- */
+const VIEWS=['today','qaza','qibla','tasbeh','prefs'];
+function route(){const v=VIEWS.includes(location.hash.slice(1))?location.hash.slice(1):'today';
+  VIEWS.forEach(x=>{$('v-'+x).hidden=x!==v});
+  document.querySelectorAll('.nav a').forEach(a=>{if(a.dataset.v===v)a.setAttribute('aria-current','page');else a.removeAttribute('aria-current')});
+  if(v==='qibla')renderQibla();if(v==='tasbeh')renderTasbeh();window.scrollTo(0,0)}
+window.addEventListener('hashchange',route);
+
+function renderAll(){renderHeader();renderHero();renderList();renderStats();renderQaza();renderQibla();renderTasbeh();nativeSync()}
+function nativeSync(){if(!NATIVE)return;try{const L=loc(),now=Date.now(),out=[];
+  if(NATIVE.setLocation)NATIVE.setLocation(L.lat,L.lng);
+  if(S.notify!==false)for(let i=-1;i<7;i++){const y=addDays(todayYMD,i),W=windowsFor(y),fri=wday(y)===5;
+    TRACK.forEach(p=>{const nm=(p.k==='dhuhr'&&fri)?'Ҷумъа':p.n,w=W[p.k];
+      if(w[0]>now)out.push({t:w[0],title:'Вақти намози '+nm,text:'Оғоз '+hm(w[0],L.tz)+' · то '+hm(w[1],L.tz)+' · '+L.name});
+      const warn=w[1]-MIN30;if(S.remind!==false&&warn>now&&!rec(y,p.k))out.push({t:warn,title:nm+': 30 дақиқа монд',text:'Агар нахонда бошед, ҳоло хонед. Пас аз '+hm(w[1],L.tz)+' қазо мешавад.'});});}
+  out.sort((a,b)=>a.t-b.t);NATIVE.schedule(JSON.stringify(out.slice(0,80)));}catch(e){}}
+window.ntHeading=function(h){heading=h;if(!$('v-qibla').hidden){const t=Date.now();if(t-(window._qh||0)>90){window._qh=t;renderQibla()}}};
+
+/* ---------- tick ---------- */
+let lastMinute=-1;
+function tick(){const L=loc(),now=Date.now();
+  if(ymdIn(now,L.tz)!==todayYMD){const prevDay=todayYMD,wasToday=viewYMD===todayYMD;compute();if(wasToday)viewYMD=todayYMD;renderAll();const ys=daySum(prevDay,now);if(ys.pct!=null)toast('Ҷамъбасти дирӯз: '+ys.pct+'% · дар вақташ '+ys.ontime+' аз 5');}
+  renderHero();
+  const m=Math.floor(now/60000);if(m!==lastMinute){lastMinute=m;if(!$('v-qibla').hidden)renderQibla();if(autoQaza(now)){renderStats();renderQaza()}if(!$('v-today').hidden)renderList()}
+  for(const p of TRACK){const t=TT[p.k];if(now>=t&&now-t<60000){const id=todayYMD+p.k;if(lastFired!==id){lastFired=id;store.set('fired',id);toast('Вақти намози '+p.n+' расид');if(S.sound)chime(1);renderList();}}}
+}
+
+
+/* ---------- pull to refresh ---------- */
+(function(){const el=$('ptr');let y0=null,dy=0,busy=false;
+  const set=(d)=>{const t=Math.min(d,90);el.style.transform='translateY('+(t-70)+'px) rotate('+(t*3)+'deg)';el.style.opacity=Math.min(1,t/60)};
+  window.addEventListener('touchstart',e=>{if(busy||window.scrollY>0||e.touches.length!==1){y0=null;return}y0=e.touches[0].clientY;dy=0;el.style.transition='none'},{passive:true});
+  window.addEventListener('touchmove',e=>{if(y0==null)return;dy=(e.touches[0].clientY-y0)*.5;if(dy>0&&window.scrollY<=0)set(dy)},{passive:true});
+  window.addEventListener('touchend',()=>{if(y0==null)return;y0=null;el.style.transition='transform .2s, opacity .2s';
+    if(dy>=60){busy=true;el.style.transform='translateY(20px)';el.style.opacity=1;el.classList.add('spin');
+      setTimeout(()=>{compute();autoQaza(Date.now());renderAll();el.classList.remove('spin');el.style.transform='translateY(-70px)';el.style.opacity=0;busy=false;toast('Нав шуд')},650);}
+    else{el.style.transform='translateY(-70px)';el.style.opacity=0}});
+})();
+
+compute();if(!FIRST){FIRST=todayYMD;store.set('first',FIRST)}autoQaza(Date.now());fillPrefs();renderAll();route();setInterval(tick,1000);
+})();
+</script>
+</body></html>
