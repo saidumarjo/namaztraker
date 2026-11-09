@@ -233,6 +233,11 @@ public class MainActivity extends Activity implements SensorEventListener {
         }
 
         @JavascriptInterface
+        public void widget(String json) {
+            Widgets.save(getApplicationContext(), json);
+        }
+
+        @JavascriptInterface
         public void lockFor(int minutes) {
             runOnUiThread(() -> startLock(Math.max(1, Math.min(minutes, 15))));
         }

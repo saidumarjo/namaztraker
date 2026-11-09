@@ -7,6 +7,7 @@ import android.content.Intent;
 public class AlarmReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context c, Intent in) {
+        Widgets.updateAll(c);
         if (Notif.ACTION_WUDU.equals(in.getAction())) {
             Notif.onWudu(c, in);
             return;

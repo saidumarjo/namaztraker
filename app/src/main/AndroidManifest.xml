@@ -33,6 +33,21 @@
 
         <receiver android:name=".AlarmReceiver" android:exported="false" />
 
+        <receiver android:name=".WidgetBig" android:exported="true" android:label="Намозхон · калон">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="tj.namoztraker.app.WIDGET_REFRESH" />
+            </intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/widget_big_info" />
+        </receiver>
+
+        <receiver android:name=".WidgetSmall" android:exported="true" android:label="Намозхон · хурд">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/widget_small_info" />
+        </receiver>
+
         <receiver android:name=".BootReceiver" android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />

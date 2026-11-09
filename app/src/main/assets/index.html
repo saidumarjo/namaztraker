@@ -1454,6 +1454,15 @@ $('wuduLock').checked=S.wuduLock!==false;$('wuduLock').onchange=e=>{S.wuduLock=e
 try{NATIVE&&NATIVE.setWuduLock&&NATIVE.setWuduLock(S.wuduLock!==false)}catch(e){}
 window.addEventListener('focus',()=>window.ntLockSync());
 
+
+/* ---------- home-screen widget data (APK) ---------- */
+function widgetSync(){if(!NATIVE||!NATIVE.widget)return;try{const L=loc(),pd=prayerDay(),days=[];
+  for(let i=-1;i<3;i++){const y=addDays(pd,i),W=windowsFor(y),fri=wday(y)===5;
+    days.push({d:y,hijri:hijri(y),p:TRACK.map(pr=>{const r=rec(y,pr.k),w=W[pr.k];
+      const st=!r?'':r.s==='missed'?'missed':r.s==='late'?'late':r.j?'jamaat':'ontime';
+      return{k:pr.k,n:(pr.k==='dhuhr'&&fri)?'Ҷумъа':pr.n,s:w[0],e:w[1],h:hm(w[0],L.tz),st}})})}
+  NATIVE.widget(JSON.stringify({city:L.name,days}))}catch(e){}}
+
 /* ---------- qaza ---------- */
 function renderQaza(){
   const tot=QK.reduce((a,[k])=>a+QZ[k],0);$('qTotal').textContent=tot.toLocaleString('ru-RU');$('qPaid').textContent=QZ.paid.toLocaleString('ru-RU');
@@ -1562,7 +1571,7 @@ function route(){const v=VIEWS.includes(location.hash.slice(1))?location.hash.sl
 window.addEventListener('hashchange',route);
 
 function renderAll(){renderDuty();renderExtras();renderHeader();renderHero();renderList();renderStats();renderQaza();renderQibla();renderTasbeh();nativeSync()}
-function nativeSync(){if(!NATIVE)return;try{const L=loc();if(NATIVE.setLocation)NATIVE.setLocation(L.lat,L.lng);
+function nativeSync(){if(!NATIVE)return;try{const L=loc();if(NATIVE.setLocation)NATIVE.setLocation(L.lat,L.lng);widgetSync();
   NATIVE.schedule(JSON.stringify(buildReminders(Date.now(),3).slice(0,190).map(r=>({t:r.t,title:r.title,text:r.text,iq:r.iq||0,k:r.k||'',n:r.n||'',ask:!!r.ask}))));}catch(e){}}
 window.ntHeading=function(h){heading=h;if(!$('v-qibla').hidden){const t=Date.now();if(t-(window._qh||0)>90){window._qh=t;renderQibla()}}};
 
