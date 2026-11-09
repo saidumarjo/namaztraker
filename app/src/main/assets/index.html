@@ -655,6 +655,15 @@ body.iq-on .app{padding-top:calc(74px + env(safe-area-inset-top,0px))}
 .blkst.warn{border-style:solid;border-color:rgba(242,142,109,.45);background:rgba(242,142,109,.08)}
 .blkst ol{margin:6px 0 8px;padding-left:18px}
 .blkst .btn{margin-top:4px}
+.cb-row{position:relative}
+.cb-kick{position:absolute;top:-7px;right:-5px;box-shadow:0 2px 8px rgba(0,0,0,.4);background:#3A1E16;width:26px;height:26px;border-radius:50%;display:grid;place-items:center;border:1px solid rgba(242,142,109,.4);background:rgba(242,142,109,.12);color:#FFB59A;padding:0}
+.cb-kick svg{width:13px;height:13px}
+.cmp-own{color:#F6D77D;font-size:13px;margin-left:4px}
+.cb-ownnote{font-size:12px;color:var(--muted);text-align:center;margin:10px 0 0}
+.cb-ask{grid-column:1/-1;display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:10px;padding:10px;border-radius:12px;background:rgba(242,142,109,.1);border:1px solid rgba(242,142,109,.35);font-size:13px}
+.cb-ask span{flex:1 1 100%}
+.cb-ask .btn{flex:1;padding:8px}
+.btn.danger{background:#E2725B;border-color:#E2725B;color:#2A0F07;font-weight:800}
 .mcmp{display:flex;align-items:center;gap:10px;margin:8px 0 2px;padding:8px 12px;border-radius:16px;text-decoration:none;color:var(--txt,#F2F7F4);
   background:linear-gradient(90deg,rgba(246,215,125,.13),rgba(255,255,255,.04));border:1px solid rgba(246,215,125,.25)}
 .mcmp .mc-ic{flex:none;width:28px;height:28px;border-radius:9px;display:grid;place-items:center;background:rgba(246,215,125,.18);color:#F6D77D}
@@ -2022,8 +2031,14 @@ function cmpGenCode(){const A='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';let c='';const 
 async function compPush(){if(!compLive()||!CMP.code)return;const a=await fbToken(),d=compSummary();
   await fsReq('PATCH','groups/'+CMP.code+'/members/'+a.uid,{fields:{name:sv(CMP.name),updated:iv(d.u),data:sv(JSON.stringify(d))}})}
 function compPushSoon(){if(!compLive()||!CMP.code)return;clearTimeout(cmpPushT);cmpPushT=setTimeout(()=>compPush().catch(()=>{}),2500)}
-async function compPull(){if(!compLive()||!CMP.code)return;const j=await fsReq('GET','groups/'+CMP.code+'/members',null,'pageSize=20');
-  const list=((j&&j.documents)||[]).map(doc=>{try{const d=JSON.parse(doc.fields.data.stringValue);d.id=doc.name.split('/').pop();return d}catch(e){return null}}).filter(Boolean);
+async function compPull(){if(!compLive()||!CMP.code)return;
+  const g=await fsReq('GET','groups/'+CMP.code);const a=await fbToken();
+  if(!g){CMP={name:CMP.name,code:'',gname:''};cmpSave();CMPC=null;store.set('comp_cache',null);toast('Ин гурӯҳ дигар вуҷуд надорад');return}
+  const ban=grpBanned(g);CMP.owner=(g.fields&&g.fields.owner&&g.fields.owner.stringValue)||'';CMP.ban=ban;cmpSave();
+  if(ban.includes(a.uid)){try{await fsReq('DELETE','groups/'+CMP.code+'/members/'+a.uid)}catch(e){}
+    CMP={name:CMP.name,code:'',gname:''};cmpSave();CMPC=null;store.set('comp_cache',null);toast('Соҳиби гурӯҳ шуморо аз мусобиқа хориҷ кард');return}
+  const j=await fsReq('GET','groups/'+CMP.code+'/members',null,'pageSize=20');
+  const list=((j&&j.documents)||[]).map(doc=>{try{const d=JSON.parse(doc.fields.data.stringValue);d.id=doc.name.split('/').pop();return d}catch(e){return null}}).filter(Boolean).filter(d=>!ban.includes(d.id));
   CMPC={at:Date.now(),list};store.set('comp_cache',CMPC);cmpLastPull=Date.now()}
 async function compCreate(){const name=$('cmpName').value.trim();if(!name){cmpErr('Номи худро нависед');return}
   if(!compLive()){cmpErr(NATIVE?'Firebase ҳанӯз танзим нашудааст.':'Мусобиқа танҳо дар APK кор мекунад.');return}
@@ -2035,9 +2050,19 @@ async function compJoin(){const name=$('cmpName').value.trim(),code=$('cmpCode')
   if(!/^[A-Z0-9]{6}$/.test(code)){cmpErr('Код бояд 6 ҳарф ё рақам бошад');return}
   if(!compLive()){cmpErr(NATIVE?'Firebase ҳанӯз танзим нашудааст.':'Мусобиқа танҳо дар APK кор мекунад.');return}
   cmpErr('Ҷустуҷӯи гурӯҳ…');try{const g=await fsReq('GET','groups/'+code);if(!g){cmpErr('Гурӯҳ бо ин код ёфт нашуд');return}
+    {const a=await fbToken();if(grpBanned(g).includes(a.uid)){cmpErr('Соҳиби ин гурӯҳ шуморо хориҷ кардааст');return}}
     const m=await fsReq('GET','groups/'+code+'/members',null,'pageSize=20');const cnt=((m&&m.documents)||[]).length;if(cnt>=8){cmpErr('Ин гурӯҳ пур аст (8 нафар)');return}
     CMP={name,code,gname:(g.fields&&g.fields.name&&g.fields.name.stringValue)||'Гурӯҳ'};cmpSave();await compPush();await compPull();cmpErr('');renderComp();toast('Ба гурӯҳ ҳамроҳ шудед!')}
   catch(e){cmpErr('Пайваст нашуд. Интернетро санҷед ва боз кӯшиш кунед.')}}
+function grpBanned(g){const v=g&&g.fields&&g.fields.banned&&g.fields.banned.arrayValue;return((v&&v.values)||[]).map(x=>x.stringValue).filter(Boolean)}
+function compIsOwner(){return !!(compLive()&&FBA&&CMP.code&&CMP.owner===FBA.uid)}
+async function compRemove(uid,name){if(!compIsOwner()||!uid||uid===FBA.uid)return;
+  try{const g=await fsReq('GET','groups/'+CMP.code);const ban=grpBanned(g);if(!ban.includes(uid))ban.push(uid);
+    await fsReq('PATCH','groups/'+CMP.code,{fields:{banned:{arrayValue:{values:ban.map(x=>({stringValue:x}))}}}},'updateMask.fieldPaths=banned');
+    CMP.ban=ban;cmpSave();try{await fsReq('DELETE','groups/'+CMP.code+'/members/'+uid)}catch(e){}
+    if(CMPC&&CMPC.list){CMPC.list=CMPC.list.filter(x=>x.id!==uid);store.set('comp_cache',CMPC)}
+    renderComp();try{renderMiniComp()}catch(e){}toast((name||'Иштирокчӣ')+' аз гурӯҳ хориҷ шуд')}
+  catch(e){toast('Хориҷ нашуд. Интернетро санҷед.')}}
 async function compLeave(){try{if(compLive()&&FBA)await fsReq('DELETE','groups/'+CMP.code+'/members/'+FBA.uid)}catch(e){}
   CMP={name:CMP.name,code:'',gname:''};cmpSave();CMPC=null;store.set('comp_cache',null);renderComp();toast('Аз гурӯҳ баромадед')}
 function cmpErr(t){$('cmpErr').textContent=t}
@@ -2075,18 +2100,24 @@ function renderComp(offline){const live=compLive(),demo=!live;
   $('cmpPodium').style.gridTemplateColumns='repeat('+order.length+',minmax(0,1fr))';
   $('cmpPodium').innerHTML=order.map(({m,r})=>{const pos=Math.min(3,r),me=m.id===myId;
     return'<div class="pd p'+pos+(me?' me':'')+'" style="--ring:'+RING[pos]+';--base:'+BASE[pos]+';--bgc:'+avColor(m.id)+'">'+(pos===1?CROWN:'')+'<div class="av"><span>'+escapeHTML(initials(m.n))+'</span><em>'+r+'</em></div><div class="nm">'+escapeHTML(m.n||'—')+'</div><div class="pc num">'+m.pct+'%</div><div class="pt num">'+m.pts+' хол</div><div class="base"></div></div>'}).join('');
+  const own=compIsOwner(),ownerId=live?CMP.owner:'me';
   $('cmpList').innerHTML=list.map((m,i)=>{const me=m.id===myId,stale=m.pd!==pd,r=rk[i];
     const dots=(m.st||[]).map(x=>'<i class="'+(stale?'':x)+'"></i>').join('');
     const sp=(m.dd||[]).map(v=>'<b class="'+(v?'':'z')+'" style="height:'+Math.max(2,Math.round(v*.16))+'px"></b>').join('');
     return'<div class="cb-row'+(me?' me':'')+'"><span class="cb-rk'+(r<=3?' r'+r:'')+'">'+r+'</span><span class="cb-av" style="--bgc:'+avColor(m.id)+'">'+escapeHTML(initials(m.n))+'</span>'+
-      '<div style="min-width:0"><div class="cb-nm"><span>'+escapeHTML(m.n||'—')+'</span>'+(me?'<span class="cmp-tag">Ман</span>':'')+'</div>'+
+      '<div style="min-width:0"><div class="cb-nm"><span>'+escapeHTML(m.n||'—')+'</span>'+(me?'<span class="cmp-tag">Ман</span>':'')+(m.id===ownerId?'<span class="cmp-own" title="Соҳиби гурӯҳ">★</span>':'')+'</div>'+
       '<div class="cb-mid"><div class="cb-dots" aria-label="Намозҳои имрӯз">'+dots+'</div>'+(sp?'<div class="cb-spark" aria-label="7 рӯз">'+sp+'</div>':'')+'</div>'+
       '<div class="cb-chips">'+(m.s?'<span class="fl">'+m.s+' рӯз пайдарпай</span>':'')+(m.miss?'<span class="qz">'+m.miss+' қазо</span>':'<span class="ok">бе қазо</span>')+'</div></div>'+
-      '<div class="cb-r"><b class="num">'+m.pct+'%</b><small class="num">'+m.pts+' хол</small></div></div>'}).join('');
+      '<div class="cb-r"><b class="num">'+m.pct+'%</b><small class="num">'+m.pts+' хол</small></div>'+(own&&!me?'<button class="cb-kick" type="button" data-kick="'+escapeHTML(m.id)+'" data-kn="'+escapeHTML(m.n||'')+'" aria-label="Хориҷ кардани '+escapeHTML(m.n||'')+'"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button>':'')+'</div>'}).join('')+(own?'<p class="cb-ownnote">★ Шумо соҳиби гурӯҳ ҳастед. Барои хориҷ кардани иштирокчӣ тугмаи ✕-ро зер кунед.</p>':'');
   $('cmpUpd').textContent=live?(offline?'Интернет нест':(CMPC?hm(CMPC.at,loc().tz):'Навсозӣ')):'Намуна';
   const msg='Ассалому алейкум! Биё дар НАМОЗХОН TJ дар намоз мусобиқа кунем. Коди гурӯҳ: '+(live?CMP.code:'K7M2QX')+'\nБарномаро аз ин ҷо гир: https://github.com/saidumarjo/namaztraker/releases/latest';
   $('cmpShare').href='https://wa.me/?text='+encodeURIComponent(msg);
   $('compTileSub').textContent=live&&CMP.code&&myR?'Ҷои шумо: '+myR+' аз '+list.length:'Бо 5–6 дӯст рақобат кунед'}
+$('cmpList').addEventListener('click',e=>{const b=e.target.closest('[data-kick]');if(!b)return;const id=b.dataset.kick,n=b.dataset.kn;
+  const row=b.closest('.cb-row');if(row.querySelector('.cb-ask'))return;
+  const ask=document.createElement('div');ask.className='cb-ask';ask.innerHTML='<span><b></b>-ро аз гурӯҳ хориҷ кунед? Ӯ дигар ҳамроҳ шуда наметавонад.</span><button class="btn" type="button" data-k="no">Не</button><button class="btn danger" type="button" data-k="yes">Хориҷ</button>';
+  ask.querySelector('b').textContent=n||'Иштирокчӣ';row.appendChild(ask);
+  ask.addEventListener('click',ev=>{const k=ev.target.closest('[data-k]');if(!k)return;ev.stopPropagation();if(k.dataset.k==='yes'){k.disabled=true;k.textContent='…';compRemove(id,n)}else ask.remove()})});
 $('cmpCreate').onclick=compCreate;$('cmpJoinBtn').onclick=compJoin;
 $('cmpName').addEventListener('change',()=>{CMP.name=$('cmpName').value.trim();cmpSave()});
 $('cmpRefresh').onclick=()=>{if(!compLive()){toast('Ин ҷадвал намуна аст');return}const b=$('cmpRefresh');b.classList.add('spin');compPush().then(compPull).then(()=>{b.classList.remove('spin');renderComp();toast('Нав шуд')}).catch(()=>{b.classList.remove('spin');renderComp(true);toast('Интернет нест')})};
