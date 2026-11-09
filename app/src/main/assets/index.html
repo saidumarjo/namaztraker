@@ -2034,7 +2034,7 @@ function compPushSoon(){if(!compLive()||!CMP.code)return;clearTimeout(cmpPushT);
 async function compPull(){if(!compLive()||!CMP.code)return;
   const g=await fsReq('GET','groups/'+CMP.code);const a=await fbToken();
   if(!g){CMP={name:CMP.name,code:'',gname:''};cmpSave();CMPC=null;store.set('comp_cache',null);toast('Ин гурӯҳ дигар вуҷуд надорад');return}
-  const ban=grpBanned(g);CMP.owner=(g.fields&&g.fields.owner&&g.fields.owner.stringValue)||'';CMP.ban=ban;cmpSave();
+  const ban=grpBanned(g);CMP.owner=(g.fields&&g.fields.owner&&g.fields.owner.stringValue)||'';if(g.fields&&g.fields.name&&g.fields.name.stringValue)CMP.gname=g.fields.name.stringValue;CMP.ban=ban;cmpSave();
   if(ban.includes(a.uid)){try{await fsReq('DELETE','groups/'+CMP.code+'/members/'+a.uid)}catch(e){}
     CMP={name:CMP.name,code:'',gname:''};cmpSave();CMPC=null;store.set('comp_cache',null);toast('Соҳиби гурӯҳ шуморо аз мусобиқа хориҷ кард');return}
   const j=await fsReq('GET','groups/'+CMP.code+'/members',null,'pageSize=20');
