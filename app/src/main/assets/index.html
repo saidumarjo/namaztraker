@@ -600,6 +600,19 @@ body.iq-on .app{padding-top:calc(74px + env(safe-area-inset-top,0px))}
 .cb-me .big small{font-size:16px;color:var(--muted);font-weight:700;letter-spacing:0}
 .cb-me .txt{font-size:13px;color:rgba(242,247,244,.8);line-height:1.4}
 .cb-me .txt b{color:#F2F7F4}
+.bkstat{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.bkstat div{border-radius:12px;padding:8px 6px;text-align:center;background:rgba(255,255,255,.04);border:1px solid var(--line)}
+.bkstat b{display:block;font-size:18px;font-weight:800}
+.bkstat span{font-size:11px;color:var(--muted)}
+.bkbtns{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.bkb{display:flex;align-items:center;gap:10px;text-align:left;padding:12px;border-radius:14px;border:1px solid rgba(147,212,92,.35);background:rgba(147,212,92,.08);color:inherit}
+.bkb+.bkb{border-color:rgba(230,188,94,.35);background:rgba(230,188,94,.08)}
+.bkb svg{flex:none;width:26px;height:26px;color:#93D45C}
+.bkb+.bkb svg{color:#E6BC5E}
+.bkb b{display:block;font-size:15px}
+.bkb small{display:block;font-size:11.5px;color:var(--muted);line-height:1.25}
+.bkconfirm{border-radius:14px;padding:12px;border:1px solid rgba(230,188,94,.45);background:rgba(230,188,94,.08);font-size:13.5px;line-height:1.45}
+.bkconfirm .row2{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
 .slptimes{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .slpview{position:fixed;inset:0;z-index:80;display:flex;align-items:center;justify-content:center;text-align:center;color:#F2F7F4;
   background:radial-gradient(120% 80% at 50% 0%,#1E3B2E,#0F2119 55%,#0A1412);padding:calc(20px + env(safe-area-inset-top,0px)) 20px calc(20px + env(safe-area-inset-bottom,0px));overflow:auto}
@@ -1121,6 +1134,18 @@ body.iq-on .app{padding-top:calc(74px + env(safe-area-inset-top,0px))}
       <div id="wipeConfirm" hidden class="confirm">Ҳамаи қайдҳои намоз, қазо ва тасбеҳ пок мешаванд.
         <div class="row" style="margin-top:8px"><button class="btn" id="wipeYes">Ҳа, пок кун</button><button class="btn ghost" id="wipeNo">Не</button></div>
       </div>
+    </div>
+
+    <h2 class="sec">Нусхаи эҳтиётӣ</h2>
+    <div class="card stack">
+      <p class="note" style="margin:0">Ҳамаи маълумотҳо (намозҳои қайдшуда, қазоҳо, ӯҳдадориҳо, тасбеҳ, танзимот ва гурӯҳи мусобиқа) дар як файл сабт мешаванд. Агар телефонро иваз кунед ё барномаро аз нав насб кунед, бо «Импорт» ҳамаашро баргардонед.</p>
+      <div class="bkstat" id="bkStat"></div>
+      <div class="bkbtns">
+        <button class="bkb" id="bkExp" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></svg><span><b>Экспорт</b><small>Сабт кардан ба файл</small></span></button>
+        <button class="bkb" id="bkImp" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21V9M7 14l5-5 5 5M5 3h14"/></svg><span><b>Импорт</b><small>Баргардондан аз файл</small></span></button>
+      </div>
+      <input type="file" id="bkFile" accept=".json,application/json,text/plain" hidden>
+      <div class="bkconfirm" id="bkConf" hidden></div>
     </div>
 
     <div class="card about">
@@ -1844,6 +1869,31 @@ $('slpPrev').onclick=()=>{if(NATIVE&&NATIVE.previewSleep){NATIVE.previewSleep();
 $('slpClose').onclick=()=>{$('slpView').hidden=true;clearInterval(slpT)};
 window.addEventListener('hashchange',()=>{if(location.hash==='#prefs')try{renderSleep()}catch(e){}});
 setTimeout(()=>{try{renderSleep()}catch(e){}},0);
+
+
+/* ---------- backup: export / import ---------- */
+const BK_KEYS=['settings','log','qaza','tasbeh','duty','first','comp','fb'];
+function bkCount(log){let d=0,n=0;for(const y in (log||{})){const o=log[y]||{};const c=Object.keys(o).length;if(c){d++;n+=c}}return{d,n}}
+function renderBackup(){const c=bkCount(LOG),q=QK.reduce((a,[k])=>a+(QZ[k]||0),0);
+  $('bkStat').innerHTML='<div><b class="num">'+c.d+'</b><span>рӯз</span></div><div><b class="num">'+c.n+'</b><span>намози қайдшуда</span></div><div><b class="num">'+q+'</b><span>қазо</span></div>'}
+function bkName(){return 'namozkhon-'+todayYMD+'.json'}
+$('bkExp').onclick=()=>{const data={};BK_KEYS.forEach(k=>{const v=localStorage.getItem('nt.'+k);if(v!=null)try{data[k]=JSON.parse(v)}catch(e){}});
+  const txt=JSON.stringify({app:'НАМОЗХОН TJ',v:1,at:new Date().toISOString(),data},null,1),name=bkName();
+  if(NATIVE&&NATIVE.saveBackup){let r='';try{r=NATIVE.saveBackup(name,txt)}catch(e){}toast(r?'Сабт шуд: '+r:'Сабт нашуд');return}
+  try{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([txt],{type:'application/json'}));a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},1500);toast('Файл сабт шуд: '+name)}catch(e){toast('Сабт нашуд')}};
+$('bkImp').onclick=()=>{$('bkFile').value='';$('bkFile').click()};
+let bkPending=null;
+$('bkFile').onchange=e=>{const f=e.target.files&&e.target.files[0];if(!f)return;const rd=new FileReader();
+  rd.onload=()=>{let o;try{o=JSON.parse(rd.result)}catch(x){toast('Ин файл нусхаи НАМОЗХОН TJ нест');return}
+    const d=o&&o.data;if(!d||typeof d!=='object'||(!d.log&&!d.settings)){toast('Ин файл нусхаи НАМОЗХОН TJ нест');return}
+    bkPending=d;const c=bkCount(d.log),q=d.qaza?Object.values(d.qaza).reduce((a,v)=>a+(+v||0),0):0,when=o.at?new Date(o.at):null;
+    const cf=$('bkConf');cf.hidden=false;cf.innerHTML='<b>Баргардондан?</b><br>Файл аз '+(when?escapeHTML(ymdIn(+when,loc().tz))+' '+hm(+when,loc().tz):'—')+': <b>'+c.d+'</b> рӯз, <b>'+c.n+'</b> намози қайдшуда, <b>'+q+'</b> қазо.<br><span class="note">Маълумотҳои ҳозира бо маълумоти файл иваз мешаванд.</span><div class="row2"><button class="btn" id="bkNo" type="button">Бекор</button><button class="btn primary" id="bkYes" type="button">Баргардондан</button></div>';
+    $('bkNo').onclick=()=>{bkPending=null;cf.hidden=true};
+    $('bkYes').onclick=()=>{if(!bkPending)return;BK_KEYS.forEach(k=>{if(k in bkPending){try{localStorage.setItem('nt.'+k,JSON.stringify(bkPending[k]))}catch(x){}}});
+      try{localStorage.removeItem('nt.comp_cache')}catch(x){}location.reload()}};
+  rd.onerror=()=>toast('Файл хонда нашуд');rd.readAsText(f)};
+window.addEventListener('hashchange',()=>{if(location.hash==='#prefs')try{renderBackup()}catch(e){}});
+setTimeout(()=>{try{renderBackup()}catch(e){}},0);
 
 /* ---------- khushu: unhurried prayer plan and guided timer ---------- */
 const KH={

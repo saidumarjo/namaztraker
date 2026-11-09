@@ -32,6 +32,8 @@ public class MainActivity extends Activity implements SensorEventListener {
     private static final String HOST = "appassets.androidplatform.net";
     private static final int REQ_LOCATION = 11;
     private static final int REQ_NOTIFY = 12;
+    private static final int REQ_FILE = 13;
+    private android.webkit.ValueCallback<Uri[]> fileCallback;
 
     private WebView web;
     private SensorManager sensors;
@@ -83,6 +85,21 @@ public class MainActivity extends Activity implements SensorEventListener {
 
         web.setWebChromeClient(new WebChromeClient() {
             @Override
+            public boolean onShowFileChooser(WebView view, android.webkit.ValueCallback<Uri[]> callback, FileChooserParams params) {
+                if (fileCallback != null) fileCallback.onReceiveValue(null);
+                fileCallback = callback;
+                Intent pick = new Intent(Intent.ACTION_GET_CONTENT).addCategory(Intent.CATEGORY_OPENABLE).setType("*/*");
+                try {
+                    startActivityForResult(Intent.createChooser(pick, "Файли нусхаро интихоб кунед"), REQ_FILE);
+                } catch (Exception e) {
+                    fileCallback = null;
+                    callback.onReceiveValue(null);
+                    return false;
+                }
+                return true;
+            }
+
+            @Override
             public void onGeolocationPermissionsShowPrompt(String origin, GeolocationPermissions.Callback callback) {
                 if (hasLocation()) {
                     callback.invoke(origin, true, false);
@@ -122,6 +139,44 @@ public class MainActivity extends Activity implements SensorEventListener {
         if (requestCode == REQ_LOCATION && geoCallback != null) {
             geoCallback.invoke(geoOrigin, hasLocation(), false);
             geoCallback = null;
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQ_FILE && fileCallback != null) {
+            Uri[] r = null;
+            if (resultCode == RESULT_OK && data != null && data.getData() != null) r = new Uri[]{data.getData()};
+            fileCallback.onReceiveValue(r);
+            fileCallback = null;
+        }
+    }
+
+    /** Writes the backup into Downloads; returns a human-readable place or "" on failure. */
+    private String writeBackup(String name, String text) {
+        byte[] bytes = text.getBytes(java.nio.charset.StandardCharsets.UTF_8);
+        try {
+            if (Build.VERSION.SDK_INT >= 29) {
+                android.content.ContentValues v = new android.content.ContentValues();
+                v.put(android.provider.MediaStore.MediaColumns.DISPLAY_NAME, name);
+                v.put(android.provider.MediaStore.MediaColumns.MIME_TYPE, "application/json");
+                v.put(android.provider.MediaStore.MediaColumns.RELATIVE_PATH, android.os.Environment.DIRECTORY_DOWNLOADS + "/Namozkhon");
+                Uri u = getContentResolver().insert(android.provider.MediaStore.Downloads.EXTERNAL_CONTENT_URI, v);
+                if (u == null) return "";
+                try (java.io.OutputStream o = getContentResolver().openOutputStream(u)) {
+                    if (o == null) return "";
+                    o.write(bytes);
+                }
+                return "Download/Namozkhon/" + name;
+            }
+            java.io.File dir = getExternalFilesDir(android.os.Environment.DIRECTORY_DOCUMENTS);
+            if (dir == null) return "";
+            java.io.File f = new java.io.File(dir, name);
+            try (java.io.FileOutputStream o = new java.io.FileOutputStream(f)) { o.write(bytes); }
+            return f.getAbsolutePath();
+        } catch (Exception e) {
+            return "";
         }
     }
 
@@ -293,6 +348,12 @@ public class MainActivity extends Activity implements SensorEventListener {
         @JavascriptInterface
         public void setBlock(String json) {
             Block.save(getApplicationContext(), json);
+        }
+
+        @JavascriptInterface
+        public String saveBackup(String name, String text) {
+            String safe = name == null ? "namozkhon.json" : name.replaceAll("[^A-Za-z0-9._-]", "_");
+            return writeBackup(safe, text == null ? "" : text);
         }
 
         @JavascriptInterface
