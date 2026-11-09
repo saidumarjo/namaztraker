@@ -28,9 +28,10 @@ final class Block {
 
     /** Active window: prayer name and end time, or null. */
     static final class Win {
-        final String name;
+        final String name, day, key;
         final long start, until;
-        Win(String n, long s, long u) { name = n; start = s; until = u; }
+        final boolean qaza;
+        Win(String n, long s, long u, boolean q, String d, String k) { name = n; start = s; until = u; qaza = q; day = d; key = k; }
     }
 
     private static SharedPreferences prefs(Context c) {
@@ -49,19 +50,31 @@ final class Block {
         return Math.max(5, Math.min(90, cfg(c).optInt("min", 20)));
     }
 
+    /** Share of the prayer window left when the "becoming qaza" block starts. */
+    static final double QAZA_SHARE = 0.20;
+
     static Win active(Context c, long now) {
         JSONObject k = cfg(c);
-        if (!k.optBoolean("on", false)) return null;
+        boolean adhan = k.optBoolean("on", false), qz = k.optBoolean("qz", false);
+        if (!adhan && !qz) return null;
         long len = minutes(c) * 60_000L;
         try {
             JSONArray days = new JSONObject(prefs(c).getString("widget", "{}")).optJSONArray("days");
             if (days == null) return null;
             for (int i = 0; i < days.length(); i++) {
-                JSONArray p = days.getJSONObject(i).getJSONArray("p");
+                JSONObject day = days.getJSONObject(i);
+                String d = day.optString("d");
+                JSONArray p = day.getJSONArray("p");
                 for (int j = 0; j < p.length(); j++) {
                     JSONObject o = p.getJSONObject(j);
-                    long s = o.getLong("s");
-                    if (now >= s && now < s + len) return new Win(o.optString("n"), s, s + len);
+                    long s = o.getLong("s"), e = o.getLong("e");
+                    String key = o.optString("k");
+                    // 1) the last 20% of the prayer time, while it is still not prayed: closed until it is marked
+                    if (qz && now < e && now >= e - (long) ((e - s) * QAZA_SHARE)
+                            && !Widgets.isMarked(c, d + "|" + key))
+                        return new Win(o.optString("n"), s, e, true, d, key);
+                    // 2) from adhan for N minutes (until the congregation)
+                    if (adhan && now >= s && now < s + len) return new Win(o.optString("n"), s, s + len, false, d, key);
                 }
             }
         } catch (Exception ignored) { }

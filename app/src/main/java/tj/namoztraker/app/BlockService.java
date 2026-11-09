@@ -64,7 +64,10 @@ public class BlockService extends AccessibilityService {
                 .putExtra("app", hit)
                 .putExtra("name", w.name)
                 .putExtra("start", w.start)
-                .putExtra("until", w.until);
+                .putExtra("until", w.until)
+                .putExtra("qaza", w.qaza)
+                .putExtra("d", w.day)
+                .putExtra("k", w.key);
         try { startActivity(in); } catch (Exception ignored) { }
     }
 

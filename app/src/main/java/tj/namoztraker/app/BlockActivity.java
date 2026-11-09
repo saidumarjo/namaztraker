@@ -32,7 +32,10 @@ public class BlockActivity extends Activity {
     };
 
     private final Handler ui = new Handler(Looper.getMainLooper());
-    private TextView count, sub;
+    private TextView count, sub, title, cntLbl;
+    private Button go;
+    private boolean qaza;
+    private String day, key;
     private long until;
     private final Runnable tick = new Runnable() {
         @Override public void run() {
@@ -105,7 +108,7 @@ public class BlockActivity extends Activity {
         pre.setLetterSpacing(0.12f);
         root.addView(pre);
 
-        TextView title = text("Вақти намоз!", 34, 0xFFF2F7F4, true);
+        title = text("Вақти намоз!", 34, 0xFFF2F7F4, true);
         title.setPadding(0, (int) dp(6), 0, (int) dp(6));
         root.addView(title);
 
@@ -116,7 +119,8 @@ public class BlockActivity extends Activity {
         count = text("--:--", 64, 0xFFB8F07E, true);
         count.setPadding(0, (int) dp(18), 0, 0);
         root.addView(count);
-        root.addView(text("то кушода шудан", 13, 0x99F2F7F4, false));
+        cntLbl = text("то кушода шудан", 13, 0x99F2F7F4, false);
+        root.addView(cntLbl);
 
         TextView hd = text("", 15, 0xD9F2F7F4, false);
         hd.setTypeface(Typeface.SERIF);
@@ -125,8 +129,13 @@ public class BlockActivity extends Activity {
         hd.setText(HADITH[(int) ((System.currentTimeMillis() / 60000) % HADITH.length)]);
         root.addView(hd);
 
-        Button go = button("Ба намоз меравам", true);
-        go.setOnClickListener(v -> home());
+        go = button("Ба намоз меравам", true);
+        go.setOnClickListener(v -> {
+            if (qaza && day != null && key != null && !Widgets.isMarked(this, day + "|" + key)) {
+                Widgets.mark(getApplicationContext(), day, key);
+            }
+            home();
+        });
         root.addView(go, new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
 
         Button open = button("НАМОЗХОН TJ-ро кушодан", false);
@@ -148,8 +157,28 @@ public class BlockActivity extends Activity {
         String name = in.getStringExtra("name");
         long start = in.getLongExtra("start", 0L);
         until = in.getLongExtra("until", System.currentTimeMillis() + 60_000L);
+        qaza = in.getBooleanExtra("qaza", false);
+        day = in.getStringExtra("d");
+        key = in.getStringExtra("k");
         long mins = Math.max(1, Math.round((until - start) / 60000.0));
         String hm = new SimpleDateFormat("HH:mm", Locale.US).format(new Date(until));
+        if (qaza) {
+            title.setText("Намоз қазо шуда истодааст!");
+            title.setTextColor(0xFFFFB59A);
+            count.setTextColor(0xFFFFB59A);
+            cntLbl.setText("то қазо шудан (соати " + hm + ")");
+            go.setText("Намозро хондам ✓");
+            sub.setText("Ту " + (name == null ? "намоз" : name) + "-ро ҳанӯз нахондаӣ.\n"
+                    + (app == null ? "Ин барнома" : app) + " то вақте намоз хонда нашавад, кушода намешавад.");
+            ui.removeCallbacks(tick);
+            ui.post(tick);
+            return;
+        }
+        title.setText("Вақти намоз!");
+        title.setTextColor(0xFFF2F7F4);
+        count.setTextColor(0xFFB8F07E);
+        cntLbl.setText("то кушода шудан");
+        go.setText("Ба намоз меравам");
         sub.setText("Азони " + (name == null ? "намоз" : name) + " шуд. Аз азон то ҷамоат " + mins + " дақиқа вақти намоз аст.\n"
                 + (app == null ? "Ин барнома" : app) + " то соати " + hm + " кушода намешавад.");
         ui.removeCallbacks(tick);

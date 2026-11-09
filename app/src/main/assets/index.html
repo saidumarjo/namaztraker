@@ -1069,6 +1069,7 @@ body.iq-on .app{padding-top:calc(74px + env(safe-area-inset-top,0px))}
     <h2 class="sec">Ҳангоми намоз шабакаҳо баста</h2>
     <div class="card stack">
       <label class="switch"><span><b>Аз азон то ҷамоат шабакаҳои иҷтимоӣ кор накунанд</b><br><span class="note">Дар ин вақт YouTube, TikTok, Instagram, Facebook ва Telegram (ҳам барнома, ҳам сайт дар браузер) кушода намешаванд. Ба ҷояш «Вақти намоз» навишта мешавад.</span></span><input type="checkbox" id="blkOn"></label>
+      <label class="switch"><span><b>Агар намоз қазо шуда истода бошад, то хондан баста бошад</b><br><span class="note">Вақте аз вақти намоз <b>20%</b> монда бошад ва намоз қайд нашуда бошад, ҳамин барномаҳо то он даме ки намозро хонда «Хондам» зер накунед, кушода намешаванд.</span></span><input type="checkbox" id="blkQz"></label>
       <div class="field"><label for="blkMin">Чанд дақиқа баста бошад (аз азон)</label><select id="blkMin"><option value="15">15 дақиқа</option><option value="20">20 дақиқа</option><option value="25">25 дақиқа</option><option value="30">30 дақиқа</option><option value="45">45 дақиқа</option><option value="60">1 соат</option></select></div>
       <div class="blkapps" id="blkApps" role="group" aria-label="Барномаҳои басташаванда"></div>
       <div class="blkst" id="blkSt"></div>
@@ -1760,18 +1761,20 @@ window.addEventListener('focus',()=>{pullWMarks()});
 
 /* ---------- block social apps from adhan until the congregation ---------- */
 const BLK_APPS=[['yt','YouTube','#E62117','▶'],['tt','TikTok','#111','♪'],['ig','Instagram','#C13584','◎'],['fb','Facebook','#1877F2','f'],['tg','Telegram','#2AA3E0','✈']];
-function blkCfg(){const b=S.block||{};return{on:b.on===true,min:+b.min||20,apps:Object.assign({yt:true,tt:true,ig:true,fb:true,tg:true},b.apps||{})}}
+function blkCfg(){const b=S.block||{};return{on:b.on===true,qz:b.qz===true,min:+b.min||20,apps:Object.assign({yt:true,tt:true,ig:true,fb:true,tg:true},b.apps||{})}}
 function blkPush(){try{NATIVE&&NATIVE.setBlock&&NATIVE.setBlock(JSON.stringify(blkCfg()))}catch(e){}}
-function renderBlock(){const c=blkCfg();$('blkOn').checked=c.on;$('blkMin').value=String(c.min);
+function renderBlock(){const c=blkCfg();$('blkOn').checked=c.on;$('blkQz').checked=c.qz;$('blkMin').value=String(c.min);
   $('blkApps').innerHTML=BLK_APPS.map(([k,n,col,ic])=>'<button type="button" data-blk="'+k+'" aria-pressed="'+!!c.apps[k]+'"><i style="background:'+col+'">'+ic+'</i>'+n+'</button>').join('');
   const st=$('blkSt');let ok=false;try{ok=!!(NATIVE&&NATIVE.blockReady&&NATIVE.blockReady())}catch(e){}
   if(!NATIVE){st.className='blkst';st.innerHTML='Ин имконият танҳо дар <b>APK</b> (телефони Android) кор мекунад.';return}
   if(!NATIVE.blockReady){st.className='blkst warn';st.innerHTML='Барои ин имконият версияи нави APK-ро насб кунед.';return}
-  if(ok){st.className='blkst ok';st.innerHTML=c.on?'✓ Фаъол. Ҳар азон '+c.min+' дақиқа барномаҳои интихобшуда баста мешаванд.':'Иҷозат дода шудааст. Барои фаъол кардан калидро дар боло фаъол кунед.';return}
+  if(ok){const t=[];if(c.on)t.push('ҳар азон '+c.min+' дақиқа');if(c.qz)t.push('вақте 20%-и вақти намоз монда бошад ва нахонда бошед — то хондан');st.className='blkst ok';st.innerHTML=t.length?'✓ Фаъол. Барномаҳо баста мешаванд: '+t.join('; ')+'.':'Иҷозат дода шудааст. Барои фаъол кардан калидҳои болоро фаъол кунед.';return}
   st.className='blkst warn';st.innerHTML='<b>Як бор иҷозат лозим аст:</b><ol><li>«Иҷозат додан»-ро зер кунед</li><li>Дар рӯйхат <b>НАМОЗХОН TJ</b>-ро ёбед ва фаъол кунед</li><li>Агар хокистарӣ бошад: Танзимот → Барномаҳо → НАМОЗХОН TJ → ⋮ (боло, рост) → «Allow restricted settings», баъд боз кӯшиш кунед</li></ol><button class="btn" id="blkGrant">Иҷозат додан</button>';
   $('blkGrant').onclick=()=>{try{NATIVE.openBlockSettings()}catch(e){}}}
 $('blkOn').onchange=e=>{const c=blkCfg();c.on=e.target.checked;S.block=c;save();blkPush();renderBlock();
   if(c.on&&NATIVE&&NATIVE.blockReady&&!NATIVE.blockReady())toast('Барои кор кардан иҷозат диҳед');else toast(c.on?'Ҳангоми намоз шабакаҳо баста мешаванд':'Блок хомӯш шуд')};
+$('blkQz').onchange=e=>{const c=blkCfg();c.qz=e.target.checked;S.block=c;save();blkPush();renderBlock();
+  if(c.qz&&NATIVE&&NATIVE.blockReady&&!NATIVE.blockReady())toast('Барои кор кардан иҷозат диҳед');else toast(c.qz?'То хондани намоз шабакаҳо баста мешаванд':'Хомӯш шуд')};
 $('blkMin').onchange=e=>{const c=blkCfg();c.min=+e.target.value;S.block=c;save();blkPush();renderBlock()};
 $('blkApps').addEventListener('click',e=>{const b=e.target.closest('[data-blk]');if(!b)return;const c=blkCfg();c.apps[b.dataset.blk]=!c.apps[b.dataset.blk];S.block=c;save();blkPush();renderBlock()});
 window.addEventListener('focus',()=>{if(!$('v-prefs').hidden)renderBlock()});
