@@ -44,6 +44,21 @@ public class BlockService extends AccessibilityService {
         String pkg = e.getPackageName().toString();
         if (pkg.equals(getPackageName()) || pkg.equals("com.android.systemui")) return;
         long now = System.currentTimeMillis();
+
+        // night lock: every app except phone, alarm clock, keyboard and system UI
+        long[] sl = Block.sleep(this, now);
+        if (sl != null) {
+            if (allowedAtNight(pkg)) return;
+            if (now - lastBlock < 700) return;
+            lastBlock = now;
+            if (!pkg.equals(homePkg())) performGlobalAction(GLOBAL_ACTION_HOME);
+            Intent in = new Intent(this, SleepActivity.class)
+                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NO_ANIMATION)
+                    .putExtra("start", sl[0]).putExtra("until", sl[1]);
+            try { startActivity(in); } catch (Exception ignored) { }
+            return;
+        }
+
         boolean stateChange = e.getEventType() == AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED;
         if (!stateChange && pkg.equals(lastPkg) && now - lastCheck < 1200) return;
         lastPkg = pkg;
@@ -69,6 +84,33 @@ public class BlockService extends AccessibilityService {
                 .putExtra("d", w.day)
                 .putExtra("k", w.key);
         try { startActivity(in); } catch (Exception ignored) { }
+    }
+
+    private static final String[] NIGHT_OK = {
+            "android", "com.android.systemui", "com.android.phone", "com.android.server.telecom", "com.android.emergency",
+            "com.google.android.dialer", "com.android.dialer", "com.samsung.android.dialer", "com.samsung.android.incallui",
+            "com.android.incallui", "com.google.android.apps.safetyhub", "com.sec.android.app.safetyassurance",
+            "com.google.android.deskclock", "com.android.deskclock", "com.sec.android.app.clockpackage",
+            "com.coloros.alarmclock", "com.oneplus.deskclock", "com.miui.clock", "com.huawei.deskclock",
+            "com.android.contacts", "com.samsung.android.app.contacts",
+    };
+    private String home;
+
+    private String homePkg() {
+        if (home == null) {
+            try {
+                android.content.pm.ResolveInfo r = getPackageManager().resolveActivity(
+                        new Intent(Intent.ACTION_MAIN).addCategory(Intent.CATEGORY_HOME), 0);
+                home = r != null && r.activityInfo != null ? r.activityInfo.packageName : "";
+            } catch (Exception e) { home = ""; }
+        }
+        return home;
+    }
+
+    private boolean allowedAtNight(String pkg) {
+        for (String p : NIGHT_OK) if (p.equals(pkg)) return true;
+        String l = pkg.toLowerCase();
+        return l.contains("inputmethod") || l.contains("keyboard") || l.contains("honeyboard") || l.contains("swiftkey");
     }
 
     private String urlOf(String pkg) {

@@ -50,6 +50,58 @@ final class Block {
         return Math.max(5, Math.min(90, cfg(c).optInt("min", 20)));
     }
 
+    /** Night lock: {start, end} of the current sleep window, or null. */
+    static long[] sleep(Context c, long now) {
+        JSONObject k = cfg(c);
+        if (!k.optBoolean("slp", false)) return null;
+        int[] f = hm(k.optString("sf", "00:00")), t = hm(k.optString("st", "04:00"));
+        for (int d = -1; d <= 0; d++) {
+            java.util.Calendar a = java.util.Calendar.getInstance();
+            a.setTimeInMillis(now);
+            a.add(java.util.Calendar.DAY_OF_MONTH, d);
+            a.set(java.util.Calendar.HOUR_OF_DAY, f[0]);
+            a.set(java.util.Calendar.MINUTE, f[1]);
+            a.set(java.util.Calendar.SECOND, 0);
+            a.set(java.util.Calendar.MILLISECOND, 0);
+            java.util.Calendar b = (java.util.Calendar) a.clone();
+            b.set(java.util.Calendar.HOUR_OF_DAY, t[0]);
+            b.set(java.util.Calendar.MINUTE, t[1]);
+            if (!b.after(a)) b.add(java.util.Calendar.DAY_OF_MONTH, 1);
+            long s = a.getTimeInMillis(), e = b.getTimeInMillis();
+            if (now >= s && now < e) {
+                if (prefs(c).getLong("sleep_skip", 0L) >= e) return null;
+                return new long[]{s, e};
+            }
+        }
+        return null;
+    }
+
+    /** Next Fajr start from the synced prayer times, or 0. */
+    static long nextFajr(Context c, long now) {
+        try {
+            JSONArray days = new JSONObject(prefs(c).getString("widget", "{}")).optJSONArray("days");
+            if (days == null) return 0;
+            for (int i = 0; i < days.length(); i++) {
+                long s = days.getJSONObject(i).getJSONArray("p").getJSONObject(0).getLong("s");
+                if (s > now) return s;
+            }
+        } catch (Exception ignored) { }
+        return 0;
+    }
+
+    static void skipSleep(Context c, long until) {
+        prefs(c).edit().putLong("sleep_skip", until).apply();
+    }
+
+    private static int[] hm(String s) {
+        try {
+            String[] p = s.split(":");
+            return new int[]{Math.max(0, Math.min(23, Integer.parseInt(p[0].trim()))), Math.max(0, Math.min(59, Integer.parseInt(p[1].trim())))};
+        } catch (Exception e) {
+            return new int[]{0, 0};
+        }
+    }
+
     /** Share of the prayer window left when the "becoming qaza" block starts. */
     static final double QAZA_SHARE = 0.20;
 

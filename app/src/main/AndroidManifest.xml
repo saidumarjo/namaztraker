@@ -41,6 +41,16 @@
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme" />
 
+        <activity
+            android:name=".SleepActivity"
+            android:exported="false"
+            android:excludeFromRecents="true"
+            android:launchMode="singleTask"
+            android:taskAffinity="tj.namoztraker.sleep"
+            android:screenOrientation="portrait"
+            android:showWhenLocked="false"
+            android:theme="@style/AppTheme" />
+
         <service
             android:name=".BlockService"
             android:exported="false"

@@ -600,6 +600,21 @@ body.iq-on .app{padding-top:calc(74px + env(safe-area-inset-top,0px))}
 .cb-me .big small{font-size:16px;color:var(--muted);font-weight:700;letter-spacing:0}
 .cb-me .txt{font-size:13px;color:rgba(242,247,244,.8);line-height:1.4}
 .cb-me .txt b{color:#F2F7F4}
+.slptimes{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.slpview{position:fixed;inset:0;z-index:80;display:flex;align-items:center;justify-content:center;text-align:center;color:#F2F7F4;
+  background:radial-gradient(120% 80% at 50% 0%,#1E3B2E,#0F2119 55%,#0A1412);padding:calc(20px + env(safe-area-inset-top,0px)) 20px calc(20px + env(safe-area-inset-bottom,0px));overflow:auto}
+.slpin{width:100%;max-width:420px}
+.slpmoon{width:56px;height:56px;filter:drop-shadow(0 0 18px rgba(230,188,94,.45))}
+.slppre{font-size:12px;letter-spacing:.14em;color:#E6BC5E;font-weight:800;margin-top:8px}
+.slpview h2{margin:6px 0 6px;font-size:30px;font-weight:800}
+.slpview p{margin:0 auto;max-width:330px;font-size:15.5px;line-height:1.45;color:rgba(242,247,244,.8)}
+.slpring{position:relative;width:min(72vw,260px);aspect-ratio:1;margin:22px auto 10px}
+.slpring svg{width:100%;height:100%}
+.slpring>div{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.slpring b{font-size:clamp(34px,11vw,46px);font-weight:800;color:#B8F07E;letter-spacing:-.02em}
+.slpring span{font-size:12.5px;color:rgba(242,247,244,.65);margin-top:2px}
+.slpfajr{font-size:14px;color:#E6BC5E;font-weight:700;margin-bottom:12px}
+.slpview .slphd{font-family:'Noto Serif',Georgia,serif;font-size:14px;margin-bottom:18px}
 .blkapps{display:flex;flex-wrap:wrap;gap:8px}
 .blkapps button{display:flex;align-items:center;gap:7px;border:1px solid var(--line);background:var(--surface);color:var(--muted);border-radius:999px;padding:7px 12px 7px 8px;font-size:13px;font-weight:700}
 .blkapps button i{width:20px;height:20px;border-radius:6px;display:grid;place-items:center;font-style:normal;font-size:11px;font-weight:900;color:#fff;opacity:.45}
@@ -745,6 +760,19 @@ body.iq-on .app{padding-top:calc(74px + env(safe-area-inset-top,0px))}
     <ol class="wl-steps"><li>Бисмиллоҳ гуфта, нияти таҳорат кунед</li><li><b>Рӯйро</b> пурра бишӯед</li><li><b>Ду дастро</b> то оринҷ бишӯед</li><li>Ба <b>чоряки сар</b> масҳ кашед</li><li><b>Ду пойро</b> то буҷулак бишӯед</li></ol>
     <button class="wb ok" id="wlDone">Таҳорат гирифтам</button>
     <p class="wl-n" id="wlNote"></p>
+  </div>
+</div>
+<div class="slpview" id="slpView" hidden role="dialog" aria-modal="true" aria-labelledby="slpT">
+  <div class="slpin">
+    <svg class="slpmoon" viewBox="0 0 48 48" aria-hidden="true"><path d="M30 6a18 18 0 1 0 12 30A20 20 0 0 1 30 6z" fill="#E6BC5E"/><circle cx="38" cy="11" r="1.6" fill="#E6BC5E"/><circle cx="43" cy="20" r="1.1" fill="#E6BC5E"/></svg>
+    <div class="slppre">НАМОЗХОН TJ</div>
+    <h2 id="slpT">Алон вақти хоб аст</h2>
+    <p>Хоб кун то субҳ, то барои намози Бомдод бедор шуда тавонӣ.</p>
+    <div class="slpring"><svg viewBox="0 0 200 200" aria-hidden="true"><defs><linearGradient id="slpG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#E6BC5E"/><stop offset="1" stop-color="#93D45C"/></linearGradient></defs><circle cx="100" cy="100" r="88" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="12"/><circle id="slpArc" cx="100" cy="100" r="88" fill="none" stroke="url(#slpG)" stroke-width="12" stroke-linecap="round" transform="rotate(-90 100 100)" stroke-dasharray="552.9" stroke-dashoffset="0"/></svg>
+      <div><b class="num" id="slpCnt">--:--:--</b><span id="slpUntil">то бедор шудан</span></div></div>
+    <div class="slpfajr" id="slpFajr"></div>
+    <p class="slphd">«Ҳар кӣ намози Бомдодро бихонад, дар паноҳи Аллоҳ аст.» (Муслим)</p>
+    <button class="btn" id="slpClose" type="button">Пӯшидани намуна</button>
   </div>
 </div>
 <div class="usheet" id="usheet" hidden role="alertdialog" aria-modal="true" aria-labelledby="uQ">
@@ -1073,6 +1101,14 @@ body.iq-on .app{padding-top:calc(74px + env(safe-area-inset-top,0px))}
       <div class="field"><label for="blkMin">Чанд дақиқа баста бошад (аз азон)</label><select id="blkMin"><option value="15">15 дақиқа</option><option value="20">20 дақиқа</option><option value="25">25 дақиқа</option><option value="30">30 дақиқа</option><option value="45">45 дақиқа</option><option value="60">1 соат</option></select></div>
       <div class="blkapps" id="blkApps" role="group" aria-label="Барномаҳои басташаванда"></div>
       <div class="blkst" id="blkSt"></div>
+    </div>
+
+    <h2 class="sec">Вақти хоб</h2>
+    <div class="card stack">
+      <label class="switch"><span><b>Шабона телефон баста шавад</b><br><span class="note">Дар ин вақт ягон барнома кушода намешавад, танҳо экрани сабз: «Алон вақти хоб аст». Занги фавқулода ва соати зангдор кор мекунанд.</span></span><input type="checkbox" id="slpOn"></label>
+      <div class="slptimes"><div class="field"><label for="slpFrom">Аз соати</label><input type="time" id="slpFrom" value="00:00"></div><div class="field"><label for="slpTo">То соати</label><input type="time" id="slpTo" value="04:00"></div></div>
+      <div class="note" id="slpInfo"></div>
+      <button class="btn" id="slpPrev" type="button">Намунаи экранро дидан</button>
     </div>
 
     <h2 class="sec">Ёдрасҳои навбатӣ <small id="remCount"></small></h2>
@@ -1761,7 +1797,7 @@ window.addEventListener('focus',()=>{pullWMarks()});
 
 /* ---------- block social apps from adhan until the congregation ---------- */
 const BLK_APPS=[['yt','YouTube','#E62117','▶'],['tt','TikTok','#111','♪'],['ig','Instagram','#C13584','◎'],['fb','Facebook','#1877F2','f'],['tg','Telegram','#2AA3E0','✈']];
-function blkCfg(){const b=S.block||{};return{on:b.on===true,qz:b.qz===true,min:+b.min||20,apps:Object.assign({yt:true,tt:true,ig:true,fb:true,tg:true},b.apps||{})}}
+function blkCfg(){const b=S.block||{};return{on:b.on===true,qz:b.qz===true,slp:b.slp===true,sf:b.sf||'00:00',st:b.st||'04:00',min:+b.min||20,apps:Object.assign({yt:true,tt:true,ig:true,fb:true,tg:true},b.apps||{})}}
 function blkPush(){try{NATIVE&&NATIVE.setBlock&&NATIVE.setBlock(JSON.stringify(blkCfg()))}catch(e){}}
 function renderBlock(){const c=blkCfg();$('blkOn').checked=c.on;$('blkQz').checked=c.qz;$('blkMin').value=String(c.min);
   $('blkApps').innerHTML=BLK_APPS.map(([k,n,col,ic])=>'<button type="button" data-blk="'+k+'" aria-pressed="'+!!c.apps[k]+'"><i style="background:'+col+'">'+ic+'</i>'+n+'</button>').join('');
@@ -1780,6 +1816,34 @@ $('blkApps').addEventListener('click',e=>{const b=e.target.closest('[data-blk]')
 window.addEventListener('focus',()=>{if(!$('v-prefs').hidden)renderBlock()});
 window.addEventListener('hashchange',()=>{if(location.hash==='#prefs')renderBlock()});
 renderBlock();blkPush();
+
+
+/* ---------- night "sleep time" lock ---------- */
+function slpCfg(){const b=S.block||{};return{on:b.slp===true,from:b.sf||'00:00',to:b.st||'04:00'}}
+function zonedMs(ymd,h,m,tz){const [Y,M,D]=ymd.split('-').map(Number),want=Date.UTC(Y,M-1,D,h,m);let t=want;
+  const f=new Intl.DateTimeFormat('en-US',{timeZone:tz,hourCycle:'h23',year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'});
+  for(let i=0;i<2;i++){const p=f.formatToParts(t),g=k=>+p.find(x=>x.type===k).value;t+=want-Date.UTC(g('year'),g('month')-1,g('day'),g('hour')%24,g('minute'))}return t}
+function slpWin(now){const c=slpCfg(),L=loc(),ymd=ymdIn(now,L.tz);const [fh,fm]=c.from.split(':').map(Number),[th,tm]=c.to.split(':').map(Number);
+  const ws=[-1,0,1].map(d=>{const y=addDays(ymd,d),a=zonedMs(y,fh,fm,L.tz);let b=zonedMs(y,th,tm,L.tz);if(b<=a)b=zonedMs(addDays(y,1),th,tm,L.tz);return[a,b]});
+  const cur=ws.find(w=>now>=w[0]&&now<w[1]);if(cur)return cur;const nx=ws.find(w=>w[0]>now)||ws[2];return[nx[0],nx[1],1]}
+function renderSleep(){const c=slpCfg();$('slpOn').checked=c.on;$('slpFrom').value=c.from;$('slpTo').value=c.to;
+  const [fh,fm]=c.from.split(':').map(Number),[th,tm]=c.to.split(':').map(Number);let mins=(th*60+tm)-(fh*60+fm);if(mins<=0)mins+=1440;
+  const L=loc(),W=windowsFor(addDays(prayerDay(),1));
+  $('slpInfo').innerHTML=(c.on?'✓ Фаъол. ':'')+'Ҳар шаб <b>'+c.from+' – '+c.to+'</b> ('+Math.floor(mins/60)+' соат'+(mins%60?' '+(mins%60)+' дақ':'')+'). Бомдод тақрибан <b>'+hm(W.fajr[0],L.tz)+'</b>.'+(NATIVE?'':' Танҳо дар APK кор мекунад.')+(NATIVE&&NATIVE.blockReady&&!NATIVE.blockReady()?' <b>Иҷозати болоро (Accessibility) диҳед.</b>':'')}
+function slpSave(c){const b=Object.assign({},S.block||{});b.slp=c.on;b.sf=c.from;b.st=c.to;S.block=b;save();blkPush();renderSleep()}
+$('slpOn').onchange=e=>{const c=slpCfg();c.on=e.target.checked;slpSave(c);toast(c.on?'Шабона аз '+c.from+' то '+c.to+' телефон баста мешавад':'Вақти хоб хомӯш шуд')};
+$('slpFrom').onchange=e=>{const c=slpCfg();if(e.target.value)c.from=e.target.value;slpSave(c)};
+$('slpTo').onchange=e=>{const c=slpCfg();if(e.target.value)c.to=e.target.value;slpSave(c)};
+let slpT=null;
+function slpTick(){const now=Date.now(),w=slpWin(now),L=loc();let a=w[0],b=w[1];if(w[2]){a=now;b=now+(w[1]-w[0])}
+  const left=Math.max(0,b-now),h=Math.floor(left/3600000),m=Math.floor(left%3600000/60000),sec=Math.floor(left%60000/1000);
+  $('slpCnt').textContent=h+':'+String(m).padStart(2,'0')+':'+String(sec).padStart(2,'0');$('slpUntil').textContent='то бедор шудан · '+hm(w[1],L.tz);
+  $('slpArc').setAttribute('stroke-dashoffset',(552.9*(1-left/Math.max(1,b-a))).toFixed(1));
+  const nf=[0,1,2].map(i=>windowsFor(addDays(prayerDay(),i)).fajr[0]).find(t=>t>now);$('slpFajr').textContent=nf?'Бомдод соати '+hm(nf,L.tz):''}
+$('slpPrev').onclick=()=>{if(NATIVE&&NATIVE.previewSleep){NATIVE.previewSleep();return}$('slpView').hidden=false;slpTick();clearInterval(slpT);slpT=setInterval(slpTick,1000)};
+$('slpClose').onclick=()=>{$('slpView').hidden=true;clearInterval(slpT)};
+window.addEventListener('hashchange',()=>{if(location.hash==='#prefs')try{renderSleep()}catch(e){}});
+setTimeout(()=>{try{renderSleep()}catch(e){}},0);
 
 /* ---------- khushu: unhurried prayer plan and guided timer ---------- */
 const KH={
