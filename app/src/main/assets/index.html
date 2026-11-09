@@ -94,6 +94,11 @@ h2.sec small{font-family:var(--f-body);font-size:12.5px;font-weight:500;color:va
 .seg button[aria-pressed="true"].s-jamaat{background:var(--gold-soft);border-color:var(--gold);color:var(--gold)}
 .seg button[aria-pressed="true"].s-missed{background:var(--warn-soft);border-color:var(--warn);color:var(--warn)}
 .seg button:disabled{opacity:.4;cursor:default}
+.seg button.s-jamaat{position:relative;overflow:visible}
+.seg .jcd{position:absolute;left:50%;top:100%;transform:translateX(-50%);margin-top:2px;font-size:9.5px;line-height:1;font-weight:800;color:var(--gold);letter-spacing:.02em;white-space:nowrap;pointer-events:none}
+.seg .jcd:empty{display:none}
+.seg .jcd.wait{color:var(--muted);font-weight:700}
+.seg button:disabled .jcd{opacity:1}
 .wait{font-size:12px;color:var(--muted);padding-right:4px}
 @media (max-width:400px){.seg button .tx{display:none}.seg button{padding:6px 9px}}
 
@@ -157,7 +162,18 @@ h2.sec small{font-family:var(--f-body);font-size:12.5px;font-weight:500;color:va
 .tap:active .in{transform:scale(.97)}
 .tap .c{font-size:56px;font-weight:700;line-height:1}
 .tap .of{font-size:13px;color:var(--muted)}
-.tap .arx{font-size:26px;color:var(--gold);line-height:1.4}
+.tap .arx{font-size:26px;color:var(--gold);line-height:1.4;max-width:78%;text-align:center}
+.tap .arx.md{font-size:20px}
+.tap .arx.sm{font-size:15px;line-height:1.5}
+.dhlist{display:grid;gap:8px}
+.dhi{display:block;width:100%;text-align:left;border:1px solid var(--line);background:var(--surface);border-radius:16px;padding:12px 14px;color:inherit}
+.dhi[aria-pressed="true"]{border-color:rgba(147,212,92,.6);background:rgba(147,212,92,.1)}
+.dhi .t{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.dhi .t b{font-size:15px}
+.dhi .t span{flex:none;font-size:11.5px;color:var(--gold);font-weight:800;border:1px solid rgba(230,188,94,.4);border-radius:999px;padding:1px 8px}
+.dhi .a{font-family:var(--f-ar);direction:rtl;text-align:right;color:var(--gold);font-size:21px;line-height:1.7;margin:6px 0 2px}
+.dhi .m{font-size:13px;color:var(--muted);line-height:1.4}
+.dhi .h{font-size:12.5px;line-height:1.45;margin-top:6px;color:rgba(242,247,244,.75);font-family:'Noto Serif',Georgia,serif}
 .tasmeta{text-align:center;font-size:13px;color:var(--muted)}
 
 /* nav */
@@ -972,6 +988,8 @@ body.iq-on .app{padding-top:calc(74px + env(safe-area-inset-top,0px))}
       <div class="dhikr" id="targets" role="group" aria-label="Ҳадаф"></div>
     </div>
     <div class="row" style="justify-content:center;margin-top:12px"><button class="btn" id="tsReset">Аз нав</button></div>
+    <h2 class="sec">Ҳамаи зикрҳо <small class="num" id="dhCount"></small></h2>
+    <div class="dhlist" id="dhList"></div>
   </section>
 
   <!-- PREFS -->
@@ -1216,7 +1234,22 @@ const DHIKR=[
  {n:'Аллоҳу акбар',ar:'ٱللَّٰهُ أَكْبَرُ',m:'Аллоҳ бузургтар аст'},
  {n:'Ло илоҳа иллаллоҳ',ar:'لَا إِلَٰهَ إِلَّا ٱللَّٰهُ',m:'Ҷуз Аллоҳ маъбуде нест'},
  {n:'Астағфируллоҳ',ar:'أَسْتَغْفِرُ ٱللَّٰهَ',m:'Аз Аллоҳ омурзиш мехоҳам'},
- {n:'Салавот',ar:'ٱللَّٰهُمَّ صَلِّ عَلَىٰ مُحَمَّدٍ',m:'Дуруд бар Паёмбар ﷺ'}
+ {n:'Салавот',ar:'ٱللَّٰهُمَّ صَلِّ عَلَىٰ مُحَمَّدٍ',m:'Дуруд бар Паёмбар ﷺ'},
+ {n:'Субҳоналлоҳи ва биҳамдиҳ',ar:'سُبْحَانَ ٱللَّٰهِ وَبِحَمْدِهِ',m:'Аллоҳ пок аст ва ҳамд Ӯрост',c:100,h:'Ҳар кӣ дар рӯз 100 бор гӯяд, гуноҳонаш омурзида мешаванд, агарчи мисли кафки баҳр бошанд. (Бухорӣ)'},
+ {n:'Субҳоналлоҳил-азим',ar:'سُبْحَانَ ٱللَّٰهِ ٱلْعَظِيمِ',m:'Пок аст Аллоҳи бузург',c:33,h:'Ду калима бар забон сабук, дар тарозу вазнин: «Субҳоналлоҳи ва биҳамдиҳӣ, субҳоналлоҳил-азим». (Бухорӣ)'},
+ {n:'Ло ҳавла ва ло қуввата',ar:'لَا حَوْلَ وَلَا قُوَّةَ إِلَّا بِٱللَّٰهِ',m:'Ҳеҷ тавон ва қувват нест, магар бо Аллоҳ',c:100,h:'Ин калима ганҷе аз ганҷҳои ҷаннат аст. (Бухорӣ, Муслим)'},
+ {n:'Ҳасбуналлоҳ',ar:'حَسْبُنَا ٱللَّٰهُ وَنِعْمَ ٱلْوَكِيلُ',m:'Аллоҳ барои мо кофист ва Ӯ беҳтарин корсоз аст',c:33,h:'Ҳангоми душворӣ ва тарс гуфта мешавад. (Оли Имрон 173)'},
+ {n:'Астағфируллоҳа ва атубу илайҳ',ar:'أَسْتَغْفِرُ ٱللَّٰهَ وَأَتُوبُ إِلَيْهِ',m:'Аз Аллоҳ омурзиш мехоҳам ва ба сӯи Ӯ тавба мекунам',c:100,h:'Паёмбар ﷺ дар як рӯз зиёда аз 70 бор истиғфор мегуфтанд. (Бухорӣ)'},
+ {n:'Ло илоҳа иллаллоҳу ваҳдаҳ',ar:'لَا إِلَٰهَ إِلَّا ٱللَّٰهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ ٱلْمُلْكُ وَلَهُ ٱلْحَمْدُ وَهُوَ عَلَىٰ كُلِّ شَيْءٍ قَدِيرٌ',m:'Ҷуз Аллоҳи ягона маъбуде нест, шарике надорад; мулк ва ҳамд Ӯрост ва Ӯ бар ҳама чиз тавоност',c:100,h:'Ҳар кӣ дар рӯз 100 бор гӯяд, савоби озод кардани 10 банда дорад. (Бухорӣ, Муслим)'},
+ {n:'Боқиётус-солиҳот',ar:'سُبْحَانَ ٱللَّٰهِ وَٱلْحَمْدُ لِلَّٰهِ وَلَا إِلَٰهَ إِلَّا ٱللَّٰهُ وَٱللَّٰهُ أَكْبَرُ',m:'Аллоҳ пок аст, ҳамд Ӯрост, ҷуз Аллоҳ маъбуде нест, Аллоҳ бузургтар аст',c:33,h:'Ин чаҳор калима дӯстдоштатарин суханҳо назди Аллоҳанд. (Муслим)'},
+ {n:'Дуои Юнус (а)',ar:'لَا إِلَٰهَ إِلَّا أَنْتَ سُبْحَانَكَ إِنِّي كُنْتُ مِنَ ٱلظَّالِمِينَ',m:'Ҷуз Ту маъбуде нест, Ту пок ҳастӣ, ман аз ситамкорон будам',c:33,h:'Ҳар мусалмоне, ки бо ин дуо дуо кунад, Аллоҳ дуояшро қабул мекунад. (Тирмизӣ)'},
+ {n:'Калимаи тайиба',ar:'لَا إِلَٰهَ إِلَّا ٱللَّٰهُ مُحَمَّدٌ رَسُولُ ٱللَّٰهِ',m:'Ҷуз Аллоҳ маъбуде нест, Муҳаммад фиристодаи Аллоҳ аст',c:100},
+ {n:'Бисмиллоҳ',ar:'بِسْمِ ٱللَّٰهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ',m:'Ба номи Аллоҳи бахшандаи меҳрубон',c:33},
+ {n:'Ё Ҳайю ё Қайюм',ar:'يَا حَيُّ يَا قَيُّومُ بِرَحْمَتِكَ أَسْتَغِيثُ',m:'Эй Зинда, эй Пойдор, ба раҳмати Ту паноҳ мебарам',c:33,h:'Паёмбар ﷺ ҳангоми ғам ин дуоро мегуфтанд. (Тирмизӣ)'},
+ {n:'Робби-ғфир лӣ',ar:'رَبِّ ٱغْفِرْ لِي وَتُبْ عَلَيَّ',m:'Парвардигоро, маро биомурз ва тавбаамро қабул кун',c:100,h:'Паёмбар ﷺ дар як нишаст 100 бор ин дуоро мегуфтанд. (Абудовуд)'},
+ {n:'Салавоти Иброҳимия',ar:'ٱللَّٰهُمَّ صَلِّ عَلَىٰ مُحَمَّدٍ وَعَلَىٰ آلِ مُحَمَّدٍ كَمَا صَلَّيْتَ عَلَىٰ إِبْرَاهِيمَ',m:'Илоҳо, бар Муҳаммад ва оли Муҳаммад дуруд фирист, чунон ки бар Иброҳим фиристодӣ',c:33,h:'Ҳар кӣ бар ман як бор дуруд фиристад, Аллоҳ бар ӯ даҳ бор раҳмат мефиристад. (Муслим)'},
+ {n:'Дуо барои зикр',ar:'ٱللَّٰهُمَّ أَعِنِّي عَلَىٰ ذِكْرِكَ وَشُكْرِكَ وَحُسْنِ عِبَادَتِكَ',m:'Илоҳо, маро дар зикр, шукр ва ибодати некат ёрӣ деҳ',c:33,h:'Паёмбар ﷺ ба Муоз (р) васият карданд, ки инро пас аз ҳар намоз гӯяд. (Абудовуд)'},
+ {n:'Субҳона Роббиял-аъло',ar:'سُبْحَانَ رَبِّيَ ٱلْأَعْلَىٰ',m:'Пок аст Парвардигори олии ман',c:33}
 ];
 const TARGETS=[33,99,100,1000];
 
@@ -1306,25 +1339,27 @@ function statusLine(ymd,k,W,now,st){const r=rec(ymd,k),w=W[k],tz=loc().tz;
   if(st==='ontime'){const d=r.at!=null?' · '+hm(r.at,tz)+(r.at-w[0]<60000?' · аввали вақт':' · +'+fm((r.at-w[0])/60000)):'';return'<span class="st ok">'+(r.j?'Ҷамоат':'Ба вақт')+d+'</span>'}
   if(st==='late')return'<span class="st late">Дер хонда шуд'+(r.at!=null?' · '+hm(r.at,tz):'')+'</span>';
   if(st==='missed')return'<span class="st bad">Вақт гузашт</span>';
-  if(st==='open'){const jL=w[0]+MIN30-now,oL=w[1]-MIN30-now;
-    if(jL>0)return'<span class="st open">Ҷамоат: '+fm(jL/60000)+'</span> · <span class="st">ба вақт то '+hm(w[1]-MIN30,tz)+'</span>';
+  if(st==='open'){const jw=jWin(k,w),oL=w[1]-MIN30-now;
+    if(now<jw[0])return'<span class="st open">Қомат '+hm(jw[2],tz)+'</span> · <span class="st">ба вақт то '+hm(w[1]-MIN30,tz)+'</span>';
+    if(now<jw[1])return'<span class="st open">Ҷамоат то '+hm(jw[1],tz)+'</span> · <span class="st">ба вақт то '+hm(w[1]-MIN30,tz)+'</span>';
     if(oL>0)return'<span class="st open">Ба вақт: '+fm(oL/60000)+' боқӣ</span>';
     return'<span class="st late">Дер · '+fm((w[1]-now)/60000)+' то қазо</span>';}
-  if(st==='none')return'<span class="st">Қайд нашуд</span>';
+  if(st==='none')return now>=W[k][1]?'<span class="st bad">Қазо · вақт гузашт</span>':'<span class="st">Қайд нашуд</span>';
   return'<span class="st">баъд аз '+fm((w[0]-now)/60000)+'</span>'}
 function rowHTML(ymd,p,W,now,opts){
   const L=loc(),w=W[p.k],st=stateOf(ymd,p.k,W,now),r=rec(ymd,p.k),fri=wday(ymd)===5,name=opts.label||((p.k==='dhuhr'&&fri)?'Ҷумъа':p.n);
   const open=now>=w[0]&&now<w[1];let right='';
-  if(!r&&(st==='future'||open)){
-    const jOn=open&&now<w[0]+MIN30, late=open&&now>=w[1]-MIN30;
+  if(!r&&!open&&st!=='future'&&now>=w[1]){right='<span class="chip-st missed">Қазо</span>'}
+  else if(!r&&(st==='future'||open)){
+    const jw=jWin(p.k,w),jOn=open&&now>=jw[0]&&now<jw[1], late=open&&now>=w[1]-MIN30, jcd=jOn&&now<jw[2]?Math.ceil((jw[2]-now)/1000):0;
     const jP=!!(r&&r.j), oP=!!(r&&!r.j&&r.s!=='missed');
     const jDis=!(jOn||jP)||!open, oDis=!open;
     right='<div class="seg">'+
-     '<button class="s-jamaat" data-y="'+ymd+'" data-p="'+p.k+'" data-a="jamaat" aria-pressed="'+jP+'"'+(jDis?' disabled':'')+' title="Бо ҷамоат">'+ICON.jamaat+'<span class="tx">Ҷамоат</span></button>'+
+     '<button class="s-jamaat" data-y="'+ymd+'" data-p="'+p.k+'" data-a="jamaat" aria-pressed="'+jP+'"'+(jDis?' disabled':'')+' title="'+(jDis&&open&&now<jw[0]?'Ҷамоат 2 дақиқа пеш аз қомат ('+hm(jw[2],L.tz)+') фаъол мешавад':'Бо ҷамоат')+'">'+ICON.jamaat+'<span class="tx">Ҷамоат</span>'+(open&&!jDis?'<small class="jcd num" data-jcd="'+jw[2]+'">'+(jcd?jcd:'')+'</small>':open&&now<jw[0]?'<small class="jcd wait num">'+hm(jw[2],L.tz)+'</small>':'')+'</button>'+
      '<button class="'+(late&&!oP?'s-late':'s-ontime')+(oP&&r.s==='late'?' s-late':'')+'" data-y="'+ymd+'" data-p="'+p.k+'" data-a="read" aria-pressed="'+oP+'"'+(oDis?' disabled':'')+' title="'+((late&&!oP)||(oP&&r.s==='late')?'Дер хондам':'Хондам')+'" aria-label="'+((late&&!oP)||(oP&&r.s==='late')?'Дер хондам':'Хондам')+'">'+ICON.ontime+'<span class="tx"></span></button></div>';}
   else if(r){const chip='<span class="chip-st '+(r.j?'jamaat':r.s)+'">'+(r.j?'Ҷамоат':r.s==='ontime'?'Ба вақт':r.s==='late'?'Дер':'Қазо')+'</span>',uk=ymd+'|'+p.k,ul=(UNDO[uk]||0)-now;right=ul>0?'<div class="undo-wrap">'+chip+'<button class="undo" data-undo="'+uk+'">Бекор кардан <b class="num">'+Math.ceil(ul/1000)+'</b></button></div>':chip;}
-  let extra='';if(open&&!r){const pc=Math.min(100,(now-w[0])/(w[1]-w[0])*100),jm=Math.min(100,MIN30/(w[1]-w[0])*100),lm=Math.max(0,100-jm);
-    extra='<div class="wbar"><b class="z1" style="width:'+jm.toFixed(1)+'%"></b><b class="z3" style="left:'+lm.toFixed(1)+'%;width:'+jm.toFixed(1)+'%"></b><i style="left:'+pc.toFixed(1)+'%"></i></div>'}
+  let extra='';if(open&&!r){const len=w[1]-w[0],pc=Math.min(100,(now-w[0])/len*100),jm=Math.min(100,MIN30/len*100),lm=Math.max(0,100-jm),jw=jWin(p.k,w),jl=Math.max(0,(jw[0]-w[0])/len*100),jwd=Math.min(100-jl,(jw[1]-jw[0])/len*100);
+    extra='<div class="wbar"><b class="z1" style="left:'+jl.toFixed(1)+'%;width:'+jwd.toFixed(1)+'%"></b><b class="z3" style="left:'+lm.toFixed(1)+'%;width:'+jm.toFixed(1)+'%"></b><i style="left:'+pc.toFixed(1)+'%"></i></div>'}
   return'<div class="prow'+(opts.cur?' cur':'')+'"><div><div class="tm num">'+hm(w[0],L.tz)+'</div><div class="end num">то '+hm(w[1],L.tz)+'</div></div>'+
     '<div style="min-width:0"><div class="nm">'+PICON(p.k)+name+' <span class="ar">'+p.ar+'</span>'+(opts.cur?' <span class="pill">Ҳоло</span>':'')+'</div><div class="sub">'+statusLine(ymd,p.k,W,now,st)+'</div>'+extra+'</div>'+right+'</div>';
 }
@@ -1437,13 +1472,13 @@ function renderStats(){try{renderMiniComp()}catch(e){}
 function setRecAt(ymd,k,v){const r=LOG[ymd]||(LOG[ymd]={});if(v)r[k]=v;else delete r[k];if(!Object.keys(r).length)delete LOG[ymd];}
 function autoQaza(now){let changed=[];const fts=store.get('firstTs',0);
   for(let i=8;i>=0;i--){const y=addDays(todayYMD,-i);if(y<addDays(FIRST,-1))continue;const W=windowsFor(y);
-    TRACK.forEach(p=>{if(!rec(y,p.k)&&now>=W[p.k][1]&&W[p.k][1]>fts){setRecAt(y,p.k,{s:'missed',auto:true});QZ[p.k]++;changed.push(p.n)}});}
+    TRACK.forEach(p=>{if(!rec(y,p.k)&&now>=W[p.k][1]&&(W[p.k][1]>fts||y===prayerDay())){setRecAt(y,p.k,{s:'missed',auto:true});QZ[p.k]++;changed.push(p.n)}});}
   if(changed.length){save();toast('Вақт гузашт — қазо қайд шуд: '+changed.join(', '));return true}return false}
 $('plist').addEventListener('click',e=>{const b=e.target.closest('button[data-p]');if(!b||b.disabled)return;const y=b.dataset.y,k=b.dataset.p,a=b.dataset.a,W=windowsFor(y),now=Date.now(),w=W[k],prev=rec(y,k);
   if(now<w[0]||now>=w[1])return;
   if(prev){toast('Ин намоз аллакай қайд шудааст ва иваз намешавад');return}
   const wantJ=a==='jamaat';
-  {if(wantJ&&now>=w[0]+MIN30){toast('Вақти ҷамоат (30 дақиқа) гузашт');return}
+  {const jw=jWin(k,w);if(wantJ&&now<jw[0]){toast('Ҷамоат 2 дақиқа пеш аз қомат ('+hm(jw[2],loc().tz)+') фаъол мешавад');return}if(wantJ&&now>=jw[1]){toast('Вақти ҷамоат гузашт');return}
     const s=now<w[1]-MIN30?'ontime':'late';setRecAt(y,k,{s,j:wantJ&&s==='ontime',at:now});startUndo(y,k);
     toast(wantJ?'Бо ҷамоат қайд шуд':s==='late'?'Дер хонда қайд шуд':'Дар вақташ қайд шуд');}
   save();renderList();renderStats();renderQaza();nativeSync();
@@ -1714,6 +1749,9 @@ function webReminders(now){if(NATIVE){remLast=now;return}const due=buildReminder
 
 
 /* ---------- adhan → iqamah countdown ---------- */
+const JPRE=2*60000,JPOST=20*60000;
+function jamaatAt(k,w){const iq=iqamaAt(k,w);if(iq)return iq;const d=+((S.iq||{})[k])||(k==='maghrib'?10:20);return Math.min(w[0]+d*60000,w[1]-60000)}
+function jWin(k,w){const t=jamaatAt(k,w);return[t-JPRE,Math.min(t+JPOST,w[1]),t]}
 function iqamaAt(k,w){if(S.iqOn===false)return 0;const m=+((S.iq||{})[k]);if(!m||m<=0)return 0;const t=w[0]+m*60000;return t<w[1]?t:0}
 function renderIqBar(){const bar=$('iqbar');if(!TT)return;const now=Date.now(),L=loc(),pd=prayerDay(),W=windowsFor(pd);let act=null;
   if(S.iqOn!==false)for(const p of TRACK){const w=W[p.k],iq=iqamaAt(p.k,w);if(iq&&now>=w[0]&&now<iq&&!rec(pd,p.k)){act={p,w,iq};break}}
@@ -1872,7 +1910,7 @@ setTimeout(()=>{try{renderSleep()}catch(e){}},0);
 
 
 /* ---------- backup: export / import ---------- */
-const BK_KEYS=['settings','log','qaza','tasbeh','duty','first','comp','fb'];
+const BK_KEYS=['settings','log','qaza','tasbeh','duty','first','firstTs','comp','fb'];
 function bkCount(log){let d=0,n=0;for(const y in (log||{})){const o=log[y]||{};const c=Object.keys(o).length;if(c){d++;n+=c}}return{d,n}}
 function renderBackup(){const c=bkCount(LOG),q=QK.reduce((a,[k])=>a+(QZ[k]||0),0);
   $('bkStat').innerHTML='<div><b class="num">'+c.d+'</b><span>рӯз</span></div><div><b class="num">'+c.n+'</b><span>намози қайдшуда</span></div><div><b class="num">'+q+'</b><span>қазо</span></div>'}
@@ -2131,13 +2169,15 @@ function renderTasbeh(){
   const D=DHIKR[TS.d]||DHIKR[0];
   $('dhikr').innerHTML=DHIKR.map((x,i)=>'<button class="chip" data-d="'+i+'" aria-pressed="'+(i===TS.d)+'">'+x.n+'</button>').join('');
   $('targets').innerHTML=TARGETS.map(t=>'<button class="chip num" data-t="'+t+'" aria-pressed="'+(t===TS.target)+'">'+t+'</button>').join('');
-  $('tsAr').textContent=D.ar;$('tsCount').textContent=TS.count;$('tsOf').textContent='аз '+TS.target;$('tsName').textContent=D.n+' — '+D.m;
+  $('tsAr').textContent=D.ar;$('tsAr').className='arx ar'+(D.ar.length>60?' sm':D.ar.length>28?' md':'');
+  $('dhCount').textContent=DHIKR.length;$('dhList').innerHTML=DHIKR.map((x,i)=>'<button class="dhi" type="button" data-d="'+i+'" aria-pressed="'+(i===TS.d)+'"><div class="t"><b>'+x.n+'</b><span class="num">'+(x.c||33)+'×</span></div><div class="a">'+x.ar+'</div><div class="m">'+x.m+'</div>'+(x.h?'<div class="h">'+x.h+'</div>':'')+'</button>').join('');$('tsCount').textContent=TS.count;$('tsOf').textContent='аз '+TS.target;$('tsName').textContent=D.n+' — '+D.m;
   $('tsToday').textContent='Имрӯз: '+TS.total.toLocaleString('ru-RU');
   const frac=(TS.count%TS.target)/TS.target||(TS.count&&TS.count%TS.target===0?1:0);$('tsRing').setAttribute('stroke-dashoffset',(295.3*(1-frac)).toFixed(1));
 }
 $('tapBtn').addEventListener('click',()=>{TS.count++;TS.total++;dutyAddDhikr();try{navigator.vibrate&&navigator.vibrate(TS.count%TS.target===0?[60,40,60]:8)}catch(e){}
   if(TS.count%TS.target===0){toast(TS.target+' бор — '+DHIKR[TS.d].n);chime(.5)}save();renderTasbeh()});
 $('dhikr').addEventListener('click',e=>{const b=e.target.closest('[data-d]');if(!b)return;TS.d=+b.dataset.d;TS.count=0;save();renderTasbeh()});
+$('dhList').addEventListener('click',e=>{const b=e.target.closest('[data-d]');if(!b)return;const D=DHIKR[+b.dataset.d];TS.d=+b.dataset.d;TS.count=0;if(D&&D.c&&TARGETS.includes(D.c))TS.target=D.c;save();renderTasbeh();try{$('dhikr').querySelector('[aria-pressed="true"]').scrollIntoView({inline:'center',block:'nearest'})}catch(x){}window.scrollTo({top:0,behavior:'smooth'})});
 $('targets').addEventListener('click',e=>{const b=e.target.closest('[data-t]');if(!b)return;TS.target=+b.dataset.t;TS.count=0;save();renderTasbeh()});
 $('tsReset').onclick=()=>{TS.count=0;save();renderTasbeh()};
 
@@ -2195,10 +2235,14 @@ window.ntHeading=function(h){heading=h;if(!$('v-qibla').hidden){const t=Date.now
 
 /* ---------- tick ---------- */
 let lastMinute=-1;
+let jcdKey='';
+function jcdTick(now){try{const pd=prayerDay(),W=windowsFor(pd),key=TRACK.map(p=>{const w=W[p.k],jw=jWin(p.k,w);return(now>=jw[0]&&now<jw[1]?1:0)+''+(now<jw[2]?1:0)}).join('');
+  if(jcdKey&&key!==jcdKey&&!$('v-today').hidden)renderList();jcdKey=key;
+  document.querySelectorAll('[data-jcd]').forEach(el=>{const l=+el.dataset.jcd-now;el.textContent=l>0&&l<=JPRE+999?Math.ceil(l/1000):''})}catch(e){}}
 function tick(){const L=loc(),now=Date.now();
   if(ymdIn(now,L.tz)!==todayYMD){compute();renderAll();}
   const pd=prayerDay();if(lastPD&&pd!==lastPD){const old=lastPD;if(viewYMD===old)viewYMD=pd;if(dView===old)dView=pd;renderAll();const ys=daySum(old,now);if(ys.pct!=null)toast('Ҷамъбасти рӯзи гузашта: '+ys.pct+'% · дар вақташ '+ys.ontime+' аз 5');}lastPD=pd;
-  renderHero();renderIqBar();wuCheck();
+  renderHero();renderIqBar();wuCheck();jcdTick(now);
   const m=Math.floor(now/60000);if(m!==lastMinute){lastMinute=m;pullWMarks();if(compLive()&&CMP.code&&Date.now()-cmpLastPull>(!$('v-comp').hidden?60000:600000))compPull().then(()=>{renderComp();renderMiniComp()}).catch(()=>{});renderExtras();webReminders(now);if(!$('v-qibla').hidden)renderQibla();if(autoQaza(now)){renderStats();renderQaza()}if(!$('v-today').hidden)renderList()}
   for(const p of TRACK){const t=TT[p.k];if(now>=t&&now-t<60000){const id=todayYMD+p.k;if(lastFired!==id){lastFired=id;store.set('fired',id);toast('Вақти намози '+p.n+' расид');if(S.sound)chime(1);renderList();}}}
 }
