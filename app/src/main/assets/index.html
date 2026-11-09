@@ -585,6 +585,65 @@ body.iq-on .app{padding-top:calc(74px + env(safe-area-inset-top,0px))}
 .cmp-r{text-align:right}
 .cmp-r b{display:block;font-size:22px;font-weight:800;line-height:1}
 .cmp-r small{font-size:11.5px;color:var(--muted);font-weight:700}
+
+/* ---------- competition board v2 ---------- */
+.cb-hero{position:relative;overflow:hidden;border-radius:24px;padding:18px 18px 16px;background:radial-gradient(120% 120% at 100% 0%,rgba(235,198,108,.28),transparent 55%),linear-gradient(160deg,rgba(46,92,66,.75),rgba(16,34,26,.8));border:1px solid rgba(235,198,108,.28);box-shadow:0 14px 40px rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.08);-webkit-backdrop-filter:var(--glass-blur);backdrop-filter:var(--glass-blur)}
+.cb-hero::after{content:"";position:absolute;right:-30px;bottom:-40px;width:160px;height:160px;opacity:.07;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fff' stroke-width='1.4'%3E%3Cpath d='M8 4h8v5a4 4 0 0 1-8 0z'/%3E%3Cpath d='M8 6H5a3 3 0 0 0 3 4M16 6h3a3 3 0 0 1-3 4M12 13v4M9 21h6M10 17h4v4h-4z'/%3E%3C/svg%3E") center/contain no-repeat;pointer-events:none}
+.cb-top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.cb-eye{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#EBC66C;font-weight:800}
+.cb-gname{font-size:22px;font-weight:800;letter-spacing:-.01em;margin-top:2px;line-height:1.2;overflow-wrap:anywhere}
+.cb-sub{font-size:12.5px;color:var(--muted);margin-top:2px}
+.cb-code{flex:none;display:flex;align-items:center;gap:8px;border:1px dashed rgba(235,198,108,.65);background:rgba(235,198,108,.1);color:#EBC66C;border-radius:14px;padding:9px 12px;font-weight:800;letter-spacing:.16em;font-size:15px}
+.cb-code svg{width:16px;height:16px}
+.cb-me{margin-top:16px;display:flex;align-items:center;gap:14px;padding-top:14px;border-top:1px solid rgba(255,255,255,.08)}
+.cb-me .big{white-space:nowrap;flex:none;font-size:40px;font-weight:800;line-height:.9;color:#F6D77D;letter-spacing:-.03em}
+.cb-me .big small{font-size:16px;color:var(--muted);font-weight:700;letter-spacing:0}
+.cb-me .txt{font-size:13px;color:rgba(242,247,244,.8);line-height:1.4}
+.cb-me .txt b{color:#F2F7F4}
+.cb-podium{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));align-items:end;gap:8px;margin:22px 0 4px;padding:0 2px}
+.pd{display:flex;flex-direction:column;align-items:center;text-align:center;min-width:0}
+.pd .crown{width:28px;height:20px;color:#F6D77D;filter:drop-shadow(0 2px 6px rgba(246,215,125,.6));margin-bottom:-2px}
+.pd .av{position:relative;width:58px;height:58px;border-radius:50%;padding:3px;background:var(--ring)}
+.pd.p1 .av{width:76px;height:76px}
+.pd .av span{width:100%;height:100%;border-radius:50%;display:grid;place-items:center;font-weight:800;font-size:22px;color:#fff;background:var(--bgc);border:2px solid #0E1D17}
+.pd.p1 .av span{font-size:28px}
+.pd .av em{position:absolute;bottom:-6px;left:50%;transform:translateX(-50%);min-width:22px;height:22px;border-radius:11px;display:grid;place-items:center;font-style:normal;font-size:12px;font-weight:800;background:var(--ring);color:#1A1405;border:2px solid #0E1D17;padding:0 5px}
+.pd .nm{margin-top:12px;font-weight:800;font-size:14px;max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pd .pc{font-size:20px;font-weight:800;line-height:1.1}
+.pd .pt{font-size:11.5px;color:var(--muted);font-weight:700}
+.pd .base{margin-top:8px;width:100%;border-radius:14px 14px 6px 6px;background:linear-gradient(180deg,var(--base),rgba(255,255,255,.02));border:1px solid rgba(255,255,255,.08);border-bottom:0}
+.pd.p1 .base{height:74px}.pd.p2 .base{height:52px}.pd.p3 .base{height:38px}
+.pd.me .nm{color:#B8F07E}
+.cb-h{display:flex;justify-content:space-between;align-items:center;margin:18px 2px 8px;font-size:13px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.cb-ref{display:flex;align-items:center;gap:6px;border:0;background:rgba(255,255,255,.06);color:var(--muted);font-size:11.5px;font-weight:700;letter-spacing:0;text-transform:none;padding:6px 10px;border-radius:999px}
+.cb-ref svg{width:14px;height:14px}.cb-ref.spin svg{animation:sp .8s linear infinite}
+.cb-list{display:flex;flex-direction:column;gap:8px}
+.cb-row{display:grid;grid-template-columns:22px 44px minmax(0,1fr) auto;gap:10px;align-items:center;padding:12px 14px 12px 10px;border-radius:20px;background:var(--surface);border:1px solid var(--line);-webkit-backdrop-filter:var(--glass-blur);backdrop-filter:var(--glass-blur)}
+.cb-row.me{border-color:rgba(147,212,92,.55);background:linear-gradient(90deg,rgba(147,212,92,.14),var(--surface) 70%)}
+.cb-rk{font-weight:800;font-size:15px;text-align:center;color:var(--muted)}
+.cb-rk.r1{color:#F6D77D}.cb-rk.r2{color:#D7E0E5}.cb-rk.r3{color:#E3A774}
+.cb-av{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;font-weight:800;font-size:18px;color:#fff;background:var(--bgc)}
+.cb-nm{display:flex;align-items:center;gap:6px;font-weight:800;font-size:15px;min-width:0}
+.cb-nm>span:first-child{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cb-mid{display:flex;align-items:center;gap:10px;margin-top:6px}
+.cb-dots{display:flex;gap:3px}
+.cb-dots i{width:12px;height:12px;border-radius:50%;border:1.5px solid rgba(242,247,244,.22)}
+.cb-dots i.ontime,.cb-legend i.ontime{background:#F2F7F4;border-color:#F2F7F4}.cb-dots i.jamaat,.cb-legend i.jamaat{background:#E6BC5E;border-color:#E6BC5E}.cb-dots i.late,.cb-legend i.late{background:#BBA3F0;border-color:#BBA3F0}.cb-dots i.missed,.cb-legend i.missed{background:#F28E6D;border-color:#F28E6D}
+.cb-spark{display:flex;align-items:flex-end;gap:2px;height:16px}
+.cb-spark b{width:5px;border-radius:2px;background:rgba(147,212,92,.8);min-height:2px}
+.cb-spark b.z{background:rgba(255,255,255,.12)}
+.cb-chips{display:flex;gap:6px;margin-top:6px;flex-wrap:wrap}
+.cb-chips span{font-size:11px;font-weight:700;padding:2px 8px;border-radius:999px;background:rgba(255,255,255,.06);color:var(--muted)}
+.cb-chips .fl{background:rgba(242,166,90,.14);color:#F2A65A}.cb-chips .qz{background:rgba(242,142,109,.14);color:#F28E6D}.cb-chips .ok{background:rgba(114,214,158,.14);color:#72D69E}
+.cb-r{text-align:right}
+.cb-r b{display:block;font-size:22px;font-weight:800;line-height:1;letter-spacing:-.01em}
+.cb-r small{display:block;margin-top:3px;font-size:11.5px;color:var(--muted);font-weight:700}
+.cb-legend{display:flex;justify-content:center;gap:14px;flex-wrap:wrap;margin-top:12px;font-size:11.5px;color:var(--muted)}
+.cb-legend span{display:flex;align-items:center;gap:5px}.cb-legend i{width:10px;height:10px;border-radius:50%;display:inline-block;border:1.5px solid}
+.cb-invite{margin-top:16px;display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:15px;border-radius:18px;text-decoration:none;font-weight:800;font-size:15.5px;color:#0F1F0B;background:linear-gradient(90deg,#4F9A2C,#93D45C);box-shadow:0 10px 28px rgba(79,154,44,.35)}
+.cb-invite svg{width:22px;height:22px}
+.cb-rules{margin-top:14px}
+.cb-leave{display:block;margin:16px auto 0;border:0;background:none;color:var(--muted);font-size:13px;font-weight:600;text-decoration:underline;text-underline-offset:3px}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}.wsheet,.wcard{animation:none}.iqbar.soon .iq-r b{animation:none}.nt-rays,.nt-star{animation:none}}
 </style>
 
@@ -890,16 +949,20 @@ body.iq-on .app{padding-top:calc(74px + env(safe-area-inset-top,0px))}
     </div>
 
     <div id="cmpBoard" hidden>
-      <div class="card cmp-head">
-        <div><small>Гурӯҳ</small><b id="cmpGName"></b></div>
-        <button class="cmp-code" id="cmpCopy" aria-label="Нусха гирифтани код"><span class="num" id="cmpGCode"></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h3"/></svg></button>
+      <div class="cb-hero">
+        <div class="cb-top">
+          <div style="min-width:0"><div class="cb-eye">Гурӯҳ</div><div class="cb-gname" id="cmpGName"></div><div class="cb-sub" id="cmpGSub"></div></div>
+          <button class="cb-code" id="cmpCopy" aria-label="Нусха гирифтани код"><span class="num" id="cmpGCode"></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h3"/></svg></button>
+        </div>
+        <div class="cb-me" id="cmpMe"></div>
       </div>
-      <div class="cmp-me" id="cmpMe"></div>
-      <div class="cmp-list" id="cmpList"></div>
-      <div class="row" style="justify-content:space-between;margin-top:10px"><span class="note" id="cmpUpd"></span><button class="link" id="cmpRefresh">Навсозӣ</button></div>
-      <div class="row" style="margin-top:14px"><a class="btn" id="cmpShare" target="_blank" rel="noopener" style="flex:1;text-align:center;text-decoration:none;color:#B8F07E;border-color:rgba(147,212,92,.45)">Даъват тавассути WhatsApp</a></div>
-      <details style="margin-top:14px"><summary>Хол чӣ тавр ҳисоб мешавад</summary><p class="note">Ҳар намоз: бо ҷамоат 3 хол, ба вақт 2 хол, дер 1 хол, қазо 0. Ҳисоб барои 7 рӯзи охир. Агар хол баробар бошад, касе ки қазояш камтар аст ва силсилааш дарозтар аст, болотар меистад. Фоиз: ба вақт 100%, дер 50%, қазо 0%.</p></details>
-      <button class="btn ghost" id="cmpLeave" style="width:100%;margin-top:12px">Аз гурӯҳ баромадан</button>
+      <div class="cb-podium" id="cmpPodium"></div>
+      <div class="cb-h"><span>Ҳамаи иштирокчиён</span><button class="cb-ref" id="cmpRefresh" aria-label="Навсозӣ"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M20 12a8 8 0 1 1-2.34-5.66"/><path d="M20 4v5h-5"/></svg><span id="cmpUpd"></span></button></div>
+      <div class="cb-list" id="cmpList"></div>
+      <div class="cb-legend"><span><i class="ontime"></i>Ба вақт</span><span><i class="jamaat"></i>Ҷамоат</span><span><i class="late"></i>Дер</span><span><i class="missed"></i>Қазо</span></div>
+      <a class="cb-invite" id="cmpShare" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm5.3 14.1c-.2.6-1.3 1.2-1.8 1.3-.5.1-1 .1-1.7-.1a15.6 15.6 0 0 1-1.5-.6 11.8 11.8 0 0 1-4.6-4c-.3-.5-1-1.5-1-2.8s.7-2 1-2.3c.2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 2c.1.2.1.3 0 .5l-.3.5-.4.4c-.1.1-.3.3-.1.6.2.3.7 1.2 1.6 2a7.4 7.4 0 0 0 2.3 1.4c.3.1.5.1.6-.1l.9-1c.2-.3.4-.2.6-.1l1.9.9c.3.1.5.2.5.3.1.1.1.7-.1 1.3z"/></svg>Дӯстонро даъват кунед</a>
+      <details class="cb-rules"><summary>Хол чӣ тавр ҳисоб мешавад</summary><p class="note">Ҳар намоз: бо ҷамоат 3 хол, ба вақт 2 хол, дер 1 хол, қазо 0. Ҳисоб барои 7 рӯзи охир. Агар хол баробар бошад, касе ки қазояш камтар ва силсилааш дарозтар аст, болотар меистад. Фоиз: ба вақт 100%, дер 50%, қазо 0%.</p></details>
+      <button class="cb-leave" id="cmpLeave">Аз гурӯҳ баромадан</button>
       <div id="cmpLeaveC" hidden class="confirm">Шумо аз гурӯҳ хориҷ мешавед ва натиҷаатон аз ҷадвал нест мешавад.<div class="row" style="margin-top:8px"><button class="btn" id="cmpLeaveY">Ҳа, баромадан</button><button class="btn ghost" id="cmpLeaveN">Не</button></div></div>
     </div>
   </section>
@@ -1123,7 +1186,7 @@ function statusLine(ymd,k,W,now,st){const r=rec(ymd,k),w=W[k],tz=loc().tz;
 function rowHTML(ymd,p,W,now,opts){
   const L=loc(),w=W[p.k],st=stateOf(ymd,p.k,W,now),r=rec(ymd,p.k),fri=wday(ymd)===5,name=opts.label||((p.k==='dhuhr'&&fri)?'Ҷумъа':p.n);
   const open=now>=w[0]&&now<w[1];let right='';
-  if(st==='future'||open){
+  if(!r&&(st==='future'||open)){
     const jOn=open&&now<w[0]+MIN30, late=open&&now>=w[1]-MIN30;
     const jP=!!(r&&r.j), oP=!!(r&&!r.j&&r.s!=='missed');
     const jDis=!(jOn||jP)||!open, oDis=!open;
@@ -1249,9 +1312,9 @@ function autoQaza(now){let changed=[];const fts=store.get('firstTs',0);
   if(changed.length){save();toast('Вақт гузашт — қазо қайд шуд: '+changed.join(', '));return true}return false}
 $('plist').addEventListener('click',e=>{const b=e.target.closest('button[data-p]');if(!b||b.disabled)return;const y=b.dataset.y,k=b.dataset.p,a=b.dataset.a,W=windowsFor(y),now=Date.now(),w=W[k],prev=rec(y,k);
   if(now<w[0]||now>=w[1])return;
+  if(prev){toast('Ин намоз аллакай қайд шудааст ва иваз намешавад');return}
   const wantJ=a==='jamaat';
-  if(prev&&prev.s!=='missed'&&!!prev.j===wantJ){setRecAt(y,k,null)}
-  else{if(wantJ&&now>=w[0]+MIN30){toast('Вақти ҷамоат (30 дақиқа) гузашт');return}
+  {if(wantJ&&now>=w[0]+MIN30){toast('Вақти ҷамоат (30 дақиқа) гузашт');return}
     const s=now<w[1]-MIN30?'ontime':'late';setRecAt(y,k,{s,j:wantJ&&s==='ontime',at:now});
     toast(wantJ?'Бо ҷамоат қайд шуд':s==='late'?'Дер хонда қайд шуд':'Дар вақташ қайд шуд');}
   save();renderList();renderStats();renderQaza();nativeSync();
@@ -1671,8 +1734,8 @@ function compSummary(){const now=Date.now(),pd=prayerDay(),W=windowsFor(pd);let 
   for(let i=0;i<7;i++){const y=addDays(pd,-i);if(y<FIRST)continue;const d=daySum(y,now);
     pts+=(d.ontime-d.jamaat)*2+d.jamaat*3+d.late;on+=d.ontime;jm+=d.jamaat;late+=d.late;miss+=d.missed;elig+=d.ontime+d.late+d.missed}
   const st=TRACK.map(p=>{const r=rec(pd,p.k);if(!r)return now>=W[p.k][1]?'missed':'';return r.s==='missed'?'missed':r.s==='late'?'late':r.j?'jamaat':'ontime'});
-  const q=QK.reduce((a,[k])=>a+QZ[k],0);
-  return{n:CMP.name,u:now,pd,st,pts,pct:elig?Math.round((on+late*.5)/elig*100):0,miss,on,jm,late,s:calcStreak(),q}}
+  const q=QK.reduce((a,[k])=>a+QZ[k],0),dd=[];for(let i=6;i>=0;i--){const y=addDays(pd,-i);const x=y<FIRST?null:daySum(y,now);dd.push(x&&x.pct!=null?x.pct:0)}
+  return{n:CMP.name,u:now,pd,st,pts,dd,pct:elig?Math.round((on+late*.5)/elig*100):0,miss,on,jm,late,s:calcStreak(),q}}
 /* auth */
 let FBA=store.get('fb',null);
 async function fbToken(){if(!fbReady())throw new Error('config');
@@ -1710,10 +1773,17 @@ async function compLeave(){try{if(compLive()&&FBA)await fsReq('DELETE','groups/'
 function cmpErr(t){$('cmpErr').textContent=t}
 /* demo board for the web preview */
 function compDemo(){const me=compSummary();me.n=CMP.name||'Шумо';me.id='me';const pd=prayerDay();
-  const mk=(n,st,pts,pct,miss,s,q)=>({n,st,pts,pct,miss,s,q,pd,u:Date.now()-Math.random()*3600e3,id:n});
-  return[me,mk('Намуна · Аҳмад',['jamaat','jamaat','ontime','',''],96,98,0,21,0),mk('Намуна · Фирдавс',['ontime','ontime','ontime','',''],84,92,1,9,3),mk('Намуна · Шоҳрух',['ontime','late','ontime','',''],70,80,2,4,12),mk('Намуна · Бахтиёр',['missed','ontime','late','',''],51,63,5,0,40)]}
+  const mk=(n,st,pts,pct,miss,s,q)=>({n,st,pts,pct,miss,s,q,pd,u:Date.now()-Math.random()*3600e3,id:n,dd:[0,1,2,3,4,5,6].map(i=>Math.max(0,Math.min(100,pct+((i*37+n.length*13)%30)-15)))});
+  return[me,mk('Аҳмад',['jamaat','jamaat','ontime','',''],96,98,0,21,0),mk('Фирдавс',['ontime','ontime','ontime','',''],84,92,1,9,3),mk('Шоҳрух',['ontime','late','ontime','',''],70,80,2,4,12),mk('Бахтиёр',['missed','ontime','late','',''],51,63,5,0,40)]}
 function compSort(list){return list.slice().sort((a,b)=>b.pts-a.pts||a.miss-b.miss||b.s-a.s||b.pct-a.pct)}
 function compOpen(){renderComp();if(compLive()&&CMP.code)compPush().then(compPull).then(renderComp).catch(()=>renderComp(true))}
+const AVC=['#2E8B57','#3B6FB6','#8E5BC9','#C2672F','#2C9AA0','#B5487A','#6A8F2B','#9C7A1F'];
+function avColor(id){let h=0;for(const c of String(id))h=(h*31+c.charCodeAt(0))|0;return AVC[Math.abs(h)%AVC.length]}
+function initials(n){const w=String(n||'?').trim().split(/\s+/).filter(x=>/\p{L}/u.test(x));if(!w.length)return'?';return (w[0][0]||'?').toUpperCase()+(w[1]?w[1][0].toUpperCase():'')}
+function denseRanks(list){const r=[];list.forEach((m,i)=>{if(i===0)r.push(1);else{const p=list[i-1];r.push(m.pts===p.pts&&m.miss===p.miss&&m.s===p.s?r[i-1]:i+1)}});return r}
+const RING={1:'linear-gradient(135deg,#FBE7A1,#D4A23A 55%,#8E6514)',2:'linear-gradient(135deg,#F4F7F9,#AFBCC3 55%,#6F7E86)',3:'linear-gradient(135deg,#F2C39A,#B8703E 55%,#6E3B18)'};
+const BASE={1:'rgba(246,215,125,.28)',2:'rgba(215,224,229,.2)',3:'rgba(227,167,116,.2)'};
+const CROWN='<svg class="crown" viewBox="0 0 28 20" aria-hidden="true"><path d="M2 18 4 5l6 6 4-9 4 9 6-6 2 13z" fill="currentColor"/></svg>';
 function renderComp(offline){const live=compLive(),demo=!live;
   $('cmpDemo').hidden=!demo;
   if(demo)$('cmpDemo').innerHTML=NATIVE?'<b>Мусобиқа ҳанӯз фаъол нест.</b> Барои кор кардан Firebase лозим аст. Ҳоло ҷадвали <b>намуна</b> нишон дода мешавад.':'Мусобиқа дар <b>APK</b> бо интернет кор мекунад. Дар ин ҷо ҷадвали <b>намуна</b> нишон дода мешавад, то тарҳро бинед.';
@@ -1722,24 +1792,34 @@ function renderComp(offline){const live=compLive(),demo=!live;
   if(!joined)return;
   const myId=live?(FBA&&FBA.uid):'me';let list=live?((CMPC&&CMPC.list)||[]):compDemo();
   if(live&&FBA&&!list.some(x=>x.id===FBA.uid)){const me=compSummary();me.id=FBA.uid;list=list.concat([me])}
-  list=compSort(list);
+  list=compSort(list);const rk=denseRanks(list),pd=prayerDay();
   $('cmpGName').textContent=live?CMP.gname:'Гурӯҳи намуна';$('cmpGCode').textContent=live?CMP.code:'K7M2QX';
-  const myRank=list.findIndex(x=>x.id===myId)+1;
-  $('cmpMe').innerHTML=myRank?'Ҷои шумо: <b>'+myRank+'</b> аз '+list.length:'';
-  const pd=prayerDay();
-  $('cmpList').innerHTML=list.map((m,i)=>{const me=m.id===myId,stale=m.pd!==pd;
+  $('cmpGSub').textContent=list.length+' иштирокчӣ · 7 рӯзи охир';
+  const mi=list.findIndex(x=>x.id===myId),myR=mi>=0?rk[mi]:0;
+  if(mi>=0){const me=list[mi];let t;
+    if(myR===1)t=list.length>1&&rk[1]===1?'<b>Ҳамсафед</b> бо пешсаф. Як намози бо ҷамоат шуморо ба пеш мебарорад.':'<b>Шумо пешсафед!</b> '+(list[1]?'Аз ҷои 2 '+(me.pts-list[1].pts)+' хол пеш.':'');
+    else{const ahead=list[mi-1];t='То ҷои '+rk[mi-1]+' <b>'+Math.max(1,ahead.pts-me.pts+1)+' хол</b> монд. Пешсаф: <b>'+escapeHTML(list[0].n||'')+'</b>'}
+    $('cmpMe').innerHTML='<div class="big num">'+myR+'<small> / '+list.length+'</small></div><div class="txt">Ҷои шумо<br>'+t+'</div>'}else $('cmpMe').innerHTML='';
+  // podium (top 3), shown as 2 · 1 · 3
+  const top=list.slice(0,3).map((m,i)=>({m,r:rk[i]}));const order=top.length===1?[top[0]]:top.length===2?[top[1],top[0]]:[top[1],top[0],top[2]];
+  $('cmpPodium').style.gridTemplateColumns='repeat('+order.length+',minmax(0,1fr))';
+  $('cmpPodium').innerHTML=order.map(({m,r})=>{const pos=Math.min(3,r),me=m.id===myId;
+    return'<div class="pd p'+pos+(me?' me':'')+'" style="--ring:'+RING[pos]+';--base:'+BASE[pos]+';--bgc:'+avColor(m.id)+'">'+(pos===1?CROWN:'')+'<div class="av"><span>'+escapeHTML(initials(m.n))+'</span><em>'+r+'</em></div><div class="nm">'+escapeHTML(m.n||'—')+'</div><div class="pc num">'+m.pct+'%</div><div class="pt num">'+m.pts+' хол</div><div class="base"></div></div>'}).join('');
+  $('cmpList').innerHTML=list.map((m,i)=>{const me=m.id===myId,stale=m.pd!==pd,r=rk[i];
     const dots=(m.st||[]).map(x=>'<i class="'+(stale?'':x)+'"></i>').join('');
-    return'<div class="cmp-row'+(me?' me':'')+'"><span class="cmp-rk'+(i<3?' r'+(i+1):'')+'">'+(i+1)+'</span><div style="min-width:0"><div class="cmp-nm"><span>'+escapeHTML(m.n||'—')+'</span>'+(me?'<span class="cmp-tag">Ман</span>':'')+'</div>'+
-      '<div class="cmp-dots" aria-label="Намозҳои имрӯз">'+dots+'</div>'+
-      '<div class="cmp-meta">'+(m.s?'<span class="fl">'+m.s+' рӯз пайдарпай</span>':'')+(m.miss?'<span class="qz">'+m.miss+' қазо</span>':'<span class="ok">бе қазо</span>')+'</div>'+
-      '<div class="cmp-bar"><i style="width:'+Math.max(2,m.pct)+'%"></i></div></div><div class="cmp-r"><b class="num">'+m.pct+'%</b><small class="num">'+m.pts+' хол</small></div></div>'}).join('');
-  $('cmpUpd').textContent=live?(offline?'Интернет нест · ':'')+(CMPC?'навсозӣ '+hm(CMPC.at,loc().tz):''):'Ин ҷадвал намуна аст';
-  const msg='Ассалому алейкум! Биё дар НАМОЗХОН TJ дар намоз мусобиқа кунем. Коди гурӯҳ: '+(live?CMP.code:'K7M2QX');
+    const sp=(m.dd||[]).map(v=>'<b class="'+(v?'':'z')+'" style="height:'+Math.max(2,Math.round(v*.16))+'px"></b>').join('');
+    return'<div class="cb-row'+(me?' me':'')+'"><span class="cb-rk'+(r<=3?' r'+r:'')+'">'+r+'</span><span class="cb-av" style="--bgc:'+avColor(m.id)+'">'+escapeHTML(initials(m.n))+'</span>'+
+      '<div style="min-width:0"><div class="cb-nm"><span>'+escapeHTML(m.n||'—')+'</span>'+(me?'<span class="cmp-tag">Ман</span>':'')+'</div>'+
+      '<div class="cb-mid"><div class="cb-dots" aria-label="Намозҳои имрӯз">'+dots+'</div>'+(sp?'<div class="cb-spark" aria-label="7 рӯз">'+sp+'</div>':'')+'</div>'+
+      '<div class="cb-chips">'+(m.s?'<span class="fl">'+m.s+' рӯз пайдарпай</span>':'')+(m.miss?'<span class="qz">'+m.miss+' қазо</span>':'<span class="ok">бе қазо</span>')+'</div></div>'+
+      '<div class="cb-r"><b class="num">'+m.pct+'%</b><small class="num">'+m.pts+' хол</small></div></div>'}).join('');
+  $('cmpUpd').textContent=live?(offline?'Интернет нест':(CMPC?hm(CMPC.at,loc().tz):'Навсозӣ')):'Намуна';
+  const msg='Ассалому алейкум! Биё дар НАМОЗХОН TJ дар намоз мусобиқа кунем. Коди гурӯҳ: '+(live?CMP.code:'K7M2QX')+'\nБарномаро аз ин ҷо гир: https://github.com/saidumarjo/namaztraker/releases/latest';
   $('cmpShare').href='https://wa.me/?text='+encodeURIComponent(msg);
-  $('compTileSub').textContent=live&&CMP.code&&myRank?'Ҷои шумо: '+myRank+' аз '+list.length:'Бо 5–6 дӯст рақобат кунед'}
+  $('compTileSub').textContent=live&&CMP.code&&myR?'Ҷои шумо: '+myR+' аз '+list.length:'Бо 5–6 дӯст рақобат кунед'}
 $('cmpCreate').onclick=compCreate;$('cmpJoinBtn').onclick=compJoin;
 $('cmpName').addEventListener('change',()=>{CMP.name=$('cmpName').value.trim();cmpSave()});
-$('cmpRefresh').onclick=()=>{if(!compLive()){toast('Ин ҷадвал намуна аст');return}compPush().then(compPull).then(()=>{renderComp();toast('Нав шуд')}).catch(()=>{renderComp(true);toast('Интернет нест')})};
+$('cmpRefresh').onclick=()=>{if(!compLive()){toast('Ин ҷадвал намуна аст');return}const b=$('cmpRefresh');b.classList.add('spin');compPush().then(compPull).then(()=>{b.classList.remove('spin');renderComp();toast('Нав шуд')}).catch(()=>{b.classList.remove('spin');renderComp(true);toast('Интернет нест')})};
 $('cmpCopy').onclick=()=>{const c=$('cmpGCode').textContent;try{navigator.clipboard.writeText(c).then(()=>toast('Код нусха шуд: '+c),()=>toast('Код: '+c))}catch(e){toast('Код: '+c)}};
 $('cmpLeave').onclick=()=>{$('cmpLeaveC').hidden=false};$('cmpLeaveN').onclick=()=>{$('cmpLeaveC').hidden=true};$('cmpLeaveY').onclick=()=>{$('cmpLeaveC').hidden=true;compLeave()};
 
