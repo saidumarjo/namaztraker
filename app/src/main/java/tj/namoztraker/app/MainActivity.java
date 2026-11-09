@@ -291,6 +291,25 @@ public class MainActivity extends Activity implements SensorEventListener {
         }
 
         @JavascriptInterface
+        public void setBlock(String json) {
+            Block.save(getApplicationContext(), json);
+        }
+
+        @JavascriptInterface
+        public boolean blockReady() {
+            return BlockService.isOn(getApplicationContext());
+        }
+
+        @JavascriptInterface
+        public void openBlockSettings() {
+            runOnUiThread(() -> {
+                try {
+                    startActivity(new Intent(android.provider.Settings.ACTION_ACCESSIBILITY_SETTINGS).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+                } catch (Exception ignored) { }
+            });
+        }
+
+        @JavascriptInterface
         public String takeMarks() {
             return Widgets.takeMarks(getApplicationContext());
         }

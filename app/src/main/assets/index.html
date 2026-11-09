@@ -600,6 +600,17 @@ body.iq-on .app{padding-top:calc(74px + env(safe-area-inset-top,0px))}
 .cb-me .big small{font-size:16px;color:var(--muted);font-weight:700;letter-spacing:0}
 .cb-me .txt{font-size:13px;color:rgba(242,247,244,.8);line-height:1.4}
 .cb-me .txt b{color:#F2F7F4}
+.blkapps{display:flex;flex-wrap:wrap;gap:8px}
+.blkapps button{display:flex;align-items:center;gap:7px;border:1px solid var(--line);background:var(--surface);color:var(--muted);border-radius:999px;padding:7px 12px 7px 8px;font-size:13px;font-weight:700}
+.blkapps button i{width:20px;height:20px;border-radius:6px;display:grid;place-items:center;font-style:normal;font-size:11px;font-weight:900;color:#fff;opacity:.45}
+.blkapps button[aria-pressed="true"]{color:var(--txt,#F2F7F4);border-color:rgba(147,212,92,.55);background:rgba(147,212,92,.12)}
+.blkapps button[aria-pressed="true"] i{opacity:1}
+.blkst{font-size:13px;line-height:1.45;border-radius:14px;padding:10px 12px;background:rgba(255,255,255,.04);border:1px dashed var(--line);color:var(--muted)}
+.blkst b{color:var(--txt,#F2F7F4)}
+.blkst.ok{border-style:solid;border-color:rgba(147,212,92,.4);background:rgba(147,212,92,.08)}
+.blkst.warn{border-style:solid;border-color:rgba(242,142,109,.45);background:rgba(242,142,109,.08)}
+.blkst ol{margin:6px 0 8px;padding-left:18px}
+.blkst .btn{margin-top:4px}
 .mcmp{display:flex;align-items:center;gap:10px;margin:8px 0 2px;padding:8px 12px;border-radius:16px;text-decoration:none;color:var(--txt,#F2F7F4);
   background:linear-gradient(90deg,rgba(246,215,125,.13),rgba(255,255,255,.04));border:1px solid rgba(246,215,125,.25)}
 .mcmp .mc-ic{flex:none;width:28px;height:28px;border-radius:9px;display:grid;place-items:center;background:rgba(246,215,125,.18);color:#F6D77D}
@@ -1054,6 +1065,15 @@ body.iq-on .app{padding-top:calc(74px + env(safe-area-inset-top,0px))}
       <p class="note" style="margin:0">Дақиқаҳо пас аз азон. Онҳоро мувофиқи масҷиди худ иваз кунед.</p>
     </div>
 
+
+    <h2 class="sec">Ҳангоми намоз шабакаҳо баста</h2>
+    <div class="card stack">
+      <label class="switch"><span><b>Аз азон то ҷамоат шабакаҳои иҷтимоӣ кор накунанд</b><br><span class="note">Дар ин вақт YouTube, TikTok, Instagram, Facebook ва Telegram (ҳам барнома, ҳам сайт дар браузер) кушода намешаванд. Ба ҷояш «Вақти намоз» навишта мешавад.</span></span><input type="checkbox" id="blkOn"></label>
+      <div class="field"><label for="blkMin">Чанд дақиқа баста бошад (аз азон)</label><select id="blkMin"><option value="15">15 дақиқа</option><option value="20">20 дақиқа</option><option value="25">25 дақиқа</option><option value="30">30 дақиқа</option><option value="45">45 дақиқа</option><option value="60">1 соат</option></select></div>
+      <div class="blkapps" id="blkApps" role="group" aria-label="Барномаҳои басташаванда"></div>
+      <div class="blkst" id="blkSt"></div>
+    </div>
+
     <h2 class="sec">Ёдрасҳои навбатӣ <small id="remCount"></small></h2>
     <div class="dlist" id="remList"></div>
     <p class="note" id="remNote" style="margin-top:8px"></p>
@@ -1284,7 +1304,7 @@ function sunArc(now){
   const cur=isDay?dayPt(now):(now<TT.sunrise?nightPt(now,yT.maghrib,TT.sunrise):nightPt(now,TT.maghrib,TOM.sunrise));
   let curK=currentKey(now);if(!curK&&now<TT.fajr)curK='isha';
   const arcD='M'+(cx-R)+' '+cy+' A'+R+' '+RY+' 0 0 1 '+(cx+R)+' '+cy;
-  let prog='';if(now>=TT.sunrise){const e=dayPt(Math.min(now,TT.maghrib));prog='<path d="M'+(cx-R)+' '+cy+' A'+R+' '+RY+' 0 0 1 '+f2(e[0])+' '+f2(e[1])+'" fill="none" stroke="url(#ntArcG)" stroke-width="3.5" stroke-linecap="round"/>'}
+  let prog='';if(now>=TT.sunrise){const e=dayPt(Math.min(now,TT.maghrib));prog='<path d="M'+(cx-R)+' '+cy+' A'+R+' '+RY+' 0 0 1 '+f2(e[0])+' '+f2(e[1])+'" fill="none" stroke="url(#ntArcG)" stroke-width="7" stroke-linecap="round"/>'}
   const marks=[
     ['fajr','Бомдод',nightPt(TT.fajr,yT.maghrib,TT.sunrise),'bl'],
     ['sunrise','Тулӯъ',[cx-R,cy],'hl'],
@@ -1296,8 +1316,8 @@ function sunArc(now){
   const mk=marks.map(([k,n,pt,pos])=>{const passed=TT[k]<=now,on=k===curK,t=hm(TT[k],L.tz);let x=pt[0],y=pt[1],anc='middle';
     if(pos==='top'){y-=11}else if(pos==='tr'){x+=4;y-=10;anc='start'}else if(pos==='hl'){x+=10;y-=8;anc='start'}else if(pos==='hr'){x-=10;y-=8;anc='end'}
     else if(pos==='bl'){x=12;y=cy+42;anc='start'}else if(pos==='br'){x=308;y=cy+42;anc='end'}
-    const m=k==='sunrise'||k==='maghrib'?'<rect x="'+f2(pt[0]-3.4)+'" y="'+f2(pt[1]-3.4)+'" width="6.8" height="6.8" transform="rotate(45 '+f2(pt[0])+' '+f2(pt[1])+')" fill="'+(passed?'var(--hero-gold)':'var(--hero)')+'" stroke="var(--hero-gold)" stroke-width="1.4"/>'
-      :(on?'<circle cx="'+f2(pt[0])+'" cy="'+f2(pt[1])+'" r="8" fill="none" stroke="var(--hero-gold)" stroke-width="1" opacity=".55"/>':'')+'<circle cx="'+f2(pt[0])+'" cy="'+f2(pt[1])+'" r="'+(on?4.6:3.6)+'" fill="'+(passed?'var(--hero-gold)':'var(--hero)')+'" stroke="var(--hero-gold)" stroke-width="1.5"/>';
+    const m=k==='sunrise'||k==='maghrib'?'<rect x="'+f2(pt[0]-5)+'" y="'+f2(pt[1]-5)+'" width="10" height="10" transform="rotate(45 '+f2(pt[0])+' '+f2(pt[1])+')" fill="'+(passed?'var(--hero-gold)':'var(--hero)')+'" stroke="var(--hero-gold)" stroke-width="1.4"/>'
+      :(on?'<circle cx="'+f2(pt[0])+'" cy="'+f2(pt[1])+'" r="10" fill="none" stroke="var(--hero-gold)" stroke-width="1.2" opacity=".55"/>':'')+'<circle cx="'+f2(pt[0])+'" cy="'+f2(pt[1])+'" r="'+(on?6.4:5.4)+'" fill="'+(passed?'var(--hero-gold)':'var(--hero)')+'" stroke="var(--hero-gold)" stroke-width="1.5"/>';
     return m+lab(x,y,anc,n,t,on)}).join('');
   const rays=[0,30,60,90,120,150,180,210,240,270,300,330].map(r=>'<line x1="0" y1="-11" x2="0" y2="'+(r%60?-13.5:-15.5)+'" stroke="var(--hero-gold)" stroke-width="1.6" stroke-linecap="round" transform="rotate('+r+')"/>').join('');
   const body=isDay?'<g transform="translate('+f2(cur[0])+' '+f2(cur[1])+')"><circle r="20" fill="url(#ntSunG)"/><g class="nt-rays">'+rays+'</g><circle r="7.5" fill="var(--hero-gold)"/><circle r="7.5" fill="none" stroke="var(--on-hero)" stroke-opacity=".35" stroke-width="1"/></g>'
@@ -1310,8 +1330,8 @@ function sunArc(now){
    '<radialGradient id="ntMoonG"><stop offset=".3" stop-color="var(--on-hero)" stop-opacity=".25"/><stop offset="1" stop-color="var(--on-hero)" stop-opacity="0"/></radialGradient>'+
    '<linearGradient id="ntHorG" x1="0" x2="1"><stop offset="0" stop-color="var(--on-hero)" stop-opacity="0"/><stop offset=".15" stop-color="var(--on-hero)" stop-opacity=".35"/><stop offset=".85" stop-color="var(--on-hero)" stop-opacity=".35"/><stop offset="1" stop-color="var(--on-hero)" stop-opacity="0"/></linearGradient></defs>'+
    (isDay?'<path d="'+arcD+' Z" fill="url(#ntSkyG)"/>':'<g opacity=".8">'+stars+'</g>')+
-   '<path d="'+arcD+'" fill="none" stroke="var(--hero-line)" stroke-width="3.5" stroke-linecap="round"/>'+
-   '<path d="M'+(cx+R)+' '+cy+' A'+R+' '+RN+' 0 0 1 '+(cx-R)+' '+cy+'" fill="none" stroke="var(--hero-line)" stroke-width="1.4" stroke-dasharray="2 5" stroke-linecap="round"/>'+
+   '<path d="'+arcD+'" fill="none" stroke="var(--hero-line)" stroke-width="7" stroke-linecap="round"/>'+
+   '<path d="M'+(cx+R)+' '+cy+' A'+R+' '+RN+' 0 0 1 '+(cx-R)+' '+cy+'" fill="none" stroke="var(--hero-line)" stroke-width="2.6" stroke-dasharray="3 7" stroke-linecap="round"/>'+
    '<line x1="6" y1="'+cy+'" x2="314" y2="'+cy+'" stroke="url(#ntHorG)" stroke-width="1"/>'+
    prog+mk+body+'</svg>';
 }
@@ -1736,6 +1756,27 @@ function pullWMarks(){if(!NATIVE||!NATIVE.takeMarks)return false;let o;try{o=JSO
     if(TRACK.some(p=>p.k===k)&&!rec(y,k)&&(m.s==='ontime'||m.s==='late')){setRecAt(y,k,{s:m.s,j:false,at:+m.at||Date.now()});ch=true}}
   if(ch){save();setTimeout(()=>{try{renderList();renderStats();renderQaza();renderMiniComp();nativeSyncSoon()}catch(e){}},0)}return ch}
 window.addEventListener('focus',()=>{pullWMarks()});
+
+
+/* ---------- block social apps from adhan until the congregation ---------- */
+const BLK_APPS=[['yt','YouTube','#E62117','▶'],['tt','TikTok','#111','♪'],['ig','Instagram','#C13584','◎'],['fb','Facebook','#1877F2','f'],['tg','Telegram','#2AA3E0','✈']];
+function blkCfg(){const b=S.block||{};return{on:b.on===true,min:+b.min||20,apps:Object.assign({yt:true,tt:true,ig:true,fb:true,tg:true},b.apps||{})}}
+function blkPush(){try{NATIVE&&NATIVE.setBlock&&NATIVE.setBlock(JSON.stringify(blkCfg()))}catch(e){}}
+function renderBlock(){const c=blkCfg();$('blkOn').checked=c.on;$('blkMin').value=String(c.min);
+  $('blkApps').innerHTML=BLK_APPS.map(([k,n,col,ic])=>'<button type="button" data-blk="'+k+'" aria-pressed="'+!!c.apps[k]+'"><i style="background:'+col+'">'+ic+'</i>'+n+'</button>').join('');
+  const st=$('blkSt');let ok=false;try{ok=!!(NATIVE&&NATIVE.blockReady&&NATIVE.blockReady())}catch(e){}
+  if(!NATIVE){st.className='blkst';st.innerHTML='Ин имконият танҳо дар <b>APK</b> (телефони Android) кор мекунад.';return}
+  if(!NATIVE.blockReady){st.className='blkst warn';st.innerHTML='Барои ин имконият версияи нави APK-ро насб кунед.';return}
+  if(ok){st.className='blkst ok';st.innerHTML=c.on?'✓ Фаъол. Ҳар азон '+c.min+' дақиқа барномаҳои интихобшуда баста мешаванд.':'Иҷозат дода шудааст. Барои фаъол кардан калидро дар боло фаъол кунед.';return}
+  st.className='blkst warn';st.innerHTML='<b>Як бор иҷозат лозим аст:</b><ol><li>«Иҷозат додан»-ро зер кунед</li><li>Дар рӯйхат <b>НАМОЗХОН TJ</b>-ро ёбед ва фаъол кунед</li><li>Агар хокистарӣ бошад: Танзимот → Барномаҳо → НАМОЗХОН TJ → ⋮ (боло, рост) → «Allow restricted settings», баъд боз кӯшиш кунед</li></ol><button class="btn" id="blkGrant">Иҷозат додан</button>';
+  $('blkGrant').onclick=()=>{try{NATIVE.openBlockSettings()}catch(e){}}}
+$('blkOn').onchange=e=>{const c=blkCfg();c.on=e.target.checked;S.block=c;save();blkPush();renderBlock();
+  if(c.on&&NATIVE&&NATIVE.blockReady&&!NATIVE.blockReady())toast('Барои кор кардан иҷозат диҳед');else toast(c.on?'Ҳангоми намоз шабакаҳо баста мешаванд':'Блок хомӯш шуд')};
+$('blkMin').onchange=e=>{const c=blkCfg();c.min=+e.target.value;S.block=c;save();blkPush();renderBlock()};
+$('blkApps').addEventListener('click',e=>{const b=e.target.closest('[data-blk]');if(!b)return;const c=blkCfg();c.apps[b.dataset.blk]=!c.apps[b.dataset.blk];S.block=c;save();blkPush();renderBlock()});
+window.addEventListener('focus',()=>{if(!$('v-prefs').hidden)renderBlock()});
+window.addEventListener('hashchange',()=>{if(location.hash==='#prefs')renderBlock()});
+renderBlock();blkPush();
 
 /* ---------- khushu: unhurried prayer plan and guided timer ---------- */
 const KH={
