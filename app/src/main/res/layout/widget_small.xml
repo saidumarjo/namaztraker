@@ -60,11 +60,24 @@
             android:textSize="11sp" />
     </LinearLayout>
 
-    <Chronometer
-        android:id="@+id/w_count"
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="#FFFFFF"
-        android:textSize="22sp"
-        android:textStyle="bold" />
+        android:gravity="end"
+        android:orientation="vertical">
+        <Chronometer
+            android:id="@+id/w_count"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#FFFFFF"
+            android:textSize="22sp"
+            android:textStyle="bold" />
+        <TextView
+            android:id="@+id/w_cnt_lbl"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="то оғоз"
+            android:textColor="#D6EEDC"
+            android:textSize="10sp" />
+    </LinearLayout>
 </LinearLayout>

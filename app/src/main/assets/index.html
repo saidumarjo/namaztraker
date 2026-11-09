@@ -1460,7 +1460,7 @@ function widgetSync(){if(!NATIVE||!NATIVE.widget)return;try{const L=loc(),pd=pra
   for(let i=-1;i<3;i++){const y=addDays(pd,i),W=windowsFor(y),fri=wday(y)===5;
     days.push({d:y,hijri:hijri(y),p:TRACK.map(pr=>{const r=rec(y,pr.k),w=W[pr.k];
       const st=!r?'':r.s==='missed'?'missed':r.s==='late'?'late':r.j?'jamaat':'ontime';
-      return{k:pr.k,n:(pr.k==='dhuhr'&&fri)?'Ҷумъа':pr.n,s:w[0],e:w[1],h:hm(w[0],L.tz),st}})})}
+      const iq=iqamaAt(pr.k,w);return{k:pr.k,n:(pr.k==='dhuhr'&&fri)?'Ҷумъа':pr.n,s:w[0],e:w[1],h:hm(w[0],L.tz),st,iq,qh:iq?hm(iq,L.tz):''}})})}
   NATIVE.widget(JSON.stringify({city:L.name,days}))}catch(e){}}
 
 /* ---------- qaza ---------- */

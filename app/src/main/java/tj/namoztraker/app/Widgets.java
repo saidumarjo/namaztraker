@@ -68,6 +68,8 @@ final class Widgets {
                         long s = o.getLong("s"), e = o.getLong("e");
                         if (s > now && (nextBoundary == 0 || s < nextBoundary)) nextBoundary = s;
                         if (e > now && (nextBoundary == 0 || e < nextBoundary)) nextBoundary = e;
+                        long iqb = o.optLong("iq", 0L);
+                        if (iqb > now && (nextBoundary == 0 || iqb < nextBoundary)) nextBoundary = iqb;
                         if (next == null && s > now) next = o;
                     }
                 }
@@ -101,12 +103,40 @@ final class Widgets {
                 vs.setProgressBar(R.id.w_ring, 5, done, false);
                 vs.setTextViewText(R.id.w_done, done + "/5");
 
-                if (next != null) {
+                // adhan → iqamah: the current prayer has started, is not yet marked and iqamah is ahead
+                JSONObject iqP = null;
+                for (int j = 0; j < 5 && j < p.length(); j++) {
+                    JSONObject o = p.getJSONObject(j);
+                    long iqt = o.optLong("iq", 0L);
+                    if (iqt > now && o.getLong("s") <= now && o.optString("st", "").isEmpty()) { iqP = o; break; }
+                }
+                if (iqP != null) {
+                    long iqt = iqP.getLong("iq");
+                    long base = SystemClock.elapsedRealtime() + (iqt - now);
+                    String at = "Қомат соати " + iqP.optString("qh") + (city.isEmpty() ? "" : " · " + city);
+                    for (RemoteViews v : new RemoteViews[]{vb, vs}) {
+                        v.setTextViewText(R.id.w_next, "Азон шуд · " + iqP.optString("n"));
+                        v.setTextViewText(R.id.w_next_at, at);
+                        v.setTextViewText(R.id.w_cnt_lbl, "то қомат");
+                        v.setTextColor(R.id.w_count, 0xFFB8F07E);
+                        v.setChronometer(R.id.w_count, base, null, true);
+                        v.setChronometerCountDown(R.id.w_count, true);
+                    }
+                    vb.setTextViewText(R.id.w_head, "Вақти намоз расид");
+                    vb.setTextViewTextSize(R.id.w_next, android.util.TypedValue.COMPLEX_UNIT_SP, 20f);
+                    vs.setTextViewTextSize(R.id.w_next, android.util.TypedValue.COMPLEX_UNIT_SP, 16f);
+                } else if (next != null) {
                     long s = next.getLong("s");
                     String nm = next.optString("n");
                     String at = "Оғоз " + next.optString("h") + (city.isEmpty() ? "" : " · " + city);
                     long base = SystemClock.elapsedRealtime() + (s - now);
+                    vb.setTextViewText(R.id.w_head, "Намози навбатӣ");
+                    vb.setTextViewTextSize(R.id.w_next, android.util.TypedValue.COMPLEX_UNIT_SP, 24f);
+                    vs.setTextViewTextSize(R.id.w_next, android.util.TypedValue.COMPLEX_UNIT_SP, 18f);
+                    vb.setTextColor(R.id.w_count, 0xFFB8F07E);
+                    vs.setTextColor(R.id.w_count, 0xFFFFFFFF);
                     for (RemoteViews v : new RemoteViews[]{vb, vs}) {
+                        v.setTextViewText(R.id.w_cnt_lbl, "то оғоз");
                         v.setTextViewText(R.id.w_next, nm);
                         v.setTextViewText(R.id.w_next_at, at);
                         v.setChronometer(R.id.w_count, base, null, true);
