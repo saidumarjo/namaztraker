@@ -10,6 +10,6 @@ public class AlarmReceiver extends BroadcastReceiver {
         String title = in.getStringExtra("title");
         String text = in.getStringExtra("text");
         int id = in.getIntExtra("id", 0);
-        Notif.show(c, title == null ? "NamozTraker" : title, text == null ? "" : text, id);
+        Notif.show(c, title == null ? "НАМОЗХОН TJ" : title, text == null ? "" : text, id);
     }
 }

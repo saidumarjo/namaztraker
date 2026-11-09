@@ -179,7 +179,7 @@ public class MainActivity extends Activity implements SensorEventListener {
 
         @JavascriptInterface
         public void testNotify() {
-            Notif.show(getApplicationContext(), "NamozTraker", "Огоҳӣ кор мекунад.", 999);
+            Notif.show(getApplicationContext(), "НАМОЗХОН TJ", "Огоҳӣ кор мекунад.", 999);
         }
     }
 }
