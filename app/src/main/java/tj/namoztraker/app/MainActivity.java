@@ -13,6 +13,9 @@ import android.hardware.SensorManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.content.SharedPreferences;
 import android.webkit.GeolocationPermissions;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebChromeClient;
@@ -101,6 +104,8 @@ public class MainActivity extends Activity implements SensorEventListener {
             requestPermissions(new String[]{Manifest.permission.POST_NOTIFICATIONS}, REQ_NOTIFY);
         }
 
+        handleWuduIntent(getIntent());
+
         sensors = (SensorManager) getSystemService(SENSOR_SERVICE);
         if (sensors != null) rotation = sensors.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);
     }
@@ -120,8 +125,58 @@ public class MainActivity extends Activity implements SensorEventListener {
     }
 
     @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
+        handleWuduIntent(intent);
+    }
+
+    /* ---------- 5-minute focus lock after "no wudu" ---------- */
+    private final Handler ui = new Handler(Looper.getMainLooper());
+    private final Runnable unlockRun = this::endLock;
+
+    private SharedPreferences ntPrefs() {
+        return getSharedPreferences("nt", MODE_PRIVATE);
+    }
+
+    private void handleWuduIntent(Intent in) {
+        if (in == null || !Notif.ACTION_WUDU_LOCK.equals(in.getAction())) return;
+        Notif.onWudu(getApplicationContext(), in);
+        in.setAction(null);
+        startLock(5);
+    }
+
+    private void startLock(int minutes) {
+        long until = System.currentTimeMillis() + minutes * 60_000L;
+        ntPrefs().edit().putLong("lock_until", until).apply();
+        try { startLockTask(); } catch (Exception ignored) { }
+        ui.removeCallbacks(unlockRun);
+        ui.postDelayed(unlockRun, until - System.currentTimeMillis());
+        if (web != null) web.evaluateJavascript("window.ntLockSync&&window.ntLockSync()", null);
+    }
+
+    private void endLock() {
+        ntPrefs().edit().putLong("lock_until", 0L).apply();
+        ui.removeCallbacks(unlockRun);
+        try { stopLockTask(); } catch (Exception ignored) { }
+        if (web != null) web.evaluateJavascript("window.ntLockSync&&window.ntLockSync()", null);
+    }
+
+    private void checkLock() {
+        long until = ntPrefs().getLong("lock_until", 0L);
+        long now = System.currentTimeMillis();
+        if (until > now) {
+            ui.removeCallbacks(unlockRun);
+            ui.postDelayed(unlockRun, until - now);
+        } else if (until != 0L) {
+            endLock();
+        }
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
+        checkLock();
         web.onResume();
         if (rotation != null) sensors.registerListener(this, rotation, SensorManager.SENSOR_DELAY_UI);
         web.evaluateJavascript("window.dispatchEvent&&window.dispatchEvent(new Event('focus'))", null);
@@ -175,6 +230,26 @@ public class MainActivity extends Activity implements SensorEventListener {
         @JavascriptInterface
         public boolean hasCompass() {
             return rotation != null;
+        }
+
+        @JavascriptInterface
+        public void lockFor(int minutes) {
+            runOnUiThread(() -> startLock(Math.max(1, Math.min(minutes, 15))));
+        }
+
+        @JavascriptInterface
+        public void unlock() {
+            runOnUiThread(MainActivity.this::endLock);
+        }
+
+        @JavascriptInterface
+        public long lockUntil() {
+            return ntPrefs().getLong("lock_until", 0L);
+        }
+
+        @JavascriptInterface
+        public void setWuduLock(boolean on) {
+            ntPrefs().edit().putBoolean("wudu_lock", on).apply();
         }
 
         @JavascriptInterface

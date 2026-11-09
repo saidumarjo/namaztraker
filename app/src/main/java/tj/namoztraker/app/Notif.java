@@ -22,6 +22,7 @@ import java.util.Locale;
 final class Notif {
     static final String CHANNEL = "namoz_times";
     static final String ACTION_WUDU = "tj.namoztraker.app.WUDU";
+    static final String ACTION_WUDU_LOCK = "tj.namoztraker.app.WUDU_LOCK";
     private static final String PREFS = "nt";
     private static final int MAX = 200;
     private static final int IQAMA_ID = 77;
@@ -184,8 +185,18 @@ final class Notif {
         in.putExtra("iq", iq);
         in.putExtra("key", key);
         in.putExtra("name", name);
-        PendingIntent pi = PendingIntent.getBroadcast(c, 700 + code, in,
-                PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+        PendingIntent pi;
+        if ("no".equals(ans) && prefs(c).getBoolean("wudu_lock", true)) {
+            // open the app and lock other apps for 5 minutes
+            in.setClass(c, MainActivity.class);
+            in.setAction(ACTION_WUDU_LOCK);
+            in.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+            pi = PendingIntent.getActivity(c, 700 + code, in,
+                    PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+        } else {
+            pi = PendingIntent.getBroadcast(c, 700 + code, in,
+                    PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+        }
         return new Notification.Action.Builder(null, label, pi).build();
     }
 

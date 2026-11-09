@@ -494,6 +494,21 @@ body.iq-on .app{padding-top:calc(74px + env(safe-area-inset-top,0px))}
 .wsteps ol{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:5px;font-size:14px}
 @keyframes wup{from{transform:translateY(40px);opacity:0}}
 @keyframes wfade{from{opacity:0}}
+
+/* ---------- 5-minute wudu lock ---------- */
+.wlock{position:fixed;inset:0;z-index:120;overflow:auto;background:radial-gradient(120% 80% at 50% 0%,#123545,#08151A 70%);color:#F2F7F4;
+  padding-left:max(20px,env(safe-area-inset-left,0px));padding-right:max(20px,env(safe-area-inset-right,0px));padding-block:calc(28px + env(safe-area-inset-top,0px)) calc(24px + env(safe-area-inset-bottom,0px))}
+.wl-in{max-width:440px;margin:0 auto;text-align:center;display:flex;flex-direction:column;align-items:center}
+.wl-ring{position:relative;width:min(62vw,220px);aspect-ratio:1;max-width:100%}
+.wl-ring>svg{position:absolute;inset:0;width:100%;height:100%}
+.wl-ring>div{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px}
+.wl-drop{width:34px;height:34px;filter:drop-shadow(0 0 12px rgba(124,200,242,.6))}
+.wl-ring b{font-size:46px;font-weight:800;letter-spacing:-.02em}
+.wl-h{margin:18px 0 4px;font-size:26px;font-weight:800}
+.wl-s{margin:0 0 16px;color:rgba(242,247,244,.72);font-size:14px}
+.wl-steps{text-align:left;width:100%;margin:0;padding:14px 16px 14px 34px;background:rgba(255,255,255,.05);border:1px solid rgba(189,232,255,.18);border-radius:18px;display:flex;flex-direction:column;gap:6px;font-size:14.5px}
+.wl-n{margin:12px 0 0;font-size:12px;color:rgba(242,247,244,.55)}
+.wlock .wb.ok{margin-top:16px}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}.wsheet,.wcard{animation:none}.iqbar.soon .iq-r b{animation:none}.nt-rays,.nt-star{animation:none}}
 </style>
 
@@ -527,6 +542,17 @@ body.iq-on .app{padding-top:calc(74px + env(safe-area-inset-top,0px))}
     <path d="M0 640 C140 620 420 620 560 640 L560 900 0 900z" fill="#06100D" opacity=".55"/>
   </svg>
   <canvas id="dust"></canvas>
+</div>
+<div class="wlock" id="wlock" hidden role="dialog" aria-modal="true" aria-labelledby="wlT">
+  <div class="wl-in">
+    <div class="wl-ring"><svg viewBox="0 0 120 120" aria-hidden="true"><circle cx="60" cy="60" r="54" fill="none" stroke="rgba(189,232,255,.15)" stroke-width="7"/><circle id="wlRing" cx="60" cy="60" r="54" fill="none" stroke="#6CC0F0" stroke-width="7" stroke-linecap="round" transform="rotate(-90 60 60)" stroke-dasharray="339.3" stroke-dashoffset="0"/></svg>
+      <div><svg class="wl-drop" viewBox="0 0 48 48"><path d="M24 5C24 5 10 21 10 30a14 14 0 0 0 28 0C38 21 24 5 24 5z" fill="#7CC8F2"/></svg><b class="num" id="wlT">5:00</b></div></div>
+    <h3 class="wl-h">Ҳозир таҳорат гиред</h3>
+    <p class="wl-s" id="wlS">Дигар барномаҳо то тамом шудани вақт баста ҳастанд.</p>
+    <ol class="wl-steps"><li>Бисмиллоҳ гуфта, нияти таҳорат кунед</li><li><b>Рӯйро</b> пурра бишӯед</li><li><b>Ду дастро</b> то оринҷ бишӯед</li><li>Ба <b>чоряки сар</b> масҳ кашед</li><li><b>Ду пойро</b> то буҷулак бишӯед</li></ol>
+    <button class="wb ok" id="wlDone">Таҳорат гирифтам</button>
+    <p class="wl-n" id="wlNote"></p>
+  </div>
 </div>
 <div class="wsheet" id="wsheet" hidden role="dialog" aria-modal="true" aria-labelledby="wQ">
   <div class="wcard">
@@ -775,6 +801,7 @@ body.iq-on .app{padding-top:calc(74px + env(safe-area-inset-top,0px))}
     <div class="card stack">
       <label class="switch"><span><b>Ҳисоби баръакс то қомат</b><br><span class="note">Аз оғози вақт (азон) дар болои экран вақти боқимонда то қомат нишон дода мешавад.</span></span><input type="checkbox" id="iqOn"></label>
       <label class="switch"><span><b>Саволи таҳорат ҳангоми азон</b><br><span class="note">«Оё таҳорат доред?» · Ҳа · Не · 3 дақиқа пас</span></span><input type="checkbox" id="wuduAsk"></label>
+      <label class="switch"><span><b>Агар таҳорат надошта бошам, телефонро 5 дақиқа қулф кун</b><br><span class="note">Пас аз «Не» дигар барномаҳо то 5 дақиқа кушода намешаванд, то таҳорат гиред.</span></span><input type="checkbox" id="wuduLock"></label>
       <div class="iqgrid" id="iqGrid"></div>
       <p class="note" style="margin:0">Дақиқаҳо пас аз азон. Онҳоро мувофиқи масҷиди худ иваз кунед.</p>
     </div>
@@ -865,7 +892,7 @@ const TARGETS=[33,99,100,1000];
 
 /* ---------- storage ---------- */
 const store={get(k,d){try{const v=localStorage.getItem('nt.'+k);return v==null?d:JSON.parse(v)}catch(e){return d}},set(k,v){try{localStorage.setItem('nt.'+k,JSON.stringify(v))}catch(e){}}};
-let S=Object.assign({city:'dubai',custom:null,method:'dubai',asr:1,sound:false,notify:true,remind:true,dremind:true,rlevel:2,wuduAsk:true,iqOn:true,iq:{fajr:20,dhuhr:20,asr:20,maghrib:10,isha:20}},store.get('settings',{}));
+let S=Object.assign({city:'dubai',custom:null,method:'dubai',asr:1,sound:false,notify:true,remind:true,dremind:true,rlevel:2,wuduAsk:true,wuduLock:true,iqOn:true,iq:{fajr:20,dhuhr:20,asr:20,maghrib:10,isha:20}},store.get('settings',{}));
 const NATIVE=(typeof window.NT==='object'&&window.NT)?window.NT:null;
 let LOG=store.get('log',{});let FIRST=store.get('first','');if(!store.get('firstTs',0))store.set('firstTs',Date.now());
 let QZ=Object.assign({fajr:0,dhuhr:0,asr:0,maghrib:0,isha:0,witr:0,paid:0},store.get('qaza',{}));
@@ -1379,7 +1406,7 @@ let wuSnooze={},wuCur=null;
 function wuAns(key){return WU[key]}
 function wuSet(key,ans){WU[key]=ans;const keys=Object.keys(WU);if(keys.length>60)keys.slice(0,keys.length-60).forEach(k=>delete WU[k]);wuSave();try{NATIVE&&NATIVE.setWudu&&NATIVE.setWudu(key,ans)}catch(e){}}
 function wuPull(){try{if(NATIVE&&NATIVE.wuduAnswers){const o=JSON.parse(NATIVE.wuduAnswers()||'{}');let ch=false;for(const k in o)if(WU[k]!==o[k]){WU[k]=o[k];ch=true}if(ch)wuSave()}}catch(e){}}
-function wuCheck(){if(S.wuduAsk===false||!TT||document.getElementById('splash'))return;if(!$('wsheet').hidden)return;
+function wuCheck(){if(S.wuduAsk===false||!TT||document.getElementById('splash')||!$('wlock').hidden)return;if(!$('wsheet').hidden)return;
   const now=Date.now(),pd=prayerDay(),W=windowsFor(pd);
   for(const p of TRACK){const w=W[p.k],end=iqamaAt(p.k,w)||Math.min(w[1],w[0]+20*60000),key=pd+'|'+p.k;
     if(now<w[0]||now>=end||rec(pd,p.k))continue;const a=wuAns(key);if(a==='yes')continue;
@@ -1396,6 +1423,7 @@ function closeWudu(){$('wsheet').hidden=true;wuCur=null}
 $('wYes').onclick=()=>{if(!wuCur)return;const c=wuCur;wuSet(c.key,'yes');closeWudu();
   toast('Офарин! Ба намоз омода шавед.'+(c.iq?' Қомат соати '+hm(c.iq,loc().tz):''))};
 $('wNo').onclick=()=>{if(!wuCur)return;const c=wuCur;wuSet(c.key,'no');wuSnooze[c.key]=Date.now()+5*60000;
+  if(S.wuduLock!==false){startWuduLock(c.key);return}
   $('wPre').textContent='Ташвиш накашед';$('wQ').textContent='Ҳозир таҳорат гиред';
   $('wSub').textContent=c.iq?'То қомат '+fm((c.iq-Date.now())/60000)+' монд. Пас аз 5 дақиқа боз мепурсам.':'Пас аз 5 дақиқа боз мепурсам.';
   $('wSteps').hidden=false;$('wBtns').hidden=true;$('wOk').hidden=false;setTimeout(()=>{try{$('wOk').focus()}catch(e){}},60)};
@@ -1404,6 +1432,27 @@ $('wOk').onclick=closeWudu;
 $('wsheet').addEventListener('keydown',e=>{if(e.key==='Escape'&&wuCur){wuSnooze[wuCur.key]=Date.now()+3*60000;closeWudu()}});
 $('wuduAsk').checked=S.wuduAsk!==false;$('wuduAsk').onchange=e=>{S.wuduAsk=e.target.checked;save();nativeSyncSoon()};
 window.addEventListener('focus',()=>{wuPull()});
+
+
+/* ---------- 5-minute lock after "no wudu" ---------- */
+let LOCK=store.get('lock',{until:0,key:''}),lockT=null;
+function lockActive(){return LOCK.until>Date.now()}
+function startWuduLock(key){LOCK={until:Date.now()+5*60000,key:key||''};store.set('lock',LOCK);
+  try{NATIVE&&NATIVE.lockFor&&NATIVE.lockFor(5)}catch(e){}showLock()}
+function showLock(){const sp=document.getElementById('splash');if(sp)sp.remove();closeWudu();$('wlock').hidden=false;
+  $('wlNote').textContent=NATIVE?'Агар телефон пурсад «Барномаро пин кунам?», «Ҳа»-ро пахш кунед.':'Дар веб-версия танҳо ҳамин саҳифа қулф мешавад. Дар APK тамоми телефон қулф мешавад.';
+  clearInterval(lockT);lockT=setInterval(tickLock,250);tickLock()}
+function tickLock(){const left=LOCK.until-Date.now();if(left<=0){endWuduLock(false);return}
+  const m=Math.floor(left/60000),sec=Math.floor(left%60000/1000);$('wlT').textContent=m+':'+String(sec).padStart(2,'0');
+  $('wlRing').setAttribute('stroke-dashoffset',(339.3*(1-left/300000)).toFixed(1))}
+function endWuduLock(done){clearInterval(lockT);const key=LOCK.key;LOCK={until:0,key:''};store.set('lock',LOCK);$('wlock').hidden=true;
+  try{NATIVE&&NATIVE.unlock&&NATIVE.unlock()}catch(e){}
+  if(done){if(key)wuSet(key,'yes');toast('Офарин! Ба намоз омода шавед.')}else{toast('5 дақиқа гузашт. Таҳорат гирифтед?');if(key)delete wuSnooze[key]}}
+window.ntLockSync=function(){try{if(NATIVE&&NATIVE.lockUntil){const u=+NATIVE.lockUntil();if(u>Date.now()){if(!lockActive()||Math.abs(u-LOCK.until)>2000){LOCK.until=u;store.set('lock',LOCK)}if($('wlock').hidden)showLock()}else if(!$('wlock').hidden){clearInterval(lockT);LOCK={until:0,key:''};store.set('lock',LOCK);$('wlock').hidden=true}}}catch(e){}};
+$('wlDone').onclick=()=>endWuduLock(true);
+$('wuduLock').checked=S.wuduLock!==false;$('wuduLock').onchange=e=>{S.wuduLock=e.target.checked;save();try{NATIVE&&NATIVE.setWuduLock&&NATIVE.setWuduLock(S.wuduLock)}catch(x){}};
+try{NATIVE&&NATIVE.setWuduLock&&NATIVE.setWuduLock(S.wuduLock!==false)}catch(e){}
+window.addEventListener('focus',()=>window.ntLockSync());
 
 /* ---------- qaza ---------- */
 function renderQaza(){
@@ -1539,7 +1588,7 @@ function tick(){const L=loc(),now=Date.now();
     else{el.style.transform='translateY(-70px)';el.style.opacity=0}});
 })();
 
-compute();if(!FIRST){FIRST=todayYMD;store.set('first',FIRST)}try{fillIq();wuPull()}catch(e){}lastPD=prayerDay();autoQaza(Date.now());fillPrefs();renderAll();route();setInterval(tick,1000);
+compute();if(!FIRST){FIRST=todayYMD;store.set('first',FIRST)}try{fillIq();wuPull();if(NATIVE)window.ntLockSync();else if(lockActive())showLock()}catch(e){}lastPD=prayerDay();autoQaza(Date.now());fillPrefs();renderAll();route();setInterval(tick,1000);
 })();
 </script>
 </body></html>
