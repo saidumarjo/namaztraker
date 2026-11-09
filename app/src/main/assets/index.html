@@ -1880,7 +1880,9 @@ function bkName(){return 'namozkhon-'+todayYMD+'.json'}
 $('bkExp').onclick=()=>{const data={};BK_KEYS.forEach(k=>{const v=localStorage.getItem('nt.'+k);if(v!=null)try{data[k]=JSON.parse(v)}catch(e){}});
   const txt=JSON.stringify({app:'НАМОЗХОН TJ',v:1,at:new Date().toISOString(),data},null,1),name=bkName();
   if(NATIVE&&NATIVE.saveBackup){let r='';try{r=NATIVE.saveBackup(name,txt)}catch(e){}toast(r?'Сабт шуд: '+r:'Сабт нашуд');return}
-  try{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([txt],{type:'application/json'}));a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},1500);toast('Файл сабт шуд: '+name)}catch(e){toast('Сабт нашуд')}};
+  (async()=>{let dl=null;try{dl=window.claude&&window.claude.use?await window.claude.use('downloads'):null}catch(e){}
+    if(dl){try{await dl.save({filename:name,data:txt});toast('Файл сабт шуд: '+name)}catch(e){toast(e&&e.code==='declined'?'Бекор шуд':'Сабт нашуд')}return}
+    try{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([txt],{type:'application/json'}));a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},1500);toast('Файл сабт шуд: '+name)}catch(e){toast('Сабт нашуд')}})()};
 $('bkImp').onclick=()=>{$('bkFile').value='';$('bkFile').click()};
 let bkPending=null;
 $('bkFile').onchange=e=>{const f=e.target.files&&e.target.files[0];if(!f)return;const rd=new FileReader();
