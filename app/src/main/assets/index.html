@@ -656,6 +656,10 @@ body.iq-on .app{padding-top:calc(74px + env(safe-area-inset-top,0px))}
 .blkst ol{margin:6px 0 8px;padding-left:18px}
 .blkst .btn{margin-top:4px}
 .cb-row{position:relative}
+.cb-rename{background:none;border:0;padding:2px 0;margin:2px 0 4px;color:var(--gold);font-size:12.5px;font-weight:700}
+.cb-ren{display:flex;gap:6px;margin:6px 0}
+.cb-ren input{flex:1;min-width:0;border-radius:10px;border:1px solid var(--line);background:rgba(0,0,0,.25);color:inherit;padding:8px 10px;font:inherit}
+.cb-ren .btn{padding:8px 12px}
 .cb-kick{position:absolute;top:-7px;right:-5px;box-shadow:0 2px 8px rgba(0,0,0,.4);background:#3A1E16;width:26px;height:26px;border-radius:50%;display:grid;place-items:center;border:1px solid rgba(242,142,109,.4);background:rgba(242,142,109,.12);color:#FFB59A;padding:0}
 .cb-kick svg{width:13px;height:13px}
 .cmp-own{color:#F6D77D;font-size:13px;margin-left:4px}
@@ -1077,7 +1081,7 @@ body.iq-on .app{padding-top:calc(74px + env(safe-area-inset-top,0px))}
     <div id="cmpBoard" hidden>
       <div class="cb-hero">
         <div class="cb-top">
-          <div style="min-width:0"><div class="cb-eye">Гурӯҳ</div><div class="cb-gname" id="cmpGName"></div><div class="cb-sub" id="cmpGSub"></div></div>
+          <div style="min-width:0"><div class="cb-eye">Гурӯҳ</div><div class="cb-gname" id="cmpGName"></div><button class="cb-rename" id="cmpRename" type="button" hidden>✏️ Номи гурӯҳро иваз кардан</button><div class="cb-ren" id="cmpRenBox" hidden><input id="cmpRenIn" maxlength="40" aria-label="Номи нави гурӯҳ"><button class="btn primary" id="cmpRenOk" type="button">Сабт</button></div><div class="cb-sub" id="cmpGSub"></div></div>
           <button class="cb-code" id="cmpCopy" aria-label="Нусха гирифтани код"><span class="num" id="cmpGCode"></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h3"/></svg></button>
         </div>
         <div class="cb-me" id="cmpMe"></div>
@@ -2089,7 +2093,7 @@ function renderComp(offline){const live=compLive(),demo=!live;
   if(live&&FBA&&!list.some(x=>x.id===FBA.uid)){const me=compSummary();me.id=FBA.uid;list=list.concat([me])}
   list=compSort(list);const rk=denseRanks(list),pd=prayerDay();
   $('cmpGName').textContent=live?CMP.gname:'Гурӯҳи намуна';$('cmpGCode').textContent=live?CMP.code:'K7M2QX';
-  $('cmpGSub').textContent=list.length+' иштирокчӣ · 7 рӯзи охир';
+  $('cmpGSub').textContent=list.length+' иштирокчӣ · 7 рӯзи охир';$('cmpRename').hidden=!compIsOwner()||!$('cmpRenBox').hidden;
   const mi=list.findIndex(x=>x.id===myId),myR=mi>=0?rk[mi]:0;
   if(mi>=0){const me=list[mi];let t;
     if(myR===1)t=list.length>1&&rk[1]===1?'<b>Ҳамсафед</b> бо пешсаф. Як намози бо ҷамоат шуморо ба пеш мебарорад.':'<b>Шумо пешсафед!</b> '+(list[1]?'Аз ҷои 2 '+(me.pts-list[1].pts)+' хол пеш.':'');
@@ -2118,6 +2122,9 @@ $('cmpList').addEventListener('click',e=>{const b=e.target.closest('[data-kick]'
   const ask=document.createElement('div');ask.className='cb-ask';ask.innerHTML='<span><b></b>-ро аз гурӯҳ хориҷ кунед? Ӯ дигар ҳамроҳ шуда наметавонад.</span><button class="btn" type="button" data-k="no">Не</button><button class="btn danger" type="button" data-k="yes">Хориҷ</button>';
   ask.querySelector('b').textContent=n||'Иштирокчӣ';row.appendChild(ask);
   ask.addEventListener('click',ev=>{const k=ev.target.closest('[data-k]');if(!k)return;ev.stopPropagation();if(k.dataset.k==='yes'){k.disabled=true;k.textContent='…';compRemove(id,n)}else ask.remove()})});
+$('cmpRename').onclick=()=>{$('cmpRenIn').value=CMP.gname||'';$('cmpRenBox').hidden=false;$('cmpRename').hidden=true;$('cmpRenIn').focus()};
+$('cmpRenOk').onclick=async()=>{const v=$('cmpRenIn').value.trim();if(!v){toast('Номро нависед');return}if(!compIsOwner())return;
+  try{await fsReq('PATCH','groups/'+CMP.code,{fields:{name:sv(v)}},'updateMask.fieldPaths=name');CMP.gname=v;cmpSave();$('cmpRenBox').hidden=true;renderComp();toast('Номи гурӯҳ иваз шуд')}catch(e){toast('Иваз нашуд. Интернетро санҷед.')}};
 $('cmpCreate').onclick=compCreate;$('cmpJoinBtn').onclick=compJoin;
 $('cmpName').addEventListener('change',()=>{CMP.name=$('cmpName').value.trim();cmpSave()});
 $('cmpRefresh').onclick=()=>{if(!compLive()){toast('Ин ҷадвал намуна аст');return}const b=$('cmpRefresh');b.classList.add('spin');compPush().then(compPull).then(()=>{b.classList.remove('spin');renderComp();toast('Нав шуд')}).catch(()=>{b.classList.remove('spin');renderComp(true);toast('Интернет нест')})};
