@@ -178,6 +178,16 @@ public class MainActivity extends Activity implements SensorEventListener {
         }
 
         @JavascriptInterface
+        public String wuduAnswers() {
+            return Notif.answers(getApplicationContext());
+        }
+
+        @JavascriptInterface
+        public void setWudu(String key, String ans) {
+            Notif.setAnswer(getApplicationContext(), key, ans);
+        }
+
+        @JavascriptInterface
         public void testNotify() {
             Notif.show(getApplicationContext(), "НАМОЗХОН TJ", "Огоҳӣ кор мекунад.", 999);
         }
