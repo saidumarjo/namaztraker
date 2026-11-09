@@ -39,7 +39,11 @@ final class Block {
     }
 
     static void save(Context c, String json) {
-        prefs(c).edit().putString("block", json).apply();
+        SharedPreferences p = prefs(c);
+        SharedPreferences.Editor e = p.edit().putString("block", json);
+        // a changed setting cancels "off for tonight"
+        if (!json.equals(p.getString("block", ""))) e.remove("sleep_skip");
+        e.apply();
     }
 
     private static JSONObject cfg(Context c) {

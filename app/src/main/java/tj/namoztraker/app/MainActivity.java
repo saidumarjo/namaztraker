@@ -361,7 +361,7 @@ public class MainActivity extends Activity implements SensorEventListener {
             long now = System.currentTimeMillis();
             long[] w = Block.sleep(getApplicationContext(), now);
             Intent in = new Intent(MainActivity.this, SleepActivity.class)
-                    .putExtra("preview", w == null)
+                    .putExtra("preview", true)
                     .putExtra("start", w == null ? now : w[0])
                     .putExtra("until", w == null ? now + 4 * 3600_000L : w[1]);
             runOnUiThread(() -> startActivity(in));
