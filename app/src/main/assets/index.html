@@ -509,6 +509,82 @@ body.iq-on .app{padding-top:calc(74px + env(safe-area-inset-top,0px))}
 .wl-steps{text-align:left;width:100%;margin:0;padding:14px 16px 14px 34px;background:rgba(255,255,255,.05);border:1px solid rgba(189,232,255,.18);border-radius:18px;display:flex;flex-direction:column;gap:6px;font-size:14.5px}
 .wl-n{margin:12px 0 0;font-size:12px;color:rgba(242,247,244,.55)}
 .wlock .wb.ok{margin-top:16px}
+
+/* ---------- khushu ---------- */
+.kh-quote{text-align:center;padding:16px 18px;background:linear-gradient(180deg,rgba(124,200,242,.10),var(--surface))}
+.kh-quote p{margin:0;font-family:'Noto Serif',Georgia,serif;font-size:15px;line-height:1.7;color:rgba(242,247,244,.9)}
+.kh-quote small{display:block;margin-top:6px;color:#7CC8F2;font-weight:700;font-size:12px}
+.kh-pr{margin-top:14px}
+.kh-sum{margin-top:12px;display:flex;align-items:center;gap:16px}
+.kh-sum>div:first-child{display:flex;flex-direction:column;align-items:center;justify-content:center;width:84px;height:84px;border-radius:50%;flex:none;background:radial-gradient(circle at 50% 35%,rgba(147,212,92,.28),rgba(147,212,92,.06));border:2px solid rgba(147,212,92,.55)}
+.kh-sum>div:first-child b{font-size:30px;font-weight:800;line-height:1}
+.kh-sum>div:first-child span{font-size:11px;color:var(--muted)}
+.kh-sum-r{min-width:0}.kh-sum-r b{display:block;font-size:20px;font-weight:800}.kh-sum-r small{color:var(--muted);font-size:13px}
+.kh-list{margin-top:12px}
+.kh-row{display:grid;grid-template-columns:6px minmax(0,1fr) auto auto;gap:12px;align-items:center;padding:12px 12px 12px 0;border-top:1px solid var(--line)}
+.kh-row:first-child{border-top:0}
+.kh-row .bar{align-self:stretch;border-radius:0 4px 4px 0;background:var(--c)}
+.kh-row .t{font-weight:700;font-size:15px}.kh-row .t small{display:block;font-weight:400;font-size:12px;color:var(--muted)}
+.kh-row .m{font-weight:800;font-size:15px;color:var(--c);white-space:nowrap}
+.kh-row.off{opacity:.42}.kh-row.off .m{text-decoration:line-through}
+.kh-row .tg{width:44px;height:26px;appearance:none;-webkit-appearance:none;background:var(--line);border-radius:999px;position:relative;cursor:pointer;flex:none;margin:0}
+.kh-row .tg::after{content:"";position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#F2F7F4;transition:left .15s}
+.kh-row .tg:checked{background:var(--accent)}.kh-row .tg:checked::after{left:21px}
+.kh-row .tg:disabled{opacity:.35}
+.kh-go{width:100%;margin-top:18px;padding:15px;font-size:16px;border-radius:16px}
+.khrun{position:fixed;inset:0;z-index:110;overflow:auto;background:radial-gradient(120% 80% at 50% 0%,#1D4A33,#08130E 72%);color:#F2F7F4;
+  padding-left:max(20px,env(safe-area-inset-left,0px));padding-right:max(20px,env(safe-area-inset-right,0px));padding-block:calc(18px + env(safe-area-inset-top,0px)) calc(20px + env(safe-area-inset-bottom,0px))}
+.kr-in{max-width:440px;margin:0 auto;display:flex;flex-direction:column;align-items:center;text-align:center}
+.kr-top{width:100%;display:flex;justify-content:space-between;font-size:13px;color:rgba(242,247,244,.7);font-weight:700;margin-bottom:14px}
+.kr-ring{position:relative;width:min(64vw,230px);aspect-ratio:1;max-width:100%}
+.kr-ring>svg{position:absolute;inset:0;width:100%;height:100%}
+.kr-ring>div{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px}
+.kr-ring small{font-size:13px;color:#B8F07E;font-weight:700}
+.kr-ring b{font-size:50px;font-weight:800;letter-spacing:-.02em}
+.kr-seg{margin:16px 0 2px;font-size:26px;font-weight:800}
+.kr-sub{margin:0;color:rgba(242,247,244,.7);font-size:14px;min-height:1.4em}
+.kr-steps{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin:18px 0 6px;width:100%}
+.kr-steps span{flex:1;min-width:0;max-width:90px;height:6px;border-radius:3px;background:rgba(242,247,244,.14)}
+.kr-steps span.done{background:#93D45C}.kr-steps span.cur{background:linear-gradient(90deg,#93D45C var(--p),rgba(242,247,244,.14) var(--p))}
+.kr-btns{display:grid;grid-template-columns:1fr 1fr;gap:8px;width:100%;margin-top:16px}
+.kr-stop{width:100%;margin-top:8px;background:transparent}
+.khrun.paused .kr-ring b{opacity:.5}
+
+/* ---------- competition ---------- */
+.comp-tile{background:linear-gradient(120deg,rgba(235,198,108,.18),var(--surface) 60%)!important;border-color:rgba(235,198,108,.35)!important}
+.cmp-note{border-color:rgba(124,200,242,.35);background:rgba(124,200,242,.08);font-size:13.5px;line-height:1.55}
+.cmp-note b{color:#7CC8F2}
+.cmp-hero{text-align:center;padding:22px 18px}
+.cmp-trophy{width:64px;height:64px;margin:0 auto 8px;border-radius:50%;display:grid;place-items:center;color:#EBC66C;background:radial-gradient(circle at 50% 35%,rgba(235,198,108,.3),rgba(235,198,108,.05));border:1px solid rgba(235,198,108,.4)}
+.cmp-trophy svg{width:34px;height:34px}
+.cmp-hero h3{margin:4px 0 6px;font-size:20px;font-weight:800}
+.cmp-hero p{margin:0;color:var(--muted);font-size:14px;line-height:1.55}
+.cmp-or{display:flex;align-items:center;gap:10px;color:var(--muted);font-size:12px}.cmp-or i{flex:1;height:1px;background:var(--line)}
+.cmp-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 14px}
+.cmp-head small{display:block;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;font-weight:700}
+.cmp-head b{font-size:17px}
+.cmp-code{display:flex;align-items:center;gap:8px;border:1px dashed rgba(235,198,108,.6);background:rgba(235,198,108,.1);color:#EBC66C;border-radius:12px;padding:8px 12px;font-weight:800;letter-spacing:.14em;font-size:15px}
+.cmp-code svg{width:16px;height:16px}
+.cmp-me{margin-top:10px;text-align:center;font-size:14px;color:var(--muted)}.cmp-me b{color:#EBC66C;font-size:16px}
+.cmp-list{margin-top:10px;display:flex;flex-direction:column;gap:8px}
+.cmp-row{display:grid;grid-template-columns:34px minmax(0,1fr) auto;gap:12px;align-items:center;padding:12px;border-radius:18px;background:var(--surface);border:1px solid var(--line);-webkit-backdrop-filter:var(--glass-blur);backdrop-filter:var(--glass-blur)}
+.cmp-row.me{border-color:rgba(147,212,92,.6);background:linear-gradient(90deg,rgba(147,212,92,.16),var(--surface))}
+.cmp-rk{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font-weight:800;font-size:15px;background:rgba(255,255,255,.07);color:var(--muted)}
+.cmp-rk.r1{background:linear-gradient(135deg,#F6D77D,#C99A2E);color:#2A1D02;box-shadow:0 0 14px rgba(235,198,108,.45)}
+.cmp-rk.r2{background:linear-gradient(135deg,#E6ECEF,#A9B6BD);color:#1C2428}
+.cmp-rk.r3{background:linear-gradient(135deg,#E3A774,#A7653A);color:#2A1404}
+.cmp-nm{display:flex;align-items:center;gap:6px;font-weight:800;font-size:15px;min-width:0}
+.cmp-nm span:first-child{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cmp-tag{font-size:10px;font-weight:800;padding:1px 6px;border-radius:999px;background:var(--accent);color:var(--on-accent);flex:none}
+.cmp-dots{display:flex;gap:4px;margin-top:5px}
+.cmp-dots i{width:14px;height:14px;border-radius:50%;border:1.5px solid rgba(242,247,244,.25)}
+.cmp-dots i.ontime{background:#F2F7F4;border-color:#F2F7F4}.cmp-dots i.jamaat{background:#E6BC5E;border-color:#E6BC5E}.cmp-dots i.late{background:#BBA3F0;border-color:#BBA3F0}.cmp-dots i.missed{background:#F28E6D;border-color:#F28E6D}
+.cmp-meta{display:flex;gap:10px;margin-top:5px;font-size:11.5px;color:var(--muted);flex-wrap:wrap}
+.cmp-meta .fl{color:#F2A65A;font-weight:700}.cmp-meta .qz{color:var(--warn);font-weight:700}.cmp-meta .ok{color:var(--ok);font-weight:700}
+.cmp-bar{height:4px;border-radius:2px;background:rgba(255,255,255,.08);margin-top:7px;overflow:hidden}.cmp-bar i{display:block;height:100%;border-radius:2px;background:linear-gradient(90deg,#4F9A2C,#93D45C)}
+.cmp-r{text-align:right}
+.cmp-r b{display:block;font-size:22px;font-weight:800;line-height:1}
+.cmp-r small{font-size:11.5px;color:var(--muted);font-weight:700}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}.wsheet,.wcard{animation:none}.iqbar.soon .iq-r b{animation:none}.nt-rays,.nt-star{animation:none}}
 </style>
 
@@ -542,6 +618,18 @@ body.iq-on .app{padding-top:calc(74px + env(safe-area-inset-top,0px))}
     <path d="M0 640 C140 620 420 620 560 640 L560 900 0 900z" fill="#06100D" opacity=".55"/>
   </svg>
   <canvas id="dust"></canvas>
+</div>
+<div class="khrun" id="khRun" hidden role="dialog" aria-modal="true" aria-labelledby="krSeg">
+  <div class="kr-in">
+    <div class="kr-top"><span id="krPr"></span><span class="num" id="krTot"></span></div>
+    <div class="kr-ring"><svg viewBox="0 0 120 120" aria-hidden="true"><circle cx="60" cy="60" r="54" fill="none" stroke="rgba(242,247,244,.1)" stroke-width="6"/><circle id="krRing" cx="60" cy="60" r="54" fill="none" stroke="#93D45C" stroke-width="6" stroke-linecap="round" transform="rotate(-90 60 60)" stroke-dasharray="339.3" stroke-dashoffset="0"/></svg>
+      <div><small id="krRk"></small><b class="num" id="krT">0:00</b></div></div>
+    <h3 class="kr-seg" id="krSeg"></h3>
+    <p class="kr-sub" id="krSub"></p>
+    <div class="kr-steps" id="krSteps"></div>
+    <div class="kr-btns"><button class="wb" id="krPause">Таваққуф</button><button class="wb" id="krSkip">Қисми навбатӣ</button></div>
+    <button class="wb kr-stop" id="krStop">Анҷом</button>
+  </div>
 </div>
 <div class="wlock" id="wlock" hidden role="dialog" aria-modal="true" aria-labelledby="wlT">
   <div class="wl-in">
@@ -732,11 +820,13 @@ body.iq-on .app{padding-top:calc(74px + env(safe-area-inset-top,0px))}
   <section id="v-more" hidden>
     <h2 class="sec" style="margin-top:4px">Бештар</h2>
     <div class="tiles">
+      <a class="tile wide comp-tile" href="#comp"><span class="ti" style="--c:#EBC66C"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 4h8v5a4 4 0 0 1-8 0z"/><path d="M8 6H5a3 3 0 0 0 3 4M16 6h3a3 3 0 0 1-3 4M12 13v4M9 21h6M10 17h4v4h-4z"/></svg></span><b>Мусобиқа</b><small id="compTileSub">Бо 5–6 дӯст рақобат кунед</small></a>
       <a class="tile" href="#hijri"><span class="ti" style="--c:var(--gold)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M15.5 4.5a8 8 0 1 0 4 11.5 6.5 6.5 0 0 1-4-11.5z"/><path d="m18 5 .6 1.4L20 7l-1.4.6L18 9l-.6-1.4L16 7l1.4-.6z" fill="currentColor"/></svg></span><b>Тақвими ҳиҷрӣ</b><small>Рӯзҳои муборак</small></a>
       <a class="tile" href="#month"><span class="ti" style="--c:var(--accent)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3.5" y="5" width="17" height="15" rx="2"/><path d="M3.5 9.5h17M8 3v4M16 3v4M7.5 13h2M11 13h2M14.5 13h2M7.5 16.5h2M11 16.5h2"/></svg></span><b>Ҷадвали моҳона</b><small>Вақти намоз барои моҳ</small></a>
       <a class="tile" href="#qibla"><span class="ti" style="--c:var(--gold)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="m15.5 8.5-2 5-5 2 2-5 5-2Z"/></svg></span><b>Қибланамо</b><small>Самти Каъба</small></a>
       <a class="tile" href="#asma"><span class="ti" style="--c:var(--ok)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3 14 8.5 20 9l-4.6 3.8L17 19l-5-3.2L7 19l1.6-6.2L4 9l6-.5z"/></svg></span><b>Асмо-ул-Ҳусно</b><small>99 номи Аллоҳ</small></a>
       <a class="tile" id="mosqueLink" href="https://www.google.com/maps/search/mosque" target="_blank" rel="noopener"><span class="ti" style="--c:var(--late)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 20V11h16v9M2.5 20h19M12 4c-3 2-5 3.4-5 7h10c0-3.6-2-5-5-7zM12 2v2M10 20v-4a2 2 0 0 1 4 0v4"/></svg></span><b>Масҷиди наздик</b><small>Дар Google Maps</small></a>
+      <a class="tile" href="#khushu"><span class="ti" style="--c:#7CC8F2"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12 21c-4-2.6-7-5.6-7-9.2A3.8 3.8 0 0 1 12 9.6a3.8 3.8 0 0 1 7 2.2c0 3.6-3 6.6-7 9.2z"/><path d="M12 3v3M8.5 4.2l1 2M15.5 4.2l-1 2"/></svg></span><b>Хушуъ</b><small>Намоз бе шитоб</small></a>
       <a class="tile wide" href="#prefs"><span class="ti" style="--c:var(--muted)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12"/><circle cx="16" cy="6" r="2"/><circle cx="10" cy="12" r="2"/><circle cx="18" cy="18" r="2"/></svg></span><b>Танзимот</b><small id="moreCity">Шаҳр, усули ҳисоб, огоҳӣ</small></a>
     </div>
   </section>
@@ -764,6 +854,54 @@ body.iq-on .app{padding-top:calc(74px + env(safe-area-inset-top,0px))}
     <a class="back" href="#more"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg>Бештар</a><h2 class="sec" style="margin-top:2px">Асмо-ул-Ҳусно</h2>
     <div class="card asma-hero" id="asmaHero"></div>
     <div class="asma-grid" id="asmaGrid"></div>
+  </section>
+
+  <section id="v-khushu" hidden>
+    <a class="back" href="#more"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg>Бештар</a><h2 class="sec" style="margin-top:2px">Хушуъ</h2>
+    <div class="card kh-quote"><p>«Ба таҳқиқ муъминон растагор шуданд, онон ки дар намозашон фурӯтан ва хошеъанд.»</p><small>Муъминун, 1–2</small></div>
+    <div class="dhikr kh-pr" id="khPr" role="group" aria-label="Намоз"></div>
+    <div class="card kh-sum"><div><b class="num" id="khTot">0</b><span>дақиқа</span></div><div class="kh-sum-r"><b id="khName"></b><small id="khSub"></small></div></div>
+    <div class="dlist kh-list" id="khList"></div>
+    <h2 class="sec">Вақт барои ҳар ракъат</h2>
+    <div class="dhikr" id="khRk" role="group" aria-label="Вақт барои ҳар ракъат"></div>
+    <h2 class="sec">Зикр пас аз ин намоз</h2>
+    <div class="dhikr" id="khDz" role="group" aria-label="Вақти зикр"></div>
+    <button class="btn primary kh-go" id="khGo">Оғози намоз бо хушуъ</button>
+    <p class="note" style="margin-top:8px">Таймер ҳар қисмро оҳиста нишон медиҳад, то намозро бе шитоб хонед. Дар охири ҳар қисм телефон каме ларзиш медиҳад.</p>
+  </section>
+
+  <section id="v-comp" hidden>
+    <a class="back" href="#more"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg>Бештар</a><h2 class="sec" style="margin-top:2px">Мусобиқа <small id="cmpWeek">7 рӯзи охир</small></h2>
+    <div id="cmpDemo" class="card cmp-note" hidden></div>
+
+    <div id="cmpJoin" hidden>
+      <div class="card cmp-hero">
+        <div class="cmp-trophy"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 4h8v5a4 4 0 0 1-8 0z"/><path d="M8 6H5a3 3 0 0 0 3 4M16 6h3a3 3 0 0 1-3 4M12 13v4M9 21h6M10 17h4v4h-4z"/></svg></div>
+        <h3>Бо дӯстон дар намоз мусобиқа кунед</h3>
+        <p>Ҳар кас натиҷаи худро мебинад: намозҳои рӯз, хол, фоизи ҳафта ва рӯзҳои пайдарпай. Касе ки қазо надорад ва холаш зиёд аст, дар боло меистад.</p>
+      </div>
+      <div class="card stack" style="margin-top:12px">
+        <div class="field"><label for="cmpName">Номи шумо дар мусобиқа</label><input id="cmpName" maxlength="20" placeholder="Масалан: Умарҷон"></div>
+        <button class="btn primary" id="cmpCreate">Гурӯҳи нав сохтан</button>
+        <div class="cmp-or"><i></i><span>ё</span><i></i></div>
+        <div class="row" style="flex-wrap:nowrap"><input id="cmpCode" class="dinput" maxlength="6" placeholder="Коди гурӯҳ, масалан K7M2QX" style="text-transform:uppercase;letter-spacing:.12em;font-weight:700"><button class="btn" id="cmpJoinBtn">Ҳамроҳ шудан</button></div>
+        <p class="note" id="cmpErr" style="margin:0"></p>
+      </div>
+    </div>
+
+    <div id="cmpBoard" hidden>
+      <div class="card cmp-head">
+        <div><small>Гурӯҳ</small><b id="cmpGName"></b></div>
+        <button class="cmp-code" id="cmpCopy" aria-label="Нусха гирифтани код"><span class="num" id="cmpGCode"></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h3"/></svg></button>
+      </div>
+      <div class="cmp-me" id="cmpMe"></div>
+      <div class="cmp-list" id="cmpList"></div>
+      <div class="row" style="justify-content:space-between;margin-top:10px"><span class="note" id="cmpUpd"></span><button class="link" id="cmpRefresh">Навсозӣ</button></div>
+      <div class="row" style="margin-top:14px"><a class="btn" id="cmpShare" target="_blank" rel="noopener" style="flex:1;text-align:center;text-decoration:none;color:#B8F07E;border-color:rgba(147,212,92,.45)">Даъват тавассути WhatsApp</a></div>
+      <details style="margin-top:14px"><summary>Хол чӣ тавр ҳисоб мешавад</summary><p class="note">Ҳар намоз: бо ҷамоат 3 хол, ба вақт 2 хол, дер 1 хол, қазо 0. Ҳисоб барои 7 рӯзи охир. Агар хол баробар бошад, касе ки қазояш камтар аст ва силсилааш дарозтар аст, болотар меистад. Фоиз: ба вақт 100%, дер 50%, қазо 0%.</p></details>
+      <button class="btn ghost" id="cmpLeave" style="width:100%;margin-top:12px">Аз гурӯҳ баромадан</button>
+      <div id="cmpLeaveC" hidden class="confirm">Шумо аз гурӯҳ хориҷ мешавед ва натиҷаатон аз ҷадвал нест мешавад.<div class="row" style="margin-top:8px"><button class="btn" id="cmpLeaveY">Ҳа, баромадан</button><button class="btn ghost" id="cmpLeaveN">Не</button></div></div>
+    </div>
   </section>
 
   <section id="v-prefs" hidden>
@@ -1463,6 +1601,148 @@ function widgetSync(){if(!NATIVE||!NATIVE.widget)return;try{const L=loc(),pd=pra
       const iq=iqamaAt(pr.k,w);return{k:pr.k,n:(pr.k==='dhuhr'&&fri)?'Ҷумъа':pr.n,s:w[0],e:w[1],h:hm(w[0],L.tz),st,iq,qh:iq?hm(iq,L.tz):''}})})}
   NATIVE.widget(JSON.stringify({city:L.name,days}))}catch(e){}}
 
+
+/* ---------- khushu: unhurried prayer plan and guided timer ---------- */
+const KH={
+ fajr:[{t:'s',r:2,w:'Суннат · пеш аз фарз'},{t:'f',r:2,w:'Фарз'}],
+ dhuhr:[{t:'s',r:4,w:'Суннат · пеш аз фарз'},{t:'f',r:4,w:'Фарз'},{t:'s',r:2,w:'Суннат · пас аз фарз'}],
+ asr:[{t:'f',r:4,w:'Фарз'}],
+ maghrib:[{t:'f',r:3,w:'Фарз'},{t:'s',r:2,w:'Суннат · пас аз фарз'}],
+ isha:[{t:'f',r:4,w:'Фарз'},{t:'s',r:2,w:'Суннат · пас аз фарз'},{t:'v',r:3,w:'Витр · воҷиб'}],
+ tahajjud:[{t:'n',r:0,w:'Нафл · ду-ду ракъат, пас аз нисфи шаб'}]};
+const KH_NAMES={fajr:'Бомдод',dhuhr:'Пешин',asr:'Аср',maghrib:'Шом',isha:'Хуфтан',tahajjud:'Таҳаҷҷуд'};
+const KH_DZ={fajr:3,dhuhr:3,asr:3,maghrib:0,isha:0,tahajjud:0};
+const KHT={n:['нафл','#E8A0C8'],s:['суннат','var(--ok)'],f:['фарз','var(--gold)'],v:['витр','var(--late)'],z:['зикр','#7CC8F2']};
+let khSel=null,khRunS=null;
+function khCfg(){S.kh=Object.assign({rk:1,off:{},dzp:{},th:4},S.kh||{});if(S.kh.v!==2){S.kh.v=2;S.kh.off={};S.kh.dzp={}}return S.kh}
+function khDz(k){const c=khCfg();return c.dzp[k]!=null?c.dzp[k]:KH_DZ[k]}
+function khGroups(k){const c=khCfg();return KH[k].map(g=>g.t==='n'?Object.assign({},g,{r:c.th}):g)}
+function khSegs(k){const c=khCfg(),list=[],dz=khDz(k);khGroups(k).forEach((g,i)=>{if(c.off[k+i])return;list.push({t:g.t,r:g.r,w:g.w,sec:Math.round(g.r*c.rk*60)})});
+  if(dz>0)list.push({t:'z',r:0,w:'Тасбеҳ, истиғфор ва дуо',sec:dz*60});return list}
+const fmMin=m=>(Math.round(m*10)/10).toString().replace('.',',');
+function renderKhushu(){const c=khCfg();if(!khSel){const n=currentKey(Date.now());khSel=n&&KH[n]?n:'dhuhr'}
+  $('khPr').innerHTML=Object.keys(KH).map(k=>'<button class="chip" data-khp="'+k+'" aria-pressed="'+(k===khSel)+'">'+KH_NAMES[k]+'</button>').join('');const dz=khDz(khSel);
+  const segs=khSegs(khSel),tot=segs.reduce((a,x)=>a+x.sec,0)/60,rk=segs.reduce((a,x)=>a+x.r,0);
+  $('khTot').textContent=fmMin(tot);$('khName').textContent=KH_NAMES[khSel];$('khSub').textContent=rk+' ракъат'+(dz?' + '+dz+' дақиқа зикр':'');
+  $('khList').innerHTML=khGroups(khSel).map((g,i)=>{const off=!!c.off[khSel+i],m=g.r*c.rk;
+    return'<div class="kh-row'+(off?' off':'')+'" style="--c:'+KHT[g.t][1]+'"><span class="bar"></span><div class="t">'+g.r+' ракъат '+KHT[g.t][0]+'<small>'+g.w+'</small></div><span class="m">'+fmMin(m)+' дақ</span><input class="tg" type="checkbox" data-kho="'+khSel+i+'" aria-label="'+g.r+' ракъат '+KHT[g.t][0]+'"'+(off?'':' checked')+(g.t!=='s'?' disabled':'')+'></div>'}).join('')+(khSel==='tahajjud'?'<div class="kh-row" style="--c:#E8A0C8"><span class="bar"></span><div class="t">Чанд ракъат?<small>'+[2,4,6,8,12].map(v=>'<button class="chip" data-khth="'+v+'" aria-pressed="'+(c.th===v)+'" style="padding:4px 11px;margin:6px 4px 0 0">'+v+'</button>').join('')+'</small></div><span></span><span></span></div>':'')+
+    (dz?'<div class="kh-row" style="--c:'+KHT.z[1]+'"><span class="bar"></span><div class="t">Зикрҳо<small>Субҳоналлоҳ 33 · Алҳамдулиллоҳ 33 · Аллоҳу акбар 34</small></div><span class="m">'+dz+' дақ</span><span></span></div>':'');
+  $('khRk').innerHTML=[[1,'1 дақиқа'],[1.5,'1,5 дақиқа'],[2,'2 дақиқа']].map(([v,l])=>'<button class="chip" data-khrk="'+v+'" aria-pressed="'+(c.rk===v)+'">'+l+'</button>').join('');
+  $('khDz').innerHTML=[0,2,3,5].map(v=>'<button class="chip" data-khdz="'+v+'" aria-pressed="'+(dz===v)+'">'+(v?v+' дақиқа':'Бе зикр')+'</button>').join('')}
+document.getElementById('v-khushu').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const c=khCfg();
+  if(b.dataset.khp)khSel=b.dataset.khp;else if(b.dataset.khrk)c.rk=+b.dataset.khrk;else if(b.dataset.khdz!=null)c.dzp[khSel]=+b.dataset.khdz;else if(b.dataset.khth)c.th=+b.dataset.khth;else return;save();renderKhushu()});
+document.getElementById('v-khushu').addEventListener('change',e=>{const i=e.target.closest('[data-kho]');if(!i)return;const c=khCfg();if(i.checked)delete c.off[i.dataset.kho];else c.off[i.dataset.kho]=1;save();renderKhushu()});
+/* guided run */
+let khWake=null;
+function khStart(){const segs=khSegs(khSel);khRunS={k:khSel,segs,i:0,left:segs[0].sec*1000,last:Date.now(),paused:false,iv:null};
+  $('khRun').hidden=false;$('khRun').classList.remove('paused');$('krPause').textContent='Таваққуф';
+  try{navigator.wakeLock&&navigator.wakeLock.request('screen').then(w=>khWake=w).catch(()=>{})}catch(e){}
+  khRunS.iv=setInterval(khTick,200);khDraw()}
+function khTick(){const r=khRunS;if(!r)return;const now=Date.now();if(!r.paused){r.left-=now-r.last}r.last=now;
+  if(r.left<=0){try{navigator.vibrate&&navigator.vibrate(r.i===r.segs.length-1?[120,80,120,80,240]:[90,60,90])}catch(e){}
+    while(r.left<=0){if(r.i>=r.segs.length-1){khFinish();return}r.i++;r.left+=r.segs[r.i].sec*1000}}khDraw()}
+function khDraw(){const r=khRunS,sg=r.segs[r.i],L=Math.max(0,r.left),m=Math.floor(L/60000),sec=Math.ceil(L%60000/1000)%60,mm=sec===0&&L%60000>0?m+0:m;
+  const shown=Math.ceil(L/1000);$('krT').textContent=Math.floor(shown/60)+':'+String(shown%60).padStart(2,'0');
+  $('krRing').setAttribute('stroke-dashoffset',(339.3*(1-L/(sg.sec*1000))).toFixed(1));$('krRing').setAttribute('stroke',sg.t==='z'?'#7CC8F2':sg.t==='f'?'#E6BC5E':sg.t==='v'?'#BBA3F0':'#93D45C');
+  const p=KH_NAMES[r.k],totLeft=(r.segs.slice(r.i+1).reduce((a,x)=>a+x.sec,0)*1000+L)/60000;
+  $('krPr').textContent=p+' · қисми '+(r.i+1)+' аз '+r.segs.length;$('krTot').textContent='боқӣ '+fmMin(Math.ceil(totLeft*10)/10)+' дақ';
+  if(sg.t==='z'){$('krSeg').textContent='Зикр ва дуо';$('krRk').textContent='пас аз намоз';$('krSub').textContent=sg.w}
+  else{const per=sg.sec*1000/sg.r,done=Math.min(sg.r,Math.floor((sg.sec*1000-L)/per)+1);$('krSeg').textContent=sg.r+' ракъат '+KHT[sg.t][0];$('krRk').textContent='ракъати '+done+' аз '+sg.r;$('krSub').textContent=sg.w}
+  $('krSteps').innerHTML=r.segs.map((x,i)=>'<span class="'+(i<r.i?'done':i===r.i?'cur':'')+'"'+(i===r.i?' style="--p:'+(100*(1-L/(x.sec*1000))).toFixed(1)+'%"':'')+'></span>').join('')}
+function khFinish(){const r=khRunS;clearInterval(r.iv);khRunS=null;$('khRun').hidden=true;try{khWake&&khWake.release()}catch(e){}khWake=null;
+  if(r.k==='tahajjud'){toast('Аллоҳ қабул кунад!');return}
+  const pd=prayerDay(),W=windowsFor(pd),w=W[r.k],now=Date.now();
+  if(now>=w[0]&&now<w[1]&&!rec(pd,r.k)){setRecAt(pd,r.k,{s:now<w[1]-MIN30?'ontime':'late',j:false,at:now});save();renderList();renderStats();renderQaza();nativeSync();toast('Аллоҳ қабул кунад! '+TRACK.find(x=>x.k===r.k).n+' қайд шуд.')}
+  else toast('Аллоҳ қабул кунад!')}
+$('khGo').onclick=khStart;
+$('krPause').onclick=()=>{const r=khRunS;if(!r)return;r.paused=!r.paused;r.last=Date.now();$('krPause').textContent=r.paused?'Давом':'Таваққуф';$('khRun').classList.toggle('paused',r.paused)};
+$('krSkip').onclick=()=>{const r=khRunS;if(!r)return;if(r.i>=r.segs.length-1){khFinish();return}r.i++;r.left=r.segs[r.i].sec*1000;r.last=Date.now();khDraw()};
+$('krStop').onclick=()=>{const r=khRunS;if(!r)return;if(r.i>=r.segs.length-1||r.segs.slice(0,r.i).some(x=>x.t==='f')){khFinish();return}clearInterval(r.iv);khRunS=null;$('khRun').hidden=true;try{khWake&&khWake.release()}catch(e){}};
+
+
+/* ---------- competition (Firebase via REST; works in the APK) ---------- */
+const FB={apiKey:'AIzaSyAebMjQSM2bqtjyoEDGDw6tHh5nSwjVzmU',projectId:'namozkhon'};
+const fbReady=()=>!!(FB.apiKey&&FB.projectId);
+const compLive=()=>!!(NATIVE&&fbReady());
+let CMP=store.get('comp',{name:'',code:'',gname:''}),CMPC=store.get('comp_cache',null),cmpPushT=null,cmpLastPull=0;
+const cmpSave=()=>store.set('comp',CMP);
+function calcStreak(){let n=0,d=todayYMD;if(onTimeCount(d)<5)d=addDays(d,-1);while(onTimeCount(d)===5&&n<3650){n++;d=addDays(d,-1)}return n}
+function compSummary(){const now=Date.now(),pd=prayerDay(),W=windowsFor(pd);let pts=0,on=0,jm=0,late=0,miss=0,elig=0;
+  for(let i=0;i<7;i++){const y=addDays(pd,-i);if(y<FIRST)continue;const d=daySum(y,now);
+    pts+=(d.ontime-d.jamaat)*2+d.jamaat*3+d.late;on+=d.ontime;jm+=d.jamaat;late+=d.late;miss+=d.missed;elig+=d.ontime+d.late+d.missed}
+  const st=TRACK.map(p=>{const r=rec(pd,p.k);if(!r)return now>=W[p.k][1]?'missed':'';return r.s==='missed'?'missed':r.s==='late'?'late':r.j?'jamaat':'ontime'});
+  const q=QK.reduce((a,[k])=>a+QZ[k],0);
+  return{n:CMP.name,u:now,pd,st,pts,pct:elig?Math.round((on+late*.5)/elig*100):0,miss,on,jm,late,s:calcStreak(),q}}
+/* auth */
+let FBA=store.get('fb',null);
+async function fbToken(){if(!fbReady())throw new Error('config');
+  if(FBA&&FBA.exp>Date.now()+60000)return FBA;
+  if(FBA&&FBA.refresh){const r=await fetch('https://securetoken.googleapis.com/v1/token?key='+FB.apiKey,{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:'grant_type=refresh_token&refresh_token='+encodeURIComponent(FBA.refresh)});
+    if(r.ok){const j=await r.json();FBA={uid:j.user_id,token:j.id_token,refresh:j.refresh_token,exp:Date.now()+(+j.expires_in)*1000};store.set('fb',FBA);return FBA}}
+  const r=await fetch('https://identitytoolkit.googleapis.com/v1/accounts:signUp?key='+FB.apiKey,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({returnSecureToken:true})});
+  if(!r.ok)throw new Error('auth '+r.status);const j=await r.json();FBA={uid:j.localId,token:j.idToken,refresh:j.refreshToken,exp:Date.now()+(+j.expiresIn)*1000};store.set('fb',FBA);return FBA}
+const fsBase=()=>'https://firestore.googleapis.com/v1/projects/'+FB.projectId+'/databases/(default)/documents/';
+async function fsReq(method,path,body,query){const a=await fbToken();const r=await fetch(fsBase()+path+(query?'?'+query:''),{method,headers:{'Authorization':'Bearer '+a.token,'Content-Type':'application/json'},body:body?JSON.stringify(body):undefined});
+  if(r.status===404)return null;if(!r.ok)throw new Error('fs '+r.status);return method==='DELETE'?true:r.json()}
+const sv=v=>({stringValue:String(v)}),iv=v=>({integerValue:String(Math.round(v))});
+function cmpGenCode(){const A='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';let c='';const b=new Uint8Array(6);crypto.getRandomValues(b);b.forEach(x=>c+=A[x%A.length]);return c}
+async function compPush(){if(!compLive()||!CMP.code)return;const a=await fbToken(),d=compSummary();
+  await fsReq('PATCH','groups/'+CMP.code+'/members/'+a.uid,{fields:{name:sv(CMP.name),updated:iv(d.u),data:sv(JSON.stringify(d))}})}
+function compPushSoon(){if(!compLive()||!CMP.code)return;clearTimeout(cmpPushT);cmpPushT=setTimeout(()=>compPush().catch(()=>{}),2500)}
+async function compPull(){if(!compLive()||!CMP.code)return;const j=await fsReq('GET','groups/'+CMP.code+'/members',null,'pageSize=20');
+  const list=((j&&j.documents)||[]).map(doc=>{try{const d=JSON.parse(doc.fields.data.stringValue);d.id=doc.name.split('/').pop();return d}catch(e){return null}}).filter(Boolean);
+  CMPC={at:Date.now(),list};store.set('comp_cache',CMPC);cmpLastPull=Date.now()}
+async function compCreate(){const name=$('cmpName').value.trim();if(!name){cmpErr('Номи худро нависед');return}
+  if(!compLive()){cmpErr(NATIVE?'Firebase ҳанӯз танзим нашудааст.':'Мусобиқа танҳо дар APK кор мекунад.');return}
+  cmpErr('Гурӯҳ сохта мешавад…');try{const a=await fbToken();let code='',ok=false;
+    for(let t=0;t<5&&!ok;t++){code=cmpGenCode();try{const r=await fsReq('PATCH','groups/'+code,{fields:{owner:sv(a.uid),name:sv('Гурӯҳи '+name),created:iv(Date.now())}},'currentDocument.exists=false');ok=!!r}catch(e){if(!String(e).includes('400')&&!String(e).includes('409'))throw e}}
+    if(!ok)throw new Error('code');CMP={name,code,gname:'Гурӯҳи '+name};cmpSave();await compPush();await compPull();cmpErr('');renderComp();toast('Гурӯҳ сохта шуд. Кодро ба дӯстон фиристед.')}
+  catch(e){cmpErr('Пайваст нашуд. Интернетро санҷед ва боз кӯшиш кунед.')}}
+async function compJoin(){const name=$('cmpName').value.trim(),code=$('cmpCode').value.trim().toUpperCase();if(!name){cmpErr('Номи худро нависед');return}
+  if(!/^[A-Z0-9]{6}$/.test(code)){cmpErr('Код бояд 6 ҳарф ё рақам бошад');return}
+  if(!compLive()){cmpErr(NATIVE?'Firebase ҳанӯз танзим нашудааст.':'Мусобиқа танҳо дар APK кор мекунад.');return}
+  cmpErr('Ҷустуҷӯи гурӯҳ…');try{const g=await fsReq('GET','groups/'+code);if(!g){cmpErr('Гурӯҳ бо ин код ёфт нашуд');return}
+    const m=await fsReq('GET','groups/'+code+'/members',null,'pageSize=20');const cnt=((m&&m.documents)||[]).length;if(cnt>=8){cmpErr('Ин гурӯҳ пур аст (8 нафар)');return}
+    CMP={name,code,gname:(g.fields&&g.fields.name&&g.fields.name.stringValue)||'Гурӯҳ'};cmpSave();await compPush();await compPull();cmpErr('');renderComp();toast('Ба гурӯҳ ҳамроҳ шудед!')}
+  catch(e){cmpErr('Пайваст нашуд. Интернетро санҷед ва боз кӯшиш кунед.')}}
+async function compLeave(){try{if(compLive()&&FBA)await fsReq('DELETE','groups/'+CMP.code+'/members/'+FBA.uid)}catch(e){}
+  CMP={name:CMP.name,code:'',gname:''};cmpSave();CMPC=null;store.set('comp_cache',null);renderComp();toast('Аз гурӯҳ баромадед')}
+function cmpErr(t){$('cmpErr').textContent=t}
+/* demo board for the web preview */
+function compDemo(){const me=compSummary();me.n=CMP.name||'Шумо';me.id='me';const pd=prayerDay();
+  const mk=(n,st,pts,pct,miss,s,q)=>({n,st,pts,pct,miss,s,q,pd,u:Date.now()-Math.random()*3600e3,id:n});
+  return[me,mk('Намуна · Аҳмад',['jamaat','jamaat','ontime','',''],96,98,0,21,0),mk('Намуна · Фирдавс',['ontime','ontime','ontime','',''],84,92,1,9,3),mk('Намуна · Шоҳрух',['ontime','late','ontime','',''],70,80,2,4,12),mk('Намуна · Бахтиёр',['missed','ontime','late','',''],51,63,5,0,40)]}
+function compSort(list){return list.slice().sort((a,b)=>b.pts-a.pts||a.miss-b.miss||b.s-a.s||b.pct-a.pct)}
+function compOpen(){renderComp();if(compLive()&&CMP.code)compPush().then(compPull).then(renderComp).catch(()=>renderComp(true))}
+function renderComp(offline){const live=compLive(),demo=!live;
+  $('cmpDemo').hidden=!demo;
+  if(demo)$('cmpDemo').innerHTML=NATIVE?'<b>Мусобиқа ҳанӯз фаъол нест.</b> Барои кор кардан Firebase лозим аст. Ҳоло ҷадвали <b>намуна</b> нишон дода мешавад.':'Мусобиқа дар <b>APK</b> бо интернет кор мекунад. Дар ин ҷо ҷадвали <b>намуна</b> нишон дода мешавад, то тарҳро бинед.';
+  const joined=live?!!CMP.code:true;$('cmpJoin').hidden=joined;$('cmpBoard').hidden=!joined;
+  if(!$('cmpName').value)$('cmpName').value=CMP.name||'';
+  if(!joined)return;
+  const myId=live?(FBA&&FBA.uid):'me';let list=live?((CMPC&&CMPC.list)||[]):compDemo();
+  if(live&&FBA&&!list.some(x=>x.id===FBA.uid)){const me=compSummary();me.id=FBA.uid;list=list.concat([me])}
+  list=compSort(list);
+  $('cmpGName').textContent=live?CMP.gname:'Гурӯҳи намуна';$('cmpGCode').textContent=live?CMP.code:'K7M2QX';
+  const myRank=list.findIndex(x=>x.id===myId)+1;
+  $('cmpMe').innerHTML=myRank?'Ҷои шумо: <b>'+myRank+'</b> аз '+list.length:'';
+  const pd=prayerDay();
+  $('cmpList').innerHTML=list.map((m,i)=>{const me=m.id===myId,stale=m.pd!==pd;
+    const dots=(m.st||[]).map(x=>'<i class="'+(stale?'':x)+'"></i>').join('');
+    return'<div class="cmp-row'+(me?' me':'')+'"><span class="cmp-rk'+(i<3?' r'+(i+1):'')+'">'+(i+1)+'</span><div style="min-width:0"><div class="cmp-nm"><span>'+escapeHTML(m.n||'—')+'</span>'+(me?'<span class="cmp-tag">Ман</span>':'')+'</div>'+
+      '<div class="cmp-dots" aria-label="Намозҳои имрӯз">'+dots+'</div>'+
+      '<div class="cmp-meta">'+(m.s?'<span class="fl">'+m.s+' рӯз пайдарпай</span>':'')+(m.miss?'<span class="qz">'+m.miss+' қазо</span>':'<span class="ok">бе қазо</span>')+'</div>'+
+      '<div class="cmp-bar"><i style="width:'+Math.max(2,m.pct)+'%"></i></div></div><div class="cmp-r"><b class="num">'+m.pct+'%</b><small class="num">'+m.pts+' хол</small></div></div>'}).join('');
+  $('cmpUpd').textContent=live?(offline?'Интернет нест · ':'')+(CMPC?'навсозӣ '+hm(CMPC.at,loc().tz):''):'Ин ҷадвал намуна аст';
+  const msg='Ассалому алейкум! Биё дар НАМОЗХОН TJ дар намоз мусобиқа кунем. Коди гурӯҳ: '+(live?CMP.code:'K7M2QX');
+  $('cmpShare').href='https://wa.me/?text='+encodeURIComponent(msg);
+  $('compTileSub').textContent=live&&CMP.code&&myRank?'Ҷои шумо: '+myRank+' аз '+list.length:'Бо 5–6 дӯст рақобат кунед'}
+$('cmpCreate').onclick=compCreate;$('cmpJoinBtn').onclick=compJoin;
+$('cmpName').addEventListener('change',()=>{CMP.name=$('cmpName').value.trim();cmpSave()});
+$('cmpRefresh').onclick=()=>{if(!compLive()){toast('Ин ҷадвал намуна аст');return}compPush().then(compPull).then(()=>{renderComp();toast('Нав шуд')}).catch(()=>{renderComp(true);toast('Интернет нест')})};
+$('cmpCopy').onclick=()=>{const c=$('cmpGCode').textContent;try{navigator.clipboard.writeText(c).then(()=>toast('Код нусха шуд: '+c),()=>toast('Код: '+c))}catch(e){toast('Код: '+c)}};
+$('cmpLeave').onclick=()=>{$('cmpLeaveC').hidden=false};$('cmpLeaveN').onclick=()=>{$('cmpLeaveC').hidden=true};$('cmpLeaveY').onclick=()=>{$('cmpLeaveC').hidden=true;compLeave()};
+
 /* ---------- qaza ---------- */
 function renderQaza(){
   const tot=QK.reduce((a,[k])=>a+QZ[k],0);$('qTotal').textContent=tot.toLocaleString('ru-RU');$('qPaid').textContent=QZ.paid.toLocaleString('ru-RU');
@@ -1563,15 +1843,15 @@ function chime(vol){try{AC=AC||new (window.AudioContext||window.webkitAudioConte
 let tT;function toast(m){const t=$('toast');t.textContent=m;t.hidden=false;clearTimeout(tT);tT=setTimeout(()=>t.hidden=true,2600)}
 
 /* ---------- routing ---------- */
-const VIEWS=['today','duty','qaza','qibla','tasbeh','more','hijri','month','asma','prefs'];const UNDER_MORE=['hijri','month','asma','prefs','qibla'];
+const VIEWS=['today','duty','qaza','qibla','tasbeh','more','hijri','month','asma','prefs','khushu','comp'];const UNDER_MORE=['hijri','month','asma','prefs','qibla','khushu','comp'];
 function route(){const v=VIEWS.includes(location.hash.slice(1))?location.hash.slice(1):'today';
   VIEWS.forEach(x=>{$('v-'+x).hidden=x!==v});
   const nv=UNDER_MORE.includes(v)?'more':v;document.querySelectorAll('.nav a').forEach(a=>{if(a.dataset.v===nv)a.setAttribute('aria-current','page');else a.removeAttribute('aria-current')});
-  if(v==='duty')renderDuty();if(v==='hijri')renderHijri();if(v==='month')renderMonth();if(v==='asma')renderAsma();if(v==='more')renderMore();if(v==='prefs')renderRemList();if(v==='qibla')renderQibla();if(v==='tasbeh')renderTasbeh();window.scrollTo(0,0)}
+  if(v==='duty')renderDuty();if(v==='hijri')renderHijri();if(v==='month')renderMonth();if(v==='asma')renderAsma();if(v==='more')renderMore();if(v==='khushu')renderKhushu();if(v==='comp')compOpen();if(v==='prefs')renderRemList();if(v==='qibla')renderQibla();if(v==='tasbeh')renderTasbeh();window.scrollTo(0,0)}
 window.addEventListener('hashchange',route);
 
 function renderAll(){renderDuty();renderExtras();renderHeader();renderHero();renderList();renderStats();renderQaza();renderQibla();renderTasbeh();nativeSync()}
-function nativeSync(){if(!NATIVE)return;try{const L=loc();if(NATIVE.setLocation)NATIVE.setLocation(L.lat,L.lng);widgetSync();
+function nativeSync(){compPushSoon();if(!NATIVE)return;try{const L=loc();if(NATIVE.setLocation)NATIVE.setLocation(L.lat,L.lng);widgetSync();
   NATIVE.schedule(JSON.stringify(buildReminders(Date.now(),3).slice(0,190).map(r=>({t:r.t,title:r.title,text:r.text,iq:r.iq||0,k:r.k||'',n:r.n||'',ask:!!r.ask}))));}catch(e){}}
 window.ntHeading=function(h){heading=h;if(!$('v-qibla').hidden){const t=Date.now();if(t-(window._qh||0)>90){window._qh=t;renderQibla()}}};
 
@@ -1581,7 +1861,7 @@ function tick(){const L=loc(),now=Date.now();
   if(ymdIn(now,L.tz)!==todayYMD){compute();renderAll();}
   const pd=prayerDay();if(lastPD&&pd!==lastPD){const old=lastPD;if(viewYMD===old)viewYMD=pd;if(dView===old)dView=pd;renderAll();const ys=daySum(old,now);if(ys.pct!=null)toast('Ҷамъбасти рӯзи гузашта: '+ys.pct+'% · дар вақташ '+ys.ontime+' аз 5');}lastPD=pd;
   renderHero();renderIqBar();wuCheck();
-  const m=Math.floor(now/60000);if(m!==lastMinute){lastMinute=m;renderExtras();webReminders(now);if(!$('v-qibla').hidden)renderQibla();if(autoQaza(now)){renderStats();renderQaza()}if(!$('v-today').hidden)renderList()}
+  const m=Math.floor(now/60000);if(m!==lastMinute){lastMinute=m;if(!$('v-comp').hidden&&compLive()&&CMP.code&&Date.now()-cmpLastPull>60000)compPull().then(()=>renderComp()).catch(()=>{});renderExtras();webReminders(now);if(!$('v-qibla').hidden)renderQibla();if(autoQaza(now)){renderStats();renderQaza()}if(!$('v-today').hidden)renderList()}
   for(const p of TRACK){const t=TT[p.k];if(now>=t&&now-t<60000){const id=todayYMD+p.k;if(lastFired!==id){lastFired=id;store.set('fired',id);toast('Вақти намози '+p.n+' расид');if(S.sound)chime(1);renderList();}}}
 }
 
