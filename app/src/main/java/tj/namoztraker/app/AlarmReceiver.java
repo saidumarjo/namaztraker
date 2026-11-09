@@ -12,6 +12,7 @@ public class AlarmReceiver extends BroadcastReceiver {
             Notif.onWudu(c, in);
             return;
         }
+        if (Widgets.isMarked(c, in.getStringExtra("mk"))) return;
         String title = in.getStringExtra("title");
         String text = in.getStringExtra("text");
         int id = in.getIntExtra("id", 0);
@@ -21,7 +22,9 @@ public class AlarmReceiver extends BroadcastReceiver {
         boolean ask = in.getBooleanExtra("ask", false);
         if (title == null) title = "НАМОЗХОН TJ";
         if (text == null) text = "";
-        if (iq > 0 || ask) {
+        if (in.getBooleanExtra("u", false)) {
+            Notif.showUrgent(c, title, text, key == null ? "" : key);
+        } else if (iq > 0 || ask) {
             Notif.showAdhan(c, title, text, iq, key == null ? "" : key, name == null ? "" : name, ask, true);
         } else {
             Notif.show(c, title, text, id);

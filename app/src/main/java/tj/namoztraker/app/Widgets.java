@@ -9,6 +9,8 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.SystemClock;
 import android.widget.RemoteViews;
+import android.widget.Toast;
+import android.content.SharedPreferences;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -16,6 +18,9 @@ import org.json.JSONObject;
 /** Home-screen widgets: next prayer with live countdown and today's five prayers. */
 final class Widgets {
     static final String ACTION_REFRESH = "tj.namoztraker.app.WIDGET_REFRESH";
+    static final String ACTION_MARK = "tj.namoztraker.app.WIDGET_MARK";
+    private static final long MIN30 = 30 * 60_000L;
+    private static final long UNDO_MS = 5_000L;
     private static final int REFRESH_CODE = 901;
 
     private static final int[] CELL = {R.id.w_c0, R.id.w_c1, R.id.w_c2, R.id.w_c3, R.id.w_c4};
@@ -98,6 +103,11 @@ final class Widgets {
                         default: bg = R.drawable.w_st_none; mark = ""; break;
                     }
                     vb.setInt(STAT[j], "setBackgroundResource", bg);
+                    Intent mi = new Intent(c, WidgetBig.class).setAction(ACTION_MARK)
+                            .setData(android.net.Uri.parse("nt://mark/" + day.optString("d") + "/" + o.optString("k")))
+                            .putExtra("d", day.optString("d")).putExtra("k", o.optString("k"));
+                    vb.setOnClickPendingIntent(CELL[j], PendingIntent.getBroadcast(c, 910 + j, mi,
+                            PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE));
                     vb.setTextViewText(STAT[j], mark);
                 }
                 vs.setProgressBar(R.id.w_ring, 5, done, false);
@@ -148,6 +158,107 @@ final class Widgets {
             if (small.length > 0) m.updateAppWidget(small, vs);
             scheduleRefresh(c, nextBoundary);
         } catch (Exception ignored) { }
+    }
+
+    private static SharedPreferences prefs(Context c) {
+        return c.getSharedPreferences("nt", Context.MODE_PRIVATE);
+    }
+
+    /** Tap on a prayer cell: mark it as prayed without opening the app; a second tap within 5 s undoes. */
+    static void mark(Context c, String d, String k) {
+        if (d == null || k == null) return;
+        try {
+            SharedPreferences sp = prefs(c);
+            JSONObject w = new JSONObject(sp.getString("widget", "{}"));
+            JSONObject o = find(w, d, k);
+            if (o == null) return;
+            String nm = o.optString("n");
+            long now = System.currentTimeMillis(), s = o.getLong("s"), e = o.getLong("e");
+            JSONObject marks = new JSONObject(sp.getString("wmarks", "{}"));
+            String key = d + "|" + k;
+            String st = o.optString("st", "");
+            if (!st.isEmpty()) {
+                JSONObject m = marks.optJSONObject(key);
+                if (m != null && now - m.optLong("at") < UNDO_MS) {
+                    marks.remove(key);
+                    o.put("st", "");
+                    sp.edit().putString("wmarks", marks.toString()).putString("widget", w.toString()).apply();
+                    toast(c, nm + ": қайд бекор шуд");
+                } else {
+                    toast(c, nm + " аллакай қайд шудааст ва иваз намешавад");
+                }
+                updateAll(c);
+                return;
+            }
+            if (now < s) { toast(c, "Вақти " + nm + " ҳанӯз нарасидааст"); return; }
+            if (now >= e) { toast(c, "Вақти " + nm + " гузаштааст"); return; }
+            String ns = now < e - MIN30 ? "ontime" : "late";
+            JSONObject m = new JSONObject();
+            m.put("s", ns);
+            m.put("at", now);
+            marks.put(key, m);
+            o.put("st", ns);
+            sp.edit().putString("wmarks", marks.toString()).putString("widget", w.toString()).apply();
+            Notif.cancelUrgent(c);
+            Notif.cancelAdhan(c);
+            toast(c, nm + (ns.equals("ontime") ? " · ба вақт" : " · дер") + " қайд шуд ✓\nХато бошад, дар 5 сония боз зер кунед");
+            updateAll(c);
+        } catch (Exception ignored) { }
+    }
+
+    private static JSONObject find(JSONObject w, String d, String k) {
+        JSONArray days = w.optJSONArray("days");
+        if (days == null) return null;
+        for (int i = 0; i < days.length(); i++) {
+            JSONObject day = days.optJSONObject(i);
+            if (day == null || !d.equals(day.optString("d"))) continue;
+            JSONArray p = day.optJSONArray("p");
+            if (p == null) return null;
+            for (int j = 0; j < p.length(); j++) {
+                JSONObject o = p.optJSONObject(j);
+                if (o != null && k.equals(o.optString("k"))) return o;
+            }
+        }
+        return null;
+    }
+
+    /** True if the prayer for key "yyyy-mm-dd|k" is already marked (in the app or from the widget). */
+    static boolean isMarked(Context c, String key) {
+        if (key == null || key.isEmpty()) return false;
+        try {
+            if (new JSONObject(prefs(c).getString("wmarks", "{}")).has(key)) return true;
+            int bar = key.indexOf('|');
+            JSONObject o = find(new JSONObject(prefs(c).getString("widget", "{}")), key.substring(0, bar), key.substring(bar + 1));
+            if (o == null) return false;
+            String st = o.optString("st", "");
+            return st.equals("ontime") || st.equals("late") || st.equals("jamaat");
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    /** Marks older than the undo window, handed to the app once. */
+    static String takeMarks(Context c) {
+        try {
+            SharedPreferences sp = prefs(c);
+            JSONObject all = new JSONObject(sp.getString("wmarks", "{}")), out = new JSONObject(), keep = new JSONObject();
+            long now = System.currentTimeMillis();
+            JSONArray names = all.names();
+            if (names == null) return "{}";
+            for (int i = 0; i < names.length(); i++) {
+                String k = names.getString(i);
+                JSONObject m = all.getJSONObject(k);
+                if (now - m.optLong("at") >= UNDO_MS) out.put(k, m); else keep.put(k, m);
+            }
+            sp.edit().putString("wmarks", keep.toString()).apply();
+            return out.toString();
+        } catch (Exception e) {
+            return "{}";
+        }
+    }
+
+    private static void toast(Context c, String t) {
+        try { Toast.makeText(c.getApplicationContext(), t, Toast.LENGTH_LONG).show(); } catch (Exception ignored) { }
     }
 
     private static void scheduleRefresh(Context c, long at) {

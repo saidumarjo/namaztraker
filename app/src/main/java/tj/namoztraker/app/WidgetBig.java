@@ -15,5 +15,6 @@ public class WidgetBig extends AppWidgetProvider {
     public void onReceive(Context c, Intent in) {
         super.onReceive(c, in);
         if (Widgets.ACTION_REFRESH.equals(in.getAction())) Widgets.updateAll(c);
+        else if (Widgets.ACTION_MARK.equals(in.getAction())) Widgets.mark(c, in.getStringExtra("d"), in.getStringExtra("k"));
     }
 }

@@ -105,6 +105,7 @@ public class MainActivity extends Activity implements SensorEventListener {
         }
 
         handleWuduIntent(getIntent());
+        handleUrgentIntent(getIntent());
 
         sensors = (SensorManager) getSystemService(SENSOR_SERVICE);
         if (sensors != null) rotation = sensors.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);
@@ -129,6 +130,28 @@ public class MainActivity extends Activity implements SensorEventListener {
         super.onNewIntent(intent);
         setIntent(intent);
         handleWuduIntent(intent);
+        handleUrgentIntent(intent);
+    }
+
+    /* ---------- "prayer is becoming qaza" full-screen alert ---------- */
+    private volatile String pendingUrgent = null;
+
+    private void handleUrgentIntent(Intent in) {
+        if (in == null || !Notif.ACTION_URGENT.equals(in.getAction())) return;
+        String key = in.getStringExtra("key");
+        in.setAction(null);
+        if (Build.VERSION.SDK_INT >= 27) {
+            setShowWhenLocked(true);
+            setTurnScreenOn(true);
+        }
+        Notif.cancelUrgent(getApplicationContext());
+        if (key == null || key.isEmpty()) return;
+        pendingUrgent = key;
+        if (web != null) {
+            String k = key.replace("'", "");
+            web.evaluateJavascript("(function(){if(window.ntUrgent){window.ntUrgent('" + k + "');return 1}return 0})()",
+                    v -> { if ("1".equals(v)) pendingUrgent = null; });
+        }
     }
 
     /* ---------- 5-minute focus lock after "no wudu" ---------- */
@@ -265,6 +288,24 @@ public class MainActivity extends Activity implements SensorEventListener {
         @JavascriptInterface
         public void setWudu(String key, String ans) {
             Notif.setAnswer(getApplicationContext(), key, ans);
+        }
+
+        @JavascriptInterface
+        public String takeMarks() {
+            return Widgets.takeMarks(getApplicationContext());
+        }
+
+        @JavascriptInterface
+        public String takeUrgent() {
+            String k = pendingUrgent;
+            pendingUrgent = null;
+            return k == null ? "" : k;
+        }
+
+        @JavascriptInterface
+        public void urgentDone() {
+            Notif.cancelUrgent(getApplicationContext());
+            if (Build.VERSION.SDK_INT >= 27) runOnUiThread(() -> { setShowWhenLocked(false); setTurnScreenOn(false); });
         }
 
         @JavascriptInterface

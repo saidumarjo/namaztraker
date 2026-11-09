@@ -23,6 +23,9 @@ final class Notif {
     static final String CHANNEL = "namoz_times";
     static final String ACTION_WUDU = "tj.namoztraker.app.WUDU";
     static final String ACTION_WUDU_LOCK = "tj.namoztraker.app.WUDU_LOCK";
+    static final String ACTION_URGENT = "tj.namoztraker.app.URGENT";
+    static final String CH_URGENT = "namoz_urgent";
+    private static final int URGENT_ID = 88;
     private static final String PREFS = "nt";
     private static final int MAX = 200;
     private static final int IQAMA_ID = 77;
@@ -44,6 +47,51 @@ final class Notif {
                         .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
                         .build());
         nm.createNotificationChannel(ch);
+        NotificationChannel u = new NotificationChannel(CH_URGENT, "Намоз қазо шуда истодааст", NotificationManager.IMPORTANCE_HIGH);
+        u.setDescription("1 соат ва 30 дақиқа пеш аз қазо шудани намози нахонда, дар экран равзана мекушояд");
+        u.enableVibration(true);
+        u.setVibrationPattern(new long[]{0, 600, 250, 600, 250, 900});
+        u.setLockscreenVisibility(Notification.VISIBILITY_PUBLIC);
+        u.setBypassDnd(false);
+        nm.createNotificationChannel(u);
+    }
+
+    /** Full-screen alert: the prayer is about to become qaza and is not marked yet. */
+    static void showUrgent(Context c, String title, String text, String key) {
+        NotificationManager nm = c.getSystemService(NotificationManager.class);
+        if (nm == null) return;
+        createChannels(c);
+        Intent open = new Intent(c, MainActivity.class);
+        open.setAction(ACTION_URGENT);
+        open.putExtra("key", key);
+        open.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        PendingIntent pi = PendingIntent.getActivity(c, 880, open,
+                PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+        Notification n = new Notification.Builder(c, CH_URGENT)
+                .setSmallIcon(R.drawable.ic_stat)
+                .setColor(0xFFF28E6D)
+                .setContentTitle(title)
+                .setContentText(text)
+                .setStyle(new Notification.BigTextStyle().bigText(text))
+                .setCategory(Notification.CATEGORY_ALARM)
+                .setVisibility(Notification.VISIBILITY_PUBLIC)
+                .setContentIntent(pi)
+                .setFullScreenIntent(pi, true)
+                .setAutoCancel(true)
+                .setTimeoutAfter(30 * 60_000L)
+                .addAction(new Notification.Action.Builder(null, "Кушодан", pi).build())
+                .build();
+        nm.notify(URGENT_ID, n);
+    }
+
+    static void cancelAdhan(Context c) {
+        NotificationManager nm = c.getSystemService(NotificationManager.class);
+        if (nm != null) nm.cancel(IQAMA_ID);
+    }
+
+    static void cancelUrgent(Context c) {
+        NotificationManager nm = c.getSystemService(NotificationManager.class);
+        if (nm != null) nm.cancel(URGENT_ID);
     }
 
     static void saveAndSchedule(Context c, String json) {
@@ -70,6 +118,8 @@ final class Notif {
                 in.putExtra("key", o.optString("k", ""));
                 in.putExtra("name", o.optString("n", ""));
                 in.putExtra("ask", o.optBoolean("ask", false));
+                in.putExtra("u", o.optBoolean("u", false));
+                in.putExtra("mk", o.optString("mk", ""));
                 PendingIntent pi = PendingIntent.getBroadcast(c, count, in,
                         PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
                 setAlarm(am, t, pi);
