@@ -662,6 +662,31 @@ body.iq-on .app{padding-top:calc(74px + env(safe-area-inset-top,0px))}
 .pp-ok{width:64px;height:64px;margin:0 auto 10px;border-radius:50%;display:grid;place-items:center;font-size:32px;font-weight:900;color:#10230F;background:linear-gradient(135deg,#6DBB3C,#A6DD6A)}
 .pp-done h3{margin:0 0 8px;font-size:19px}
 .pp-done .pp-hd{font-size:13.5px;line-height:1.5;color:rgba(242,247,244,.8);font-family:'Noto Serif',Georgia,serif;margin:0 0 14px}
+.cb-row[data-mid]{cursor:pointer}
+.msheet{position:fixed;inset:0;z-index:65;display:flex;align-items:flex-end;justify-content:center;background:rgba(0,0,0,.55);-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);animation:wfade .2s ease}
+.mcard{width:100%;max-width:520px;max-height:88vh;overflow:auto;border-radius:26px 26px 0 0;padding:18px 16px calc(18px + env(safe-area-inset-bottom,0px));background:linear-gradient(180deg,#1C3529,#0F1F18);border:1px solid rgba(230,188,94,.25);border-bottom:0;animation:wup .28s cubic-bezier(.2,.9,.3,1.1)}
+.mhead{display:flex;align-items:center;gap:12px}
+.mhead .cb-av{width:48px;height:48px;font-size:19px;flex:none}
+.mhn{flex:1;min-width:0}.mhn b{display:block;font-size:19px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.mhn small{color:var(--muted);font-size:12.5px}
+.mclose{flex:none;width:34px;height:34px;border-radius:50%;border:1px solid var(--line);background:rgba(255,255,255,.06);color:inherit;font-size:15px}
+.mstats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin:14px 0 12px}
+.mstats div{text-align:center;padding:8px 2px;border-radius:12px;background:rgba(255,255,255,.04);border:1px solid var(--line)}
+.mstats b{display:block;font-size:17px}.mstats span{font-size:10.5px;color:var(--muted)}
+.mtbl table{width:100%;border-collapse:separate;border-spacing:0 6px;table-layout:fixed}
+.mtbl th{font-size:11px;color:var(--muted);font-weight:700;padding:0 0 2px}
+.mtbl th:first-child{text-align:left;width:26%}
+.mtbl td{text-align:center;padding:0}
+.mtbl td:first-child{text-align:left;font-size:12.5px;font-weight:700;white-space:nowrap}
+.mtbl td:first-child small{display:block;font-weight:500;color:var(--muted);font-size:10.5px}
+.mtbl tr.today td:first-child{color:var(--gold)}
+.mc{display:inline-grid;place-items:center;width:34px;height:34px;border-radius:10px;font-size:14px;font-weight:900;background:rgba(255,255,255,.05);border:1px dashed rgba(255,255,255,.14);color:var(--muted)}
+.mc small{display:block;font-size:8.5px;font-weight:700;line-height:1;margin-top:1px}
+.mc.ontime{background:#F2F7F4;border:0;color:#10230F}.mc.jamaat{background:#E6BC5E;border:0;color:#2A1D05}.mc.late{background:#B9A3F2;border:0;color:#1E1440}.mc.missed{background:#F28E6D;border:0;color:#2A0F07}
+.mc.t{line-height:1.05;flex-direction:column}
+.mleg{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;font-size:11.5px;color:var(--muted);margin-top:8px}
+.mleg i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:4px;vertical-align:-1px;border:1px dashed rgba(255,255,255,.3)}
+.mleg i.ontime{background:#F2F7F4;border:0}.mleg i.jamaat{background:#E6BC5E;border:0}.mleg i.late{background:#B9A3F2;border:0}.mleg i.missed{background:#F28E6D;border:0}
+.mnote{font-size:12px;color:var(--muted);text-align:center;margin:10px 0 0}.mnote:empty{display:none}
 .slptimes{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .slpview{position:fixed;inset:0;z-index:80;display:flex;align-items:center;justify-content:center;text-align:center;color:#F2F7F4;
   background:radial-gradient(120% 80% at 50% 0%,#1E3B2E,#0F2119 55%,#0A1412);padding:calc(20px + env(safe-area-inset-top,0px)) 20px calc(20px + env(safe-area-inset-bottom,0px));overflow:auto}
@@ -848,6 +873,15 @@ body.iq-on .app{padding-top:calc(74px + env(safe-area-inset-top,0px))}
     <div class="slpfajr" id="slpFajr"></div>
     <p class="slphd">«Ҳар кӣ намози Бомдодро бихонад, дар паноҳи Аллоҳ аст.» (Муслим)</p>
     <button class="btn" id="slpClose" type="button">Пӯшидани намуна</button>
+  </div>
+</div>
+<div class="msheet" id="mSheet" hidden role="dialog" aria-modal="true" aria-labelledby="mName">
+  <div class="mcard">
+    <div class="mhead"><span class="cb-av" id="mAv"></span><div class="mhn"><b id="mName"></b><small id="mSub"></small></div><button class="mclose" id="mClose" type="button" aria-label="Пӯшидан">✕</button></div>
+    <div class="mstats" id="mStats"></div>
+    <div class="mtbl" id="mTbl"></div>
+    <div class="mleg"><span><i class="ontime"></i>Ба вақт</span><span><i class="jamaat"></i>Ҷамоат</span><span><i class="late"></i>Дер</span><span><i class="missed"></i>Қазо</span><span><i></i>Ҳанӯз</span></div>
+    <p class="mnote" id="mNote"></p>
   </div>
 </div>
 <div class="usheet" id="usheet" hidden role="alertdialog" aria-modal="true" aria-labelledby="uQ">
@@ -2076,7 +2110,10 @@ function compSummary(){const now=Date.now(),pd=prayerDay(),W=windowsFor(pd);let 
     pts+=(d.ontime-d.jamaat)*2+d.jamaat*3+d.late;on+=d.ontime;jm+=d.jamaat;late+=d.late;miss+=d.missed;elig+=d.ontime+d.late+d.missed}
   const st=TRACK.map(p=>{const r=rec(pd,p.k);if(!r)return now>=W[p.k][1]?'missed':'';return r.s==='missed'?'missed':r.s==='late'?'late':r.j?'jamaat':'ontime'});
   const q=QK.reduce((a,[k])=>a+QZ[k],0),dd=[];for(let i=6;i>=0;i--){const y=addDays(pd,-i);const x=y<FIRST?null:daySum(y,now);dd.push(x&&x.pct!=null?x.pct:0)}
-  return{n:CMP.name,u:now,pd,st,pts,dd,pct:elig?Math.round((on+late*.5)/elig*100):0,miss,on,jm,late,s:calcStreak(),q}}
+  const L=loc(),wk=[];for(let i=6;i>=0;i--){const y=addDays(pd,-i);if(y<FIRST)continue;const Wy=windowsFor(y);
+    wk.push({d:y,s:TRACK.map(p=>{const r=rec(y,p.k);if(!r)return now>=Wy[p.k][1]?'missed':'';return r.s==='missed'?'missed':r.s==='late'?'late':r.j?'jamaat':'ontime'}),
+      t:TRACK.map(p=>{const r=rec(y,p.k);return r&&r.at&&r.s!=='missed'?hm(r.at,L.tz):''})})}
+  return{n:CMP.name,u:now,pd,st,pts,dd,wk,pct:elig?Math.round((on+late*.5)/elig*100):0,miss,on,jm,late,s:calcStreak(),q}}
 /* auth */
 let FBA=store.get('fb',null);
 async function fbToken(){if(!fbReady())throw new Error('config');
@@ -2130,7 +2167,8 @@ async function compLeave(){try{if(compLive()&&FBA)await fsReq('DELETE','groups/'
 function cmpErr(t){$('cmpErr').textContent=t}
 /* demo board for the web preview */
 function compDemo(){const me=compSummary();me.n=CMP.name||'Шумо';me.id='me';const pd=prayerDay();
-  const mk=(n,st,pts,pct,miss,s,q)=>({n,st,pts,pct,miss,s,q,pd,u:Date.now()-Math.random()*3600e3,id:n,dd:[0,1,2,3,4,5,6].map(i=>Math.max(0,Math.min(100,pct+((i*37+n.length*13)%30)-15)))});
+  const S5=['ontime','jamaat','late','missed','ontime','jamaat','ontime'],wkd=(n,st)=>[6,5,4,3,2,1,0].map(i=>({d:addDays(pd,-i),s:i?TRACK.map((p,j)=>S5[(i*3+j*2+n.length)%7]):st,t:[]}));
+  const mk=(n,st,pts,pct,miss,s,q)=>({n,st,pts,pct,miss,s,q,pd,wk:wkd(n,st),u:Date.now()-Math.random()*3600e3,id:n,dd:[0,1,2,3,4,5,6].map(i=>Math.max(0,Math.min(100,pct+((i*37+n.length*13)%30)-15)))});
   return[me,mk('Аҳмад',['jamaat','jamaat','ontime','',''],96,98,0,21,0),mk('Фирдавс',['ontime','ontime','ontime','',''],84,92,1,9,3),mk('Шоҳрух',['ontime','late','ontime','',''],70,80,2,4,12),mk('Бахтиёр',['missed','ontime','late','',''],51,63,5,0,40)]}
 function compSort(list){return list.slice().sort((a,b)=>b.pts-a.pts||a.miss-b.miss||b.s-a.s||b.pct-a.pct)}
 function compOpen(){renderComp();if(compLive()&&CMP.code)compPush().then(compPull).then(renderComp).catch(()=>renderComp(true))}
@@ -2162,11 +2200,11 @@ function renderComp(offline){const live=compLive(),demo=!live;
   $('cmpPodium').style.gridTemplateColumns='repeat('+order.length+',minmax(0,1fr))';
   $('cmpPodium').innerHTML=order.map(({m,r})=>{const pos=Math.min(3,r),me=m.id===myId;
     return'<div class="pd p'+pos+(me?' me':'')+'" style="--ring:'+RING[pos]+';--base:'+BASE[pos]+';--bgc:'+avColor(m.id)+'">'+(pos===1?CROWN:'')+'<div class="av"><span>'+escapeHTML(initials(m.n))+'</span><em>'+r+'</em></div><div class="nm">'+escapeHTML(m.n||'—')+'</div><div class="pc num">'+m.pct+'%</div><div class="pt num">'+m.pts+' хол</div><div class="base"></div></div>'}).join('');
-  const own=compIsOwner(),ownerId=live?CMP.owner:'me';
+  const own=compIsOwner(),ownerId=live?CMP.owner:'me';CMP_SHOWN={list,rk,pd};
   $('cmpList').innerHTML=list.map((m,i)=>{const me=m.id===myId,stale=m.pd!==pd,r=rk[i];
     const dots=(m.st||[]).map(x=>'<i class="'+(stale?'':x)+'"></i>').join('');
     const sp=(m.dd||[]).map(v=>'<b class="'+(v?'':'z')+'" style="height:'+Math.max(2,Math.round(v*.16))+'px"></b>').join('');
-    return'<div class="cb-row'+(me?' me':'')+'"><span class="cb-rk'+(r<=3?' r'+r:'')+'">'+r+'</span><span class="cb-av" style="--bgc:'+avColor(m.id)+'">'+escapeHTML(initials(m.n))+'</span>'+
+    return'<div class="cb-row'+(me?' me':'')+'" data-mid="'+escapeHTML(m.id)+'" role="button" tabindex="0" aria-label="Ҷадвали намозҳои '+escapeHTML(m.n||'')+'"><span class="cb-rk'+(r<=3?' r'+r:'')+'">'+r+'</span><span class="cb-av" style="--bgc:'+avColor(m.id)+'">'+escapeHTML(initials(m.n))+'</span>'+
       '<div style="min-width:0"><div class="cb-nm"><span>'+escapeHTML(m.n||'—')+'</span>'+(me?'<span class="cmp-tag">Ман</span>':'')+(m.id===ownerId?'<span class="cmp-own" title="Соҳиби гурӯҳ">★</span>':'')+'</div>'+
       '<div class="cb-mid"><div class="cb-dots" aria-label="Намозҳои имрӯз">'+dots+'</div>'+(sp?'<div class="cb-spark" aria-label="7 рӯз">'+sp+'</div>':'')+'</div>'+
       '<div class="cb-chips">'+(m.s?'<span class="fl">'+m.s+' рӯз пайдарпай</span>':'')+(m.miss?'<span class="qz">'+m.miss+' қазо</span>':'<span class="ok">бе қазо</span>')+'</div></div>'+
@@ -2321,6 +2359,29 @@ $('ppReset').onclick=()=>{TS.pp=null;ppState();save();renderPP()};
 $('ppAgain').onclick=()=>{TS.pp=null;ppState();save();renderPP()};
 $('tsMode').addEventListener('click',e=>{const b=e.target.closest('[data-m]');if(!b)return;TS.mode=b.dataset.m;save();renderPP()});
 function renderTasbehTotal(){$('tsToday').textContent='Имрӯз: '+TS.total.toLocaleString('ru-RU')}
+
+
+/* ---------- member detail: which prayers were on time, jamaat, late or missed ---------- */
+let CMP_SHOWN=null;
+const MSYM={ontime:'✓',jamaat:'Ҷ',late:'Д',missed:'✕'},MDN=['Як','Ду','Се','Чр','Пн','Ҷм','Шн'];
+function openMember(id){if(!CMP_SHOWN)return;const i=CMP_SHOWN.list.findIndex(x=>x.id===id);if(i<0)return;const m=CMP_SHOWN.list[i],r=CMP_SHOWN.rk[i],pd=CMP_SHOWN.pd;
+  $('mAv').textContent=initials(m.n);$('mAv').style.setProperty('--bgc',avColor(m.id));$('mName').textContent=m.n||'Иштирокчӣ';
+  const myId=compLive()?(FBA&&FBA.uid):'me';$('mSub').textContent='Ҷойи '+r+(m.id===myId?' · Шумо':'')+(m.u?' · навсозӣ '+hm(m.u,loc().tz):'');
+  let wk=Array.isArray(m.wk)?m.wk.slice():[];if(!wk.length&&m.st)wk=[{d:m.pd||pd,s:m.st,t:[]}];
+  const c={ontime:0,jamaat:0,late:0,missed:0};wk.forEach(d=>(d.s||[]).forEach(x=>{if(x in c)c[x]++}));
+  $('mStats').innerHTML='<div><b class="num">'+(m.pct||0)+'%</b><span>фоиз</span></div><div><b class="num">'+(m.pts||0)+'</b><span>хол</span></div><div><b class="num">'+(c.jamaat)+'</b><span>ҷамоат</span></div><div><b class="num">'+(c.missed)+'</b><span>қазо</span></div>';
+  const head='<tr><th>Рӯз</th>'+TRACK.map(p=>'<th>'+p.n+'</th>').join('')+'</tr>';
+  const rows=wk.slice().reverse().map(d=>{const dt=new Date(d.d+'T12:00:00Z'),lbl=d.d===pd?'Имрӯз':d.d===addDays(pd,-1)?'Дирӯз':MDN[dt.getUTCDay()];
+    return'<tr class="'+(d.d===pd?'today':'')+'"><td>'+lbl+'<small class="num">'+d.d.slice(8)+'.'+d.d.slice(5,7)+'</small></td>'+TRACK.map((p,j)=>{const x=(d.s||[])[j]||'',t=(d.t||[])[j]||'';
+      const title=x?({ontime:'Ба вақт',jamaat:'Бо ҷамоат',late:'Дер',missed:'Қазо'})[x]:'Ҳанӯз';
+      return'<td><span class="mc '+x+(t?' t':'')+'" title="'+p.n+': '+title+(t?' · '+t:'')+'">'+(MSYM[x]||'–')+(t?'<small class="num">'+t+'</small>':'')+'</span></td>'}).join('')+'</tr>'}).join('');
+  $('mTbl').innerHTML='<table>'+head+rows+'</table>';
+  $('mNote').textContent=Array.isArray(m.wk)?'':'Ин иштирокчӣ версияи кӯҳнаи барномаро дорад, барои ҳамин танҳо намозҳои имрӯз нишон дода мешаванд.';
+  $('mSheet').hidden=false}
+$('cmpList').addEventListener('click',e=>{if(e.target.closest('[data-kick],.cb-ask'))return;const row=e.target.closest('.cb-row[data-mid]');if(row)openMember(row.dataset.mid)});
+$('cmpList').addEventListener('keydown',e=>{if(e.key!=='Enter'&&e.key!==' ')return;const row=e.target.closest('.cb-row[data-mid]');if(row){e.preventDefault();openMember(row.dataset.mid)}});
+$('mClose').onclick=()=>{$('mSheet').hidden=true};
+$('mSheet').addEventListener('click',e=>{if(e.target.id==='mSheet')$('mSheet').hidden=true});
 
 /* ---------- prefs ---------- */
 function fillPrefs(){
