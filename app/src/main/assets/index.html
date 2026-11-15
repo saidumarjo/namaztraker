@@ -687,6 +687,9 @@ body.iq-on .app{padding-top:calc(74px + env(safe-area-inset-top,0px))}
 .mleg i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:4px;vertical-align:-1px;border:1px dashed rgba(255,255,255,.3)}
 .mleg i.ontime{background:#F2F7F4;border:0}.mleg i.jamaat{background:#E6BC5E;border:0}.mleg i.late{background:#B9A3F2;border:0}.mleg i.missed{background:#F28E6D;border:0}
 .mnote{font-size:12px;color:var(--muted);text-align:center;margin:10px 0 0}.mnote:empty{display:none}
+.ovask{display:flex;align-items:center;gap:10px;margin:8px 0 2px;padding:10px 12px;border-radius:16px;background:rgba(242,142,109,.1);border:1px solid rgba(242,142,109,.45);font-size:13px;line-height:1.35}
+.ovask span{flex:1}.ovask b{color:#FFB59A}
+.ovask button{flex:none;border:0;border-radius:999px;padding:8px 12px;font-weight:800;font-size:12.5px;background:#F28E6D;color:#2A0F07}
 .hayz{display:flex;align-items:center;gap:10px;margin:8px 0 2px;padding:9px 12px;border-radius:16px;background:rgba(232,140,190,.1);border:1px solid rgba(232,140,190,.35);font-size:13px;line-height:1.35}
 .hayz span{flex:1}.hayz b{color:#F2B8D8}
 .hayz button{flex:none;border:1px solid rgba(232,140,190,.5);background:rgba(232,140,190,.15);color:#F7D2E6;border-radius:999px;padding:7px 12px;font-weight:800;font-size:12.5px}
@@ -981,6 +984,7 @@ body.iq-on .app{padding-top:calc(74px + env(safe-area-inset-top,0px))}
 
     <div class="ppills" id="ppills"></div>
     <a class="mcmp" id="miniComp" href="#comp" hidden aria-label="Натиҷаи мусобиқа"></a>
+    <div class="ovask" id="ovAsk" hidden><span><b>Ҳисоби қомат дар болои экран</b> кор намекунад: иҷозат дода нашудааст.</span><button type="button" id="ovAskBtn">Иҷозат додан</button></div>
     <div class="hayz" id="hayzBar" hidden></div>
     <div class="ram" id="ramCard" hidden>
       <div class="ram-h"><span class="ram-i" aria-hidden="true">☾</span><b id="ramT"></b><small id="ramN"></small></div>
@@ -2483,7 +2487,10 @@ $('mSheet').addEventListener('click',e=>{if(e.target.id==='mSheet')$('mSheet').h
 
 
 /* ---------- floating iqamah countdown over other apps (APK) ---------- */
-function ovRender(){const on=S.ovOn!==false;$('ovOn').checked=on;const st=$('ovSt');
+function ovAskRender(){const el=$('ovAsk');let need=false;try{need=!!(NATIVE&&NATIVE.overlayReady&&S.ovOn!==false&&!NATIVE.overlayReady())}catch(e){}el.hidden=!need}
+$('ovAskBtn').onclick=()=>{try{NATIVE.openOverlaySettings()}catch(e){}};
+window.addEventListener('focus',()=>{try{ovAskRender()}catch(e){}});
+function ovRender(){ovAskRender();const on=S.ovOn!==false;$('ovOn').checked=on;const st=$('ovSt');
   if(!NATIVE){st.hidden=false;st.className='blkst';st.innerHTML='Ин равзана танҳо дар <b>APK</b> кор мекунад.';return}
   if(!NATIVE.overlayReady){st.hidden=false;st.className='blkst warn';st.innerHTML='Барои ин версияи нави APK лозим аст.';return}
   let ok=false;try{ok=NATIVE.overlayReady()}catch(e){}
@@ -2494,7 +2501,7 @@ function ovRender(){const on=S.ovOn!==false;$('ovOn').checked=on;const st=$('ovS
 $('ovOn').onchange=e=>{S.ovOn=e.target.checked;save();try{NATIVE&&NATIVE.setOverlay&&NATIVE.setOverlay(S.ovOn)}catch(x){}ovRender()};
 window.addEventListener('focus',()=>{try{if(!$('v-prefs').hidden)ovRender()}catch(e){}});
 window.addEventListener('hashchange',()=>{if(location.hash==='#prefs')try{ovRender()}catch(e){}});
-setTimeout(()=>{try{NATIVE&&NATIVE.setOverlay&&NATIVE.setOverlay(S.ovOn!==false);ovRender()}catch(e){}},0);
+setTimeout(()=>{try{NATIVE&&NATIVE.setOverlay&&NATIVE.setOverlay(S.ovOn!==false);ovRender();ovAskRender()}catch(e){}},0);
 
 
 /* ---------- women: excused days (hayz/nifas) ---------- */
