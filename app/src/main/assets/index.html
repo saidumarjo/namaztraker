@@ -696,6 +696,16 @@ details.pset[open]>summary::after{transform:rotate(180deg)}
 details.pset[open]>summary{border-bottom:1px solid var(--line)}
 details.pset>.pbody{padding:10px 10px 12px}
 details.pset>.pbody>.card{margin:0;background:none;border:0;box-shadow:none;padding:6px}
+.hdpop{position:fixed;left:0;right:0;top:0;z-index:68;display:flex;justify-content:center;padding:calc(10px + env(safe-area-inset-top,0px)) 12px 0;pointer-events:none;animation:hdin .35s cubic-bezier(.2,.9,.3,1.15)}
+@keyframes hdin{from{transform:translateY(-120%)}to{transform:none}}
+.hdcard{pointer-events:auto;width:100%;max-width:460px;border-radius:24px;padding:14px 16px 14px;background:linear-gradient(180deg,#4A1E14,#1E0E0A);border:1px solid rgba(242,142,109,.45);box-shadow:0 16px 44px rgba(0,0,0,.55),0 0 30px rgba(242,142,109,.18)}
+.hdtop{display:flex;align-items:center;gap:10px}
+.hdic{flex:none;width:36px;height:36px;border-radius:50%;display:grid;place-items:center;font-size:18px;background:radial-gradient(circle,rgba(242,142,109,.35),rgba(242,142,109,.08));border:1px solid rgba(242,142,109,.5)}
+.hdtop b{flex:1;font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:#FFB59A}
+.hdx{flex:none;width:30px;height:30px;border-radius:50%;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.06);color:#FFE1D6}
+.hdtx{margin:10px 2px 12px;font-family:'Noto Serif',Georgia,serif;font-size:16px;line-height:1.55;color:#FFF3EE}
+.hdbar{height:4px;border-radius:2px;background:rgba(255,255,255,.1);overflow:hidden;margin-bottom:12px}.hdbar i{display:block;height:100%;background:#F28E6D;width:100%}
+.hdcard .wb{width:100%}
 .ovask{display:flex;align-items:center;gap:10px;margin:8px 0 2px;padding:10px 12px;border-radius:16px;background:rgba(242,142,109,.1);border:1px solid rgba(242,142,109,.45);font-size:13px;line-height:1.35}
 .ovask span{flex:1}.ovask b{color:#FFB59A}
 .ovask button{flex:none;border:0;border-radius:999px;padding:8px 12px;font-weight:800;font-size:12.5px;background:#F28E6D;color:#2A0F07}
@@ -929,6 +939,14 @@ details.pset>.pbody>.card{margin:0;background:none;border:0;box-shadow:none;padd
     <div class="mtbl" id="mTbl"></div>
     <div class="mleg"><span><i class="ontime"></i>Ба вақт</span><span><i class="jamaat"></i>Ҷамоат</span><span><i class="late"></i>Дер</span><span><i class="missed"></i>Қазо</span><span><i></i>Ҳанӯз</span></div>
     <p class="mnote" id="mNote"></p>
+  </div>
+</div>
+<div class="hdpop" id="hdPop" hidden role="dialog" aria-labelledby="hdpT">
+  <div class="hdcard">
+    <div class="hdtop"><span class="hdic" id="hdpI"></span><b id="hdpT"></b><button class="hdx" id="hdpX" type="button" aria-label="Пӯшидан">✕</button></div>
+    <p class="hdtx" id="hdpX2"></p>
+    <div class="hdbar"><i id="hdpBar"></i></div>
+    <button class="wb yes" id="hdpOk" type="button">Ҷазокаллоҳу хайран</button>
   </div>
 </div>
 <div class="usheet" id="usheet" hidden role="alertdialog" aria-modal="true" aria-labelledby="uQ">
@@ -2623,7 +2641,15 @@ function hdSave(c){S.hd=c;save();hdPush();renderHd()}
 $('hdOn').onchange=e=>{const c=hdCfg();c.on=e.target.checked;hdSave(c);toast(c.on?'Ҳар '+c.every+' дақиқа як ҳадис дар болои экран меояд':'Ҳадисҳо хомӯш шуданд')};
 $('hdEvery').onchange=e=>{const c=hdCfg();c.every=+e.target.value;hdSave(c)};
 $('hdTopics').addEventListener('click',e=>{const b=e.target.closest('[data-hd]');if(!b)return;const c=hdCfg();c.topics[b.dataset.hd]=!c.topics[b.dataset.hd];if(!Object.values(c.topics).some(Boolean)){toast('Ақаллан як мавзӯъ лозим аст');return}hdSave(c)});
-$('hdTest').onclick=()=>{const l=hdList(hdCfg());if(!l.length)return;const h=l[Math.floor(Math.random()*l.length)];if(NATIVE&&NATIVE.testHadith)NATIVE.testHadith(h.t,h.x);else toast(h.t+': '+h.x)};
+let hdT=null,hdEnd=0,hdLast=Date.now(),hdIdx=0;
+function hdShow(h){const sp=h.t.indexOf(' ');$('hdpI').textContent=h.t.slice(0,sp);$('hdpT').textContent=h.t.slice(sp+1);$('hdpX2').textContent=h.x;
+  const pop=$('hdPop');pop.hidden=false;pop.style.animation='none';void pop.offsetWidth;pop.style.animation='';hdEnd=Date.now()+180000;clearInterval(hdT);
+  hdT=setInterval(()=>{const l=hdEnd-Date.now();$('hdpBar').style.width=Math.max(0,l/1800).toFixed(1)+'%';if(l<=0)hdHide()},500)}
+function hdHide(){$('hdPop').hidden=true;clearInterval(hdT)}
+$('hdpX').onclick=hdHide;$('hdpOk').onclick=hdHide;
+function hdTick(now){const c=hdCfg();if(!c.on||(NATIVE&&NATIVE.setHadith))return;if(now-hdLast<c.every*60000)return;hdLast=now;
+  const h=new Date(now).getHours();if(h>=23||now<TT.fajr)return;const l=hdList(c);if(!l.length)return;hdShow(l[hdIdx++%l.length])}
+$('hdTest').onclick=()=>{const l=hdList(hdCfg());if(!l.length)return;const h=l[Math.floor(Math.random()*l.length)];if(NATIVE&&NATIVE.testHadith)NATIVE.testHadith(h.t,h.x);else hdShow(h)};
 window.addEventListener('hashchange',()=>{if(location.hash==='#prefs')try{renderHd()}catch(e){}});
 setTimeout(()=>{try{renderHd();hdPush()}catch(e){}},0);
 
@@ -2697,7 +2723,7 @@ function tick(){const L=loc(),now=Date.now();
   if(ymdIn(now,L.tz)!==todayYMD){compute();renderAll();}
   const pd=prayerDay();if(lastPD&&pd!==lastPD){const old=lastPD;if(viewYMD===old)viewYMD=pd;if(dView===old)dView=pd;renderAll();const ys=daySum(old,now);if(ys.pct!=null)toast('Ҷамъбасти рӯзи гузашта: '+ys.pct+'% · дар вақташ '+ys.ontime+' аз 5');}lastPD=pd;
   renderHero();renderIqBar();wuCheck();jcdTick(now);try{renderRam(now)}catch(e){}
-  const m=Math.floor(now/60000);if(m!==lastMinute){lastMinute=m;pullWMarks();try{hayzSync()}catch(e){}if(compLive()&&CMP.code&&Date.now()-cmpLastPull>(!$('v-comp').hidden?60000:600000))compPull().then(()=>{renderComp();renderMiniComp()}).catch(()=>{});renderExtras();webReminders(now);if(!$('v-qibla').hidden)renderQibla();if(autoQaza(now)){renderStats();renderQaza()}if(!$('v-today').hidden)renderList()}
+  const m=Math.floor(now/60000);if(m!==lastMinute){lastMinute=m;pullWMarks();try{hayzSync()}catch(e){}try{hdTick(now)}catch(e){}if(compLive()&&CMP.code&&Date.now()-cmpLastPull>(!$('v-comp').hidden?60000:600000))compPull().then(()=>{renderComp();renderMiniComp()}).catch(()=>{});renderExtras();webReminders(now);if(!$('v-qibla').hidden)renderQibla();if(autoQaza(now)){renderStats();renderQaza()}if(!$('v-today').hidden)renderList()}
   for(const p of TRACK){const t=TT[p.k];if(now>=t&&now-t<60000){const id=todayYMD+p.k;if(lastFired!==id){lastFired=id;store.set('fired',id);toast('Вақти намози '+p.n+' расид');if(S.sound)chime(1);renderList();}}}
 }
 

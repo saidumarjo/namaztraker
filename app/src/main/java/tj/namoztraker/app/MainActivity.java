@@ -385,7 +385,7 @@ public class MainActivity extends Activity implements SensorEventListener {
 
         @JavascriptInterface
         public void testHadith(String title, String text) {
-            Hadith.show(getApplicationContext(), title, text);
+            if (!OverlayService.showHadith(getApplicationContext(), title, text)) Hadith.show(getApplicationContext(), title, text);
         }
 
         @JavascriptInterface
