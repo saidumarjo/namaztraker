@@ -107,7 +107,7 @@ final class Hadith {
                 .setStyle(new Notification.BigTextStyle().bigText(text))
                 .setContentIntent(pi)
                 .setAutoCancel(true)
-                .setTimeoutAfter(3 * 60_000L)
+                .setTimeoutAfter(30_000L)
                 .setCategory(Notification.CATEGORY_RECOMMENDATION)
                 .setVisibility(Notification.VISIBILITY_PUBLIC)
                 .build();

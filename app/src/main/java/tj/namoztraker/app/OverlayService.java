@@ -246,7 +246,7 @@ public class OverlayService extends Service {
                 lp.windowAnimations = android.R.style.Animation_Toast;
                 wm(c).addView(wrap, lp);
                 hadith = wrap;
-                hadithUntil = System.currentTimeMillis() + 3 * 60_000L;
+                hadithUntil = System.currentTimeMillis() + 30_000L;
                 keepAlive(c);
                 startTick(c);
             } catch (Exception ignored) { }
@@ -592,7 +592,7 @@ public class OverlayService extends Service {
                     if (hl <= 0) removeHadith(c);
                     else if (hadithBar != null && hadithBar.getParent() instanceof View) {
                         int w = ((View) hadithBar.getParent()).getWidth();
-                        hadithBar.setTranslationX(-w * (1f - hl / 180_000f));
+                        hadithBar.setTranslationX(-w * (1f - hl / 30_000f));
                     }
                 }
                 if (pill == null && sleepEnd <= now && player == null && hadith == null && ask == null) {
