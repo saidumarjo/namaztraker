@@ -2636,7 +2636,7 @@ function hdList(c){const out=[];const tl=HD_T.filter(t=>c.topics[t[0]]);const mx
 function hdPush(){const c=hdCfg();try{NATIVE&&NATIVE.setHadith&&NATIVE.setHadith(JSON.stringify({on:c.on,every:c.every,list:hdList(c)}))}catch(e){}}
 function renderHd(){const c=hdCfg();$('hdOn').checked=c.on;$('hdEvery').value=String(c.every);
   $('hdTopics').innerHTML=HD_T.map(([k,n,col,ic])=>'<button type="button" data-hd="'+k+'" aria-pressed="'+!!c.topics[k]+'"><i style="background:'+col+'">'+ic+'</i>'+n+'</button>').join('');
-  $('hdCount').textContent=hdList(c).length+' ҳадис ва оят'+(NATIVE&&NATIVE.setHadith?'':' · танҳо дар APK')}
+  $('hdCount').textContent=hdList(c).length+' ҳадис ва оят'}
 function hdSave(c){S.hd=c;save();hdPush();renderHd()}
 $('hdOn').onchange=e=>{const c=hdCfg();c.on=e.target.checked;hdSave(c);toast(c.on?'Ҳар '+c.every+' дақиқа як ҳадис дар болои экран меояд':'Ҳадисҳо хомӯш шуданд')};
 $('hdEvery').onchange=e=>{const c=hdCfg();c.every=+e.target.value;hdSave(c)};
