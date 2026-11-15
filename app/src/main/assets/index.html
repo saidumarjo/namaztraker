@@ -687,6 +687,15 @@ body.iq-on .app{padding-top:calc(74px + env(safe-area-inset-top,0px))}
 .mleg i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:4px;vertical-align:-1px;border:1px dashed rgba(255,255,255,.3)}
 .mleg i.ontime{background:#F2F7F4;border:0}.mleg i.jamaat{background:#E6BC5E;border:0}.mleg i.late{background:#B9A3F2;border:0}.mleg i.missed{background:#F28E6D;border:0}
 .mnote{font-size:12px;color:var(--muted);text-align:center;margin:10px 0 0}.mnote:empty{display:none}
+details.pset{margin:10px 0;border-radius:20px;background:var(--surface);border:1px solid var(--line);overflow:hidden}
+details.pset>summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:10px;padding:15px 16px;font-size:16.5px;font-weight:800}
+details.pset>summary::-webkit-details-marker{display:none}
+details.pset>summary small{font-weight:600;color:var(--muted);font-size:12px}
+details.pset>summary::after{content:"";margin-left:auto;flex:none;width:18px;height:18px;transition:transform .2s;background:no-repeat center/18px url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%239FB3A8' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E")}
+details.pset[open]>summary::after{transform:rotate(180deg)}
+details.pset[open]>summary{border-bottom:1px solid var(--line)}
+details.pset>.pbody{padding:10px 10px 12px}
+details.pset>.pbody>.card{margin:0;background:none;border:0;box-shadow:none;padding:6px}
 .ovask{display:flex;align-items:center;gap:10px;margin:8px 0 2px;padding:10px 12px;border-radius:16px;background:rgba(242,142,109,.1);border:1px solid rgba(242,142,109,.45);font-size:13px;line-height:1.35}
 .ovask span{flex:1}.ovask b{color:#FFB59A}
 .ovask button{flex:none;border:0;border-radius:999px;padding:8px 12px;font-weight:800;font-size:12.5px;background:#F28E6D;color:#2A0F07}
@@ -2617,6 +2626,14 @@ $('hdTopics').addEventListener('click',e=>{const b=e.target.closest('[data-hd]')
 $('hdTest').onclick=()=>{const l=hdList(hdCfg());if(!l.length)return;const h=l[Math.floor(Math.random()*l.length)];if(NATIVE&&NATIVE.testHadith)NATIVE.testHadith(h.t,h.x);else toast(h.t+': '+h.x)};
 window.addEventListener('hashchange',()=>{if(location.hash==='#prefs')try{renderHd()}catch(e){}});
 setTimeout(()=>{try{renderHd();hdPush()}catch(e){}},0);
+
+
+/* ---------- settings: every group folds up/down, closed by default ---------- */
+(function prefsAccordion(){const sec=$('v-prefs');if(!sec||sec.dataset.acc)return;sec.dataset.acc='1';
+  [...sec.children].filter(h=>h.matches('h2.sec')&&h.textContent.trim()!=='Танзимот').forEach(h=>{
+    const items=[];let n=h.nextElementSibling;while(n&&!n.matches('h2.sec')&&!n.classList.contains('about')){items.push(n);n=n.nextElementSibling}
+    const d=document.createElement('details');d.className='pset';const sm=document.createElement('summary');sm.innerHTML=h.innerHTML;d.appendChild(sm);
+    const body=document.createElement('div');body.className='pbody';items.forEach(x=>body.appendChild(x));d.appendChild(body);h.replaceWith(d)})})();
 
 /* ---------- prefs ---------- */
 function fillPrefs(){
