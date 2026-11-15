@@ -8,6 +8,10 @@ public class AlarmReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context c, Intent in) {
         Widgets.updateAll(c);
+        if (Block.ACTION_SLEEP.equals(in.getAction())) {
+            Block.scheduleSleep(c);
+            return;
+        }
         if (Notif.ACTION_WUDU.equals(in.getAction())) {
             Notif.onWudu(c, in);
             return;
@@ -22,6 +26,7 @@ public class AlarmReceiver extends BroadcastReceiver {
         boolean ask = in.getBooleanExtra("ask", false);
         if (title == null) title = "НАМОЗХОН TJ";
         if (text == null) text = "";
+        if (iq > System.currentTimeMillis()) OverlayService.showIqama(c, name, iq);
         if (in.getBooleanExtra("u", false)) {
             Notif.showUrgent(c, title, text, key == null ? "" : key);
         } else if (iq > 0 || ask) {

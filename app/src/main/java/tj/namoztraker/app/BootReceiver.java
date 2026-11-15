@@ -9,5 +9,6 @@ public class BootReceiver extends BroadcastReceiver {
     public void onReceive(Context c, Intent in) {
         Notif.schedule(c);
         Widgets.updateAll(c);
+        Block.scheduleSleep(c);
     }
 }

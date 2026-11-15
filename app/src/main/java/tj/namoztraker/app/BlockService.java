@@ -48,7 +48,7 @@ public class BlockService extends AccessibilityService {
         // night lock: every app except phone, alarm clock, keyboard and system UI
         long[] sl = Block.sleep(this, now);
         if (sl != null) {
-            if (allowedAtNight(pkg)) return;
+            if (allowedAtNight(pkg) || OverlayService.sleepShowing()) return;
             if (now - lastBlock < 700) return;
             lastBlock = now;
             if (!pkg.equals(homePkg())) performGlobalAction(GLOBAL_ACTION_HOME);

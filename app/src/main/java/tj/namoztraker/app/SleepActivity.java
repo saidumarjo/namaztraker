@@ -49,23 +49,12 @@ public class SleepActivity extends Activity {
             long s = left / 1000;
             count.setText(String.format(Locale.US, "%d:%02d:%02d", s / 3600, (s % 3600) / 60, s % 60));
             ring.setProgress((float) left / Math.max(1f, (float) (until - start)));
-            if (holdStart > 0) {
-                long h = 5 - (now - holdStart) / 1000;
-                if (h <= 0) {
-                    holdStart = 0;
-                    if (!preview) Block.skipSleep(getApplicationContext(), until);
-                    Toast.makeText(SleepActivity.this, "Имшаб вақти хоб хомӯш шуд", Toast.LENGTH_LONG).show();
-                    finish();
-                    return;
-                }
-                holdBtnLabel.setText("Нигоҳ доред… " + h);
-            }
-            ui.postDelayed(this, holdStart > 0 ? 200 : 1000);
+            ui.postDelayed(this, 1000);
         }
     };
 
     /** Big countdown ring. */
-    static final class Ring extends View {
+    public static final class Ring extends View {
         private final Paint track = new Paint(Paint.ANTI_ALIAS_FLAG), arc = new Paint(Paint.ANTI_ALIAS_FLAG), dot = new Paint(Paint.ANTI_ALIAS_FLAG);
         private final RectF box = new RectF();
         private float p = 1f;
@@ -181,19 +170,9 @@ public class SleepActivity extends Activity {
         call.setOnClickListener(v -> {
             try { startActivity(new Intent(Intent.ACTION_DIAL, Uri.parse("tel:")).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)); } catch (Exception ignored) { }
         });
-        Button hold = button("Хомӯш кардан (5 сония пахш кунед)");
+        Button hold = button("Пӯшидани намуна");
         holdBtnLabel = hold;
-        hold.setOnTouchListener((v, e) -> {
-            if (e.getAction() == MotionEvent.ACTION_DOWN) {
-                holdStart = System.currentTimeMillis();
-                ui.removeCallbacks(tick);
-                ui.post(tick);
-            } else if (e.getAction() == MotionEvent.ACTION_UP || e.getAction() == MotionEvent.ACTION_CANCEL) {
-                holdStart = 0;
-                hold.setText(preview ? "Пӯшидани намуна (5 сония пахш кунед)" : "Хомӯш кардан (5 сония пахш кунед)");
-            }
-            return true;
-        });
+        hold.setOnClickListener(v -> { if (preview) finish(); });
         LinearLayout.LayoutParams bp = new LinearLayout.LayoutParams(0, -2, 1f);
         bp.rightMargin = (int) dp(5);
         row.addView(call, bp);
@@ -208,7 +187,7 @@ public class SleepActivity extends Activity {
         sv.addView(root, new ScrollView.LayoutParams(-1, -2));
         setContentView(sv);
         apply(getIntent());
-        if (preview) hold.setText("Пӯшидани намуна (5 сония пахш кунед)");
+        hold.setVisibility(preview ? View.VISIBLE : View.GONE);
     }
 
     private void apply(Intent in) {

@@ -1223,6 +1223,8 @@ body.iq-on .app{padding-top:calc(74px + env(safe-area-inset-top,0px))}
     <h2 class="sec">Азон то қомат</h2>
     <div class="card stack">
       <label class="switch"><span><b>Ҳисоби баръакс то қомат</b><br><span class="note">Аз оғози вақт (азон) дар болои экран вақти боқимонда то қомат нишон дода мешавад.</span></span><input type="checkbox" id="iqOn"></label>
+      <label class="switch"><span><b>Равзанаи ҳисоб дар болои ҳамаи барномаҳо</b><br><span class="note">Ҳангоми азон дар болои экран равзанаи хурд бо ҳисоби баръакс то қомат худаш пайдо мешавад ва дар вақти қомат худаш нест мешавад.</span></span><input type="checkbox" id="ovOn"></label>
+      <div class="blkst" id="ovSt" hidden></div>
       <label class="switch"><span><b>Саволи таҳорат ҳангоми азон</b><br><span class="note">«Оё таҳорат доред?» · Ҳа · Не · 3 дақиқа пас</span></span><input type="checkbox" id="wuduAsk"></label>
       <label class="switch"><span><b>Агар таҳорат надошта бошам, телефонро 5 дақиқа қулф кун</b><br><span class="note">Пас аз «Не» дигар барномаҳо то 5 дақиқа кушода намешаванд, то таҳорат гиред.</span></span><input type="checkbox" id="wuduLock"></label>
       <div class="iqgrid" id="iqGrid"></div>
@@ -1241,7 +1243,7 @@ body.iq-on .app{padding-top:calc(74px + env(safe-area-inset-top,0px))}
 
     <h2 class="sec">Вақти хоб</h2>
     <div class="card stack">
-      <label class="switch"><span><b>Шабона телефон баста шавад</b><br><span class="note">Дар ин вақт ягон барнома кушода намешавад, танҳо экрани сабз: «Алон вақти хоб аст». Занги фавқулода ва соати зангдор кор мекунанд.</span></span><input type="checkbox" id="slpOn"></label>
+      <label class="switch"><span><b>Шабона телефон баста шавад</b><br><span class="note">Дар ин вақт телефон то охири вақт кушода намешавад, танҳо экрани сабз: «Алон вақти хоб аст». Хомӯш кардан мумкин нест. Танҳо занги фавқулода ва соати зангдор кор мекунанд.</span></span><input type="checkbox" id="slpOn"></label>
       <div class="slptimes"><div class="field"><label for="slpFrom">Аз соати</label><input type="time" id="slpFrom" value="00:00"></div><div class="field"><label for="slpTo">То соати</label><input type="time" id="slpTo" value="04:00"></div></div>
       <div class="note" id="slpInfo"></div>
       <button class="btn" id="slpPrev" type="button">Намунаи экранро дидан</button>
@@ -1583,7 +1585,7 @@ $('plist').addEventListener('click',e=>{const b=e.target.closest('button[data-p]
   if(now<w[0]||now>=w[1])return;
   if(prev){toast('Ин намоз аллакай қайд шудааст ва иваз намешавад');return}
   const wantJ=a==='jamaat';
-  {const jw=jWin(k,w);if(wantJ&&now<jw[0]){toast('Ҷамоат 2 дақиқа пеш аз қомат ('+hm(jw[2],loc().tz)+') фаъол мешавад');return}if(wantJ&&now>=jw[1]){toast('Вақти ҷамоат гузашт');return}
+  {const jw=jWin(k,w);if(wantJ&&now>=jw[1]){toast('Вақти ҷамоат (30 дақиқа аз азон) гузашт');return}
     const s=now<w[1]-MIN30?'ontime':'late';setRecAt(y,k,{s,j:wantJ&&s==='ontime',at:now});startUndo(y,k);
     toast(wantJ?'Бо ҷамоат қайд шуд':s==='late'?'Дер хонда қайд шуд':'Дар вақташ қайд шуд');}
   save();renderList();renderStats();renderQaza();nativeSync();
@@ -1820,8 +1822,12 @@ function buildReminders(now,days){const L=loc(),out=[],lv=+S.rlevel||2,pd=prayer
     TRACK.forEach(p=>{const nm=(p.k==='dhuhr'&&fri)?'Ҷумъа':p.n,w=W[p.k],done=!!rec(y,p.k),sd=y+p.k;
       if(S.notify!==false){const iq=iqamaAt(p.k,w);add(w[0],'Азон · вақти намози '+nm,(iq?'Қомат соати '+hm(iq,L.tz)+' · ':'')+'вақт то '+hm(w[1],L.tz)+' · '+L.name,'start',iq);const last=out[out.length-1];if(last&&last.t===Math.round(w[0])&&last.kind==='start'){last.k=y+'|'+p.k;last.n=nm;last.ask=S.wuduAsk!==false}}
       if(S.remind===false||done)return;curMK=y+'|'+p.k;
-      if(lv>=2&&w[0]+40*MINm<w[1]-45*MINm)add(w[0]+40*MINm,'Ту '+nm+'ро ҳанӯз нахондаӣ',pick(RM[p.k],sd+'a'),'miss');
-      if(lv>=3)for(let t=w[0]+100*MINm;t<w[1]-45*MINm;t+=60*MINm)add(t,nm+'ро нахондаӣ',pick(RM[p.k],sd+t),'miss');
+      {const iq=iqamaAt(p.k,w)||jamaatAt(p.k,w),stop=w[1]-65*MINm;
+        if(iq>w[0]&&iq<stop)add(iq,'Қомат · '+nm,'Намози ҷамоат сар шуд. Ба намоз шитоб кун! '+pick(RM[p.k],sd+'iq'),'miss');
+        if(iq+10*MINm<stop)add(iq+10*MINm,'Намози ҷамоати '+nm+' тамом шуд','Ту ҳанӯз нахондаӣ. Ҳозир бихон, то вақташ нагузаштааст. '+pick(RM[p.k],sd+'ie'),'miss');
+        if(w[0]+30*MINm<stop)add(w[0]+30*MINm,'30 дақиқа гузашт · '+nm,'Ту '+nm+'ро ҳанӯз нахондаӣ. '+pick(RM[p.k],sd+'a'),'miss');
+        const rep=lv>=3?30:lv>=2?30:60,cap=Math.min(stop,w[0]+(lv>=3?6:4)*60*MINm);
+        for(let t=w[0]+60*MINm,n=1;t<cap;t+=rep*MINm,n++){const h=(t-w[0])/3600000;add(t,(h%1?Math.floor(h)+' соату 30 дақиқа':h+' соат')+' гузашт · '+nm,'Ту ҳанӯз нахондаӣ. '+pick(RM[p.k],sd+'r'+n),'miss')}}
       for(const mins of [60,30]){const t=w[1]-mins*MINm;if(t>w[0]){add(t,'Намоз қазо шуда истодааст!','Ту '+nm+'ро ҳанӯз нахондаӣ. То қазо '+(mins===60?'1 соат':'30 дақиқа')+' монд ('+hm(w[1],L.tz)+'). '+pick(RM[p.k],sd+'w'+mins),'warn');const l=out[out.length-1];if(l&&l.kind==='warn'&&l.t===Math.round(t)){l.u=1;l.k=y+'|'+p.k;l.pk=p.k;l.y=y;l.nm=nm;l.mins=mins;l.end=w[1]}}}
       add(w[1]+MINm,nm+' қазо шуд',pick(RM.qaza,sd+'q'),'qaza');});
     if(S.dremind===false)continue;
@@ -1856,7 +1862,7 @@ function webReminders(now){if(NATIVE){remLast=now;return}const due=buildReminder
 /* ---------- adhan → iqamah countdown ---------- */
 const JPRE=2*60000,JPOST=20*60000;
 function jamaatAt(k,w){const iq=iqamaAt(k,w);if(iq)return iq;const d=+((S.iq||{})[k])||(k==='maghrib'?10:20);return Math.min(w[0]+d*60000,w[1]-60000)}
-function jWin(k,w){const t=jamaatAt(k,w);return[t-JPRE,Math.min(t+JPOST,w[1]),t]}
+function jWin(k,w){const t=jamaatAt(k,w);return[w[0],Math.min(w[0]+MIN30,w[1]),t]}
 function iqamaAt(k,w){if(S.iqOn===false)return 0;const m=+((S.iq||{})[k]);if(!m||m<=0)return 0;const t=w[0]+m*60000;return t<w[1]?t:0}
 function renderIqBar(){const bar=$('iqbar');if(!TT)return;const now=Date.now(),L=loc(),pd=prayerDay(),W=windowsFor(pd);let act=null;
   if(S.iqOn!==false)for(const p of TRACK){const w=W[p.k],iq=iqamaAt(p.k,w);if(iq&&now>=w[0]&&now<iq&&!rec(pd,p.k)){act={p,w,iq};break}}
@@ -2382,6 +2388,21 @@ $('cmpList').addEventListener('click',e=>{if(e.target.closest('[data-kick],.cb-a
 $('cmpList').addEventListener('keydown',e=>{if(e.key!=='Enter'&&e.key!==' ')return;const row=e.target.closest('.cb-row[data-mid]');if(row){e.preventDefault();openMember(row.dataset.mid)}});
 $('mClose').onclick=()=>{$('mSheet').hidden=true};
 $('mSheet').addEventListener('click',e=>{if(e.target.id==='mSheet')$('mSheet').hidden=true});
+
+
+/* ---------- floating iqamah countdown over other apps (APK) ---------- */
+function ovRender(){const on=S.ovOn!==false;$('ovOn').checked=on;const st=$('ovSt');
+  if(!NATIVE){st.hidden=false;st.className='blkst';st.innerHTML='Ин равзана танҳо дар <b>APK</b> кор мекунад.';return}
+  if(!NATIVE.overlayReady){st.hidden=false;st.className='blkst warn';st.innerHTML='Барои ин версияи нави APK лозим аст.';return}
+  let ok=false;try{ok=NATIVE.overlayReady()}catch(e){}
+  if(ok||!on){st.hidden=!on;st.className='blkst ok';st.innerHTML='✓ Иҷозат дода шудааст. Аз «Намунаро дидан» санҷед. <button class="btn" id="ovTest" type="button">Намунаро дидан</button>';
+    const t=$('ovTest');if(t)t.onclick=()=>{try{NATIVE.overlayTest()}catch(e){}};return}
+  st.hidden=false;st.className='blkst warn';st.innerHTML='<b>Як бор иҷозат лозим аст:</b> «Иҷозат додан» → <b>НАМОЗХОН TJ</b> → «Allow display over other apps» / «Нишон додан дар болои барномаҳои дигар»-ро фаъол кунед. <button class="btn" id="ovGrant" type="button">Иҷозат додан</button>';
+  $('ovGrant').onclick=()=>{try{NATIVE.openOverlaySettings()}catch(e){}}}
+$('ovOn').onchange=e=>{S.ovOn=e.target.checked;save();try{NATIVE&&NATIVE.setOverlay&&NATIVE.setOverlay(S.ovOn)}catch(x){}ovRender()};
+window.addEventListener('focus',()=>{try{if(!$('v-prefs').hidden)ovRender()}catch(e){}});
+window.addEventListener('hashchange',()=>{if(location.hash==='#prefs')try{ovRender()}catch(e){}});
+setTimeout(()=>{try{NATIVE&&NATIVE.setOverlay&&NATIVE.setOverlay(S.ovOn!==false);ovRender()}catch(e){}},0);
 
 /* ---------- prefs ---------- */
 function fillPrefs(){

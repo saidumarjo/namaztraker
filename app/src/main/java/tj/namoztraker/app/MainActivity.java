@@ -357,6 +357,33 @@ public class MainActivity extends Activity implements SensorEventListener {
         }
 
         @JavascriptInterface
+        public boolean overlayReady() {
+            return OverlayService.canDraw(getApplicationContext());
+        }
+
+        @JavascriptInterface
+        public void setOverlay(boolean on) {
+            ntPrefs().edit().putBoolean("overlay_on", on).apply();
+        }
+
+        @JavascriptInterface
+        public void openOverlaySettings() {
+            runOnUiThread(() -> {
+                try {
+                    startActivity(new Intent(android.provider.Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                            Uri.parse("package:" + getPackageName())).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+                } catch (Exception e) {
+                    try { startActivity(new Intent(android.provider.Settings.ACTION_MANAGE_OVERLAY_PERMISSION)); } catch (Exception ignored) { }
+                }
+            });
+        }
+
+        @JavascriptInterface
+        public void overlayTest() {
+            OverlayService.showIqama(getApplicationContext(), "Пешин", System.currentTimeMillis() + 60_000L);
+        }
+
+        @JavascriptInterface
         public void previewSleep() {
             long now = System.currentTimeMillis();
             long[] w = Block.sleep(getApplicationContext(), now);

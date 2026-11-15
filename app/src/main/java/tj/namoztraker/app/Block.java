@@ -2,6 +2,7 @@ package tj.namoztraker.app;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Build;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -44,6 +45,37 @@ final class Block {
         // a changed setting cancels "off for tonight"
         if (!json.equals(p.getString("block", ""))) e.remove("sleep_skip");
         e.apply();
+        scheduleSleep(c);
+    }
+
+    static final String ACTION_SLEEP = "tj.namoztraker.app.SLEEP";
+
+    /** Exact alarm at the next start of the night window (and an immediate start if we are inside it). */
+    static void scheduleSleep(Context c) {
+        android.app.AlarmManager am = c.getSystemService(android.app.AlarmManager.class);
+        if (am == null) return;
+        android.content.Intent in = new android.content.Intent(c, AlarmReceiver.class).setAction(ACTION_SLEEP);
+        android.app.PendingIntent pi = android.app.PendingIntent.getBroadcast(c, 902, in,
+                android.app.PendingIntent.FLAG_UPDATE_CURRENT | android.app.PendingIntent.FLAG_IMMUTABLE);
+        am.cancel(pi);
+        JSONObject k = cfg(c);
+        if (!k.optBoolean("slp", false)) return;
+        long now = System.currentTimeMillis();
+        long[] cur = sleep(c, now);
+        if (cur != null) { OverlayService.showSleep(c, cur[0], cur[1]); }
+        int[] f = hm(k.optString("sf", "00:00"));
+        java.util.Calendar a = java.util.Calendar.getInstance();
+        a.setTimeInMillis(now);
+        a.set(java.util.Calendar.HOUR_OF_DAY, f[0]);
+        a.set(java.util.Calendar.MINUTE, f[1]);
+        a.set(java.util.Calendar.SECOND, 0);
+        a.set(java.util.Calendar.MILLISECOND, 0);
+        if (a.getTimeInMillis() <= now) a.add(java.util.Calendar.DAY_OF_MONTH, 1);
+        try {
+            if (Build.VERSION.SDK_INT >= 31 && !am.canScheduleExactAlarms())
+                am.setAndAllowWhileIdle(android.app.AlarmManager.RTC_WAKEUP, a.getTimeInMillis(), pi);
+            else am.setExactAndAllowWhileIdle(android.app.AlarmManager.RTC_WAKEUP, a.getTimeInMillis(), pi);
+        } catch (Exception ignored) { }
     }
 
     private static JSONObject cfg(Context c) {
