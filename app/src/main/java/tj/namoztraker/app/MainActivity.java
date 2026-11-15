@@ -385,7 +385,13 @@ public class MainActivity extends Activity implements SensorEventListener {
 
         @JavascriptInterface
         public void testHadith(String title, String text) {
-            if (!OverlayService.showHadith(getApplicationContext(), title, text)) Hadith.show(getApplicationContext(), title, text);
+            testHadith2(title, text, "");
+        }
+
+        @JavascriptInterface
+        public void testHadith2(String title, String text, String src) {
+            if (!OverlayService.showHadith(getApplicationContext(), title, text, src))
+                Hadith.show(getApplicationContext(), title, src == null || src.isEmpty() ? text : text + "\n— " + src);
         }
 
         @JavascriptInterface
@@ -481,6 +487,14 @@ public class MainActivity extends Activity implements SensorEventListener {
                     startActivity(new Intent(android.provider.Settings.ACTION_ACCESSIBILITY_SETTINGS).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
                 } catch (Exception ignored) { }
             });
+        }
+
+        @JavascriptInterface
+        public String takeDMarks() {
+            android.content.SharedPreferences p = ntPrefs();
+            String s = p.getString("dmarks", "{}");
+            p.edit().remove("dmarks").apply();
+            return s;
         }
 
         @JavascriptInterface

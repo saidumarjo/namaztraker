@@ -704,6 +704,8 @@ details.pset>.pbody>.card{margin:0;background:none;border:0;box-shadow:none;padd
 .hdtop b{flex:1;font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:#FFB59A}
 .hdx{flex:none;width:30px;height:30px;border-radius:50%;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.06);color:#FFE1D6}
 .hdtx{margin:10px 2px 12px;font-family:'Noto Serif',Georgia,serif;font-size:16px;line-height:1.55;color:#FFF3EE}
+.hdsrc{margin:-6px 2px 10px;text-align:right;font-size:11px;color:rgba(255,225,214,.6)}.hdsrc:empty{display:none}
+.askrow{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:8px}
 .hdbar{height:4px;border-radius:2px;background:rgba(255,255,255,.1);overflow:hidden;margin-bottom:12px}.hdbar i{display:block;height:100%;background:#F28E6D;width:100%}
 .hdcard .wb{width:100%}
 .ovask{display:flex;align-items:center;gap:10px;margin:8px 0 2px;padding:10px 12px;border-radius:16px;background:rgba(242,142,109,.1);border:1px solid rgba(242,142,109,.45);font-size:13px;line-height:1.35}
@@ -944,7 +946,7 @@ details.pset>.pbody>.card{margin:0;background:none;border:0;box-shadow:none;padd
 <div class="hdpop" id="hdPop" hidden role="dialog" aria-labelledby="hdpT">
   <div class="hdcard">
     <div class="hdtop"><span class="hdic" id="hdpI"></span><b id="hdpT"></b><button class="hdx" id="hdpX" type="button" aria-label="Пӯшидан">✕</button></div>
-    <p class="hdtx" id="hdpX2"></p>
+    <p class="hdtx" id="hdpX2"></p><p class="hdsrc" id="hdpS"></p>
     <div class="hdbar"><i id="hdpBar"></i></div>
     <button class="wb yes" id="hdpOk" type="button">Ҷазокаллоҳу хайран</button>
   </div>
@@ -1957,13 +1959,14 @@ function buildReminders(now,days){const L=loc(),out=[],lv=+S.rlevel||2,pd=prayer
       if(it.id==='namaz')ok=onTimeCount(y)===5;else if(it.id==='dhikr')ok=(v||0)>=100;else if(it.t==='count')ok=(v||0)>=it.goal;else if(it.t==='level')ok=!!v;else ok=!!v;
       if(!ok)undone.push(it)});
     const has=id=>undone.some(u=>u.id===id);
-    if(has('quran')){add(T.sunrise+20*MINm,'Пас аз Бомдод Қуръон нахондаӣ',pick(RM.quran,y+'q1'),'duty');if(lv>=3)add(T.dhuhr+60*MINm,'Қуръон ҳанӯз хонда нашуд',pick(RM.quran,y+'q2'),'duty')}
+    const tagQ=(dq,dn)=>{const l=out[out.length-1];if(l&&l.kind==='duty'&&!l.dq){l.dq=dq;l.dy=y;l.dn=dn}};
+    if(has('quran')){add(T.sunrise+20*MINm,'Пас аз Бомдод Қуръон нахондаӣ',pick(RM.quran,y+'q1'),'duty');tagQ('quran','Имрӯз Қуръон хондӣ?');if(lv>=3){add(T.dhuhr+60*MINm,'Қуръон ҳанӯз хонда нашуд',pick(RM.quran,y+'q2'),'duty');tagQ('quran','Имрӯз Қуръон хондӣ?')}}
     if(has('dhikr')){const n=dVal(y,'dhikr')||0,ks=lv>=3?['dhuhr','asr','maghrib','isha']:lv>=2?['asr','isha']:['isha'];
-      ks.forEach(k=>add(W[k][0]+(k==='maghrib'?20:25)*MINm,'Пас аз намоз зикр накардаӣ','Имрӯз '+n+' аз 100. '+pick(RM.dhikr,y+k),'duty'))}
-    if(has('ayat')&&lv>=2)add(T.asr+60*MINm,'Имрӯз оят аз ёд накардаӣ',pick(RM.ayat,y+'ay'),'duty');
-    if(has('sadaqa')&&lv>=2)add(T.dhuhr+90*MINm,'Имрӯз садақа накардаӣ',pick(RM.sadaqa,y+'sd'),'duty');
-    const cust=undone.filter(u=>u.custom&&u.t!=='level');if(cust.length&&lv>=2)add(T.maghrib+30*MINm,'Ӯҳдадории худатро иҷро накардаӣ',cust.map(c=>c.n).join(', '),'duty');
-    const lvls=undone.filter(u=>u.t==='level');if(lvls.length)add(T.isha+60*MINm,'Забонат ва амалатро ҳисоб кун','Баҳо деҳ: '+lvls.map(c=>c.n.toLowerCase()).join(', ')+'. '+pick(RM.tongue,y+'tg'),'duty');
+      ks.forEach(k=>{add(W[k][0]+(k==='maghrib'?20:25)*MINm,'Пас аз намоз зикр накардаӣ','Имрӯз '+n+' аз 100. '+pick(RM.dhikr,y+k),'duty');tagQ('dhikr','Пас аз намоз зикр кардӣ?')})}
+    if(has('ayat')&&lv>=2){add(T.asr+60*MINm,'Имрӯз оят аз ёд накардаӣ',pick(RM.ayat,y+'ay'),'duty');tagQ('ayat','Имрӯз 2–3 оят аз ёд кардӣ?')}
+    if(has('sadaqa')&&lv>=2){add(T.dhuhr+90*MINm,'Имрӯз садақа накардаӣ',pick(RM.sadaqa,y+'sd'),'duty');tagQ('sadaqa','Имрӯз садақа кардӣ?')}
+    const cust=undone.filter(u=>u.custom&&u.t!=='level');if(cust.length&&lv>=2){add(T.maghrib+30*MINm,'Ӯҳдадории худатро иҷро накардаӣ',cust.map(c=>c.n).join(', '),'duty');tagQ('cust:'+cust.map(c=>c.id).join(','),'Имрӯз инро иҷро кардӣ: '+cust.map(c=>c.n).join(', ')+'?')}
+    const lvls=undone.filter(u=>u.t==='level');if(lvls.length){add(T.isha+60*MINm,'Забонат ва амалатро ҳисоб кун','Баҳо деҳ: '+lvls.map(c=>c.n.toLowerCase()).join(', ')+'. '+pick(RM.tongue,y+'tg'),'duty');tagQ('lvl:'+lvls.map(c=>c.id).join(','),'Имрӯз худро нигоҳ доштӣ: '+lvls.map(c=>c.n.toLowerCase()).join(', ')+'?')}
     const sc=dScore(y);if(sc<100){const left=undone.filter(u=>u.t!=='level').map(u=>u.n.split(' ').slice(0,3).join(' '));
       add(T.isha+90*MINm,'Ӯҳдадориҳоро иҷро накардаӣ','Имрӯз '+sc+'% иҷро шуд.'+(left.length?' Боқӣ: '+left.join(', ')+'.':'')+' '+pick(RM.sum,y),'sum')}
   }
@@ -1977,6 +1980,7 @@ function renderRemList(){const now=Date.now(),L=loc(),list=buildReminders(now,2)
   $('remNote').textContent=NATIVE?'Ёдрасҳо ҳатто вақте ки барнома баста аст, ба телефон меоянд. Вақте ки корро иҷро мекунед, ёдрасаш худкор бекор мешавад.':'Дар веб-версия ёдрасҳо танҳо вақте ки барнома кушода аст, дар экран нишон дода мешаванд. Дар версияи APK онҳо ҳатто бо барномаи баста ба телефон меоянд.'}
 let remLast=Date.now();
 function webReminders(now){if(NATIVE){remLast=now;return}const due=buildReminders(remLast,1).filter(r=>r.t<=now&&r.kind!=='start');remLast=now;const ug=due.filter(r=>r.u);if(ug.length){showUrgent(ug[ug.length-1]);return}
+  const dqs=due.filter(r=>r.dq);if(dqs.length){const r=dqs[dqs.length-1],lv=r.dq.startsWith('lvl:');askPop('🤲','Ӯҳдадорӣ',r.dn,lv?[['Ҳа, пурра',()=>dApply(r.dy,r.dq,100)],['Қисман',()=>dApply(r.dy,r.dq,50)],['Не',()=>dApply(r.dy,r.dq,10)]]:[['Ҳа, кардам ✓',()=>dApply(r.dy,r.dq)],['Ҳоло не',null]]);return}
   if(due.length){const r=due[due.length-1];toast(r.title+' — '+r.text);if(S.sound)chime(.8)}}
 
 
@@ -2622,17 +2626,31 @@ setTimeout(()=>{try{azPush();renderExtraPrefs();renderHayz();hayzSync();renderRa
 
 
 /* ---------- short hadith every N minutes (APK notification, gone after 3 min) ---------- */
-const HD_T=[['namaz','Намоз','#93D45C','🕌'],['zikr','Зикр','#E6BC5E','📿'],['zina','Зино','#E2725B','🛡'],['qabr','Қабр','#9FB3A8','🪦'],['marg','Марг','#B9A3F2','⏳'],['bandagi','Бандагӣ','#7CC8F2','🤲']];
+const HD_T=[['namaz','Намоз','#93D45C','🕌'],['zikr','Зикр','#E6BC5E','📿'],['quran','Қуръон','#7CC8F2','📖'],['zina','Зино','#E2725B','🛡'],['qabr','Қабр','#9FB3A8','🪦'],['marg','Марг','#B9A3F2','⏳'],['bandagi','Бандагӣ','#7CC8F2','🤲'],['tavba','Тавба','#93D45C','💧'],['volid','Волидайн','#F2B8D8','👨‍👩‍👦'],['axloq','Ахлоқ','#E6BC5E','🌿'],['zabon','Забон ва ғайбат','#F2A26D','🤐'],['rost','Ростӣ','#93D45C','✅'],['sabr','Сабр','#B9A3F2','⛰'],['sadaqa','Садақа','#E6BC5E','🤝'],['ilm','Илм','#7CC8F2','🎓'],['hayo','Ҳаё','#F2B8D8','🌸'],['xashm','Хашм','#E2725B','🔥'],['hamsoya','Ҳамсоя','#9FB3A8','🏠'],['halol','Ҳалол','#93D45C','🍃']];
+const BK={b:'Саҳеҳи Бухорӣ',m:'Саҳеҳи Муслим',t:'Сунани Тирмизӣ',d:'Сунани Абудовуд',n:'Сунани Насоӣ',j:'Сунани Ибни Моҷа',h:'Мустадраки Ҳоким',q:'Қуръони карим'};
 const HADITHS={
- namaz:['«Аввалин чизе, ки рӯзи қиёмат аз банда ҳисоб гирифта мешавад, намоз аст.» (Тирмизӣ)','«Байни мард ва ширку куфр тарки намоз аст.» (Муслим)','«Маҳбубтарин амал назди Аллоҳ намоз дар вақташ аст.» (Бухорӣ)','«Намози ҷамоат аз намози танҳо 27 дараҷа афзалтар аст.» (Бухорӣ, Муслим)','«Агар дар назди дари яке аз шумо дарёе бошад ва ӯ ҳар рӯз панҷ бор дар он ғусл кунад, оё аз чиркаш чизе мемонад? Панҷ намоз ҳамин гуна гуноҳҳоро мешӯянд.» (Бухорӣ, Муслим)','«Намоз аз бадкорӣ ва зиштӣ бозмедорад.» (Анкабут, 45)','«Ҳар кӣ намози Бомдодро бихонад, дар паноҳи Аллоҳ аст.» (Муслим)','«Ҳар кӣ ду намози салқинро (Бомдод ва Аср) бихонад, ба ҷаннат дохил мешавад.» (Бухорӣ, Муслим)'],
- zikr:['«Огоҳ бошед, ки бо ёди Аллоҳ дилҳо ором мегиранд.» (Раъд, 28)','«Маро ёд кунед, то шуморо ёд кунам.» (Бақара, 152)','«Мисоли касе, ки Парвардигорашро ёд мекунад ва касе, ки ёд намекунад, мисоли зинда ва мурда аст.» (Бухорӣ)','«Ду калима бар забон сабук, дар тарозу вазнин ва назди Раҳмон дӯстдошта: Субҳоналлоҳи ва биҳамдиҳӣ, Субҳоналлоҳил-азим.» (Бухорӣ)','«Забонат ҳамеша бо зикри Аллоҳ тар бошад.» (Тирмизӣ)','«Ҳар кӣ дар рӯз сад бор “Субҳоналлоҳи ва биҳамдиҳӣ” гӯяд, гуноҳонаш омурзида мешаванд, агарчи мисли кафки баҳр бошанд.» (Бухорӣ)','«“Ло ҳавла ва ло қуввата илло биллоҳ” ганҷе аз ганҷҳои ҷаннат аст.» (Бухорӣ, Муслим)'],
- zina:['«Ба зино наздик нашавед, ки он кори зишт ва роҳи бад аст.» (Исро, 32)','«Зинокор дар ҳоле ки зино мекунад, мӯъмин нест.» (Бухорӣ, Муслим)','«Ҳар кӣ барои ман он чиро, ки байни ду ҷоғаш ва он чиро, ки байни ду пояш аст, кафолат диҳад, ман барояш ҷаннатро кафолат медиҳам.» (Бухорӣ)','«Ба мӯъминон бигӯ, ки чашмони худро нигоҳ доранд ва шармгоҳи худро ҳифз кунанд; ин барояшон поктар аст.» (Нур, 30)','«Чашмҳо зино мекунанд ва зинои онҳо нигоҳ кардан аст.» (Бухорӣ, Муслим)'],
- qabr:['«Қабр аввалин манзил аз манзилҳои охират аст; агар аз он наҷот ёбад, баъдаш осонтар аст.» (Тирмизӣ)','«Аз азоби қабр ба Аллоҳ паноҳ баред.» (Муслим)','«Бештари азоби қабр аз (беэҳтиётӣ дар) пешоб аст.» (Ибни Моҷа)','«Сураи Мулк аз азоби қабр монеъ аст.» (Насоӣ)'],
- marg:['«Ҳар нафсе чашандаи марг аст.» (Оли Имрон, 185)','«Лаззатшиканро — маргро — бисёр ёд кунед.» (Тирмизӣ)','«Дар дунё чун мусофир ё раҳгузар бош.» (Бухорӣ)','«Ҳар куҷо бошед, марг шуморо меёбад, агарчи дар қалъаҳои мустаҳкам бошед.» (Нисо, 78)','«Зирактарин мӯъмин касест, ки маргро бештар ёд мекунад ва барои баъди он беҳтар омодагӣ мебинад.» (Ибни Моҷа)','«Вақте одам мемирад, амалаш қатъ мешавад, магар аз се чиз: садақаи ҷория, илме ки аз он фоида гиранд ва фарзанди солеҳе ки барояш дуо кунад.» (Муслим)'],
- bandagi:['«Ҷин ва инсро наофаридам, магар барои он ки Маро ибодат кунанд.» (Зориёт, 56)','«Аллоҳ ба сурат ва молҳои шумо наменигарад, балки ба дилҳо ва амалҳои шумо менигарад.» (Муслим)','«Маҳбубтарин амал назди Аллоҳ он аст, ки доимӣ бошад, агарчи кам бошад.» (Бухорӣ, Муслим)','«Аллоҳро чунон ибодат кун, ки гӯё Ӯро мебинӣ; агар ту Ӯро намебинӣ, Ӯ туро мебинад.» (Муслим)','«Амалҳо ба ниятҳост.» (Бухорӣ, Муслим)','«Пеш аз панҷ чиз панҷро ғанимат дон: ҷавониро пеш аз пирӣ, саломатиро пеш аз беморӣ, сарватро пеш аз фақр, фурсатро пеш аз машғулӣ ва зиндагиро пеш аз марг.» (Ҳоким)']};
-function hdCfg(){const h=S.hd||{};return{on:h.on===true,every:+h.every||20,topics:Object.assign({namaz:true,zikr:true,zina:true,qabr:true,marg:true,bandagi:true},h.topics||{})}}
+ namaz:[['«Аввалин чизе, ки рӯзи қиёмат аз банда ҳисоб гирифта мешавад, намоз аст.»','t','№413'],['«Байни мард ва ширку куфр тарки намоз аст.»','m','№82'],['«Маҳбубтарин амал назди Аллоҳ намоз дар вақташ аст.»','b','№527'],['«Намози ҷамоат аз намози танҳо 27 дараҷа афзалтар аст.»','b','№645'],['«Агар дари хонаи яке аз шумо дарёе бошад ва ӯ ҳар рӯз панҷ бор дар он ғусл кунад, оё аз чиркаш чизе мемонад? Панҷ намоз ҳамин гуна гуноҳҳоро мешӯянд.»','b','№528'],['«Намоз аз бадкорӣ ва зиштӣ бозмедорад.»','q','Анкабут 29:45'],['«Ҳар кӣ намози Бомдодро бихонад, дар паноҳи Аллоҳ аст.»','m','№657'],['«Ҳар кӣ ду намози салқинро (Бомдод ва Аср) бихонад, ба ҷаннат дохил мешавад.»','b','№574']],
+ zikr:[['«Огоҳ бошед, ки бо ёди Аллоҳ дилҳо ором мегиранд.»','q','Раъд 13:28'],['«Маро ёд кунед, то шуморо ёд кунам.»','q','Бақара 2:152'],['«Мисоли касе, ки Парвардигорашро ёд мекунад ва касе, ки ёд намекунад, мисоли зинда ва мурда аст.»','b','№6407'],['«Ду калима бар забон сабук, дар тарозу вазнин: Субҳоналлоҳи ва биҳамдиҳӣ, Субҳоналлоҳил-азим.»','b','№6406'],['«Забонат ҳамеша бо зикри Аллоҳ тар бошад.»','t','№3375'],['«Ҳар кӣ дар рӯз сад бор “Субҳоналлоҳи ва биҳамдиҳӣ” гӯяд, гуноҳонаш омурзида мешаванд, агарчи мисли кафки баҳр бошанд.»','b','№6405'],['«“Ло ҳавла ва ло қуввата илло биллоҳ” ганҷе аз ганҷҳои ҷаннат аст.»','b','№6384']],
+ quran:[['«Беҳтарини шумо касест, ки Қуръонро омӯзад ва ба дигарон омӯзонад.»','b','№5027'],['«Ҳар кӣ як ҳарф аз Китоби Аллоҳ бихонад, барояш як некӣ аст ва ҳар некӣ даҳ баробар аст.»','t','№2910'],['«Қуръонро бихонед, ки рӯзи қиёмат барои аҳлаш шафоатгар меояд.»','m','№804']],
+ zina:[['«Ба зино наздик нашавед, ки он кори зишт ва роҳи бад аст.»','q','Исро 17:32'],['«Зинокор дар ҳоле ки зино мекунад, мӯъмин нест.»','b','№2475'],['«Ҳар кӣ барои ман он чиро, ки байни ду ҷоғаш ва он чиро, ки байни ду пояш аст, кафолат диҳад, ман барояш ҷаннатро кафолат медиҳам.»','b','№6474'],['«Ба мӯъминон бигӯ, ки чашмони худро нигоҳ доранд ва шармгоҳи худро ҳифз кунанд; ин барояшон поктар аст.»','q','Нур 24:30'],['«Чашмҳо зино мекунанд ва зинои онҳо нигоҳ кардан аст.»','b','№6243']],
+ qabr:[['«Қабр аввалин манзил аз манзилҳои охират аст; агар аз он наҷот ёбад, баъдаш осонтар аст.»','t','№2308'],['«Аз азоби қабр ба Аллоҳ паноҳ баред.»','m','№2867'],['«Бештари азоби қабр аз (беэҳтиётӣ дар) пешоб аст.»','j','№348'],['«Сураи Мулк монеъ аст, аз азоби қабр наҷот медиҳад.»','t','№2890']],
+ marg:[['«Ҳар нафсе чашандаи марг аст.»','q','Оли Имрон 3:185'],['«Лаззатшиканро — маргро — бисёр ёд кунед.»','t','№2307'],['«Дар дунё чун мусофир ё раҳгузар бош.»','b','№6416'],['«Ҳар куҷо бошед, марг шуморо меёбад, агарчи дар қалъаҳои мустаҳкам бошед.»','q','Нисо 4:78'],['«Зирактарин мӯъмин касест, ки маргро бештар ёд мекунад ва барои баъди он беҳтар омодагӣ мебинад.»','j','№4259'],['«Вақте одам мемирад, амалаш қатъ мешавад, магар аз се чиз: садақаи ҷория, илме ки аз он фоида гиранд ва фарзанди солеҳе ки барояш дуо кунад.»','m','№1631']],
+ bandagi:[['«Ҷин ва инсро наофаридам, магар барои он ки Маро ибодат кунанд.»','q','Зориёт 51:56'],['«Аллоҳ ба сурат ва молҳои шумо наменигарад, балки ба дилҳо ва амалҳои шумо менигарад.»','m','№2564'],['«Маҳбубтарин амал назди Аллоҳ он аст, ки доимӣ бошад, агарчи кам бошад.»','b','№6464'],['«Аллоҳро чунон ибодат кун, ки гӯё Ӯро мебинӣ; агар ту Ӯро намебинӣ, Ӯ туро мебинад.»','m','№8'],['«Амалҳо ба ниятҳост.»','b','№1'],['«Пеш аз панҷ чиз панҷро ғанимат дон: ҷавониро пеш аз пирӣ, саломатиро пеш аз беморӣ, сарватро пеш аз фақр, фурсатро пеш аз машғулӣ ва зиндагиро пеш аз марг.»','h','№7846']],
+ tavba:[['«Ҳамаи фарзандони Одам хатокоранд ва беҳтарини хатокорон тавбакунандагонанд.»','t','№2499'],['«Ба Аллоҳ қасам, ман дар як рӯз зиёда аз ҳафтод бор аз Аллоҳ омурзиш мехоҳам ва ба сӯи Ӯ тавба мекунам.»','b','№6307'],['«Аз раҳмати Аллоҳ ноумед нашавед, ҳароина Аллоҳ ҳамаи гуноҳонро меомурзад.»','q','Зумар 39:53']],
+ volid:[['«Ризои Аллоҳ дар ризои падар ва ғазаби Аллоҳ дар ғазаби падар аст.»','t','№1899'],['Марде пурсид: Кӣ ба ҳамнишинии неки ман сазовортар аст? Фармуданд: «Модарат». Пурсид: Баъд кӣ? «Модарат». Баъд кӣ? «Модарат». Баъд кӣ? «Падарат».','b','№5971'],['«Ба онҳо “уф” нагӯ ва бар онҳо бонг назан ва ба онҳо сухани нарм бигӯ.»','q','Исро 17:23'],['«Модаратро гирифтор бош, зеро ҷаннат назди пойҳои ӯст.»','n','№3104']],
+ axloq:[['«Комилтарини мӯъминон дар имон некахлоқтарини онҳост.»','t','№1162'],['«Дар тарозу чизе аз хулқи нек вазнинтар нест.»','t','№2002'],['«Табассуми ту дар рӯи бародарат садақа аст.»','t','№1956']],
+ zabon:[['«Ҳар кӣ ба Аллоҳ ва рӯзи охират имон дорад, сухани нек гӯяд ё хомӯш бошад.»','b','№6018'],['«Мусалмон касест, ки мусалмонон аз забон ва дасташ дар амон бошанд.»','b','№10'],['«Ғайбат он аст, ки бародаратро ба чизе ёд кунӣ, ки онро бад мебинад.»','m','№2589'],['«Оё касе аз шумо дӯст медорад, ки гӯшти бародари мурдаашро бихӯрад? Онро бад мебинед.»','q','Ҳуҷурот 49:12']],
+ rost:[['«Ростӣ ба некӣ роҳ менамояд ва некӣ ба ҷаннат; дурӯғ ба бадкорӣ роҳ менамояд ва бадкорӣ ба дӯзах.»','b','№6094'],['«Нишонаи мунофиқ се аст: чун сухан гӯяд, дурӯғ мегӯяд; чун ваъда диҳад, вафо намекунад; чун амонат гирад, хиёнат мекунад.»','b','№33']],
+ sabr:[['«Кори мӯъмин аҷиб аст, ҳамааш барояш хайр аст: агар хушӣ расад, шукр мекунад ва агар зарар расад, сабр мекунад.»','m','№2999'],['«Сабр ҳамон аст, ки дар зарбаи аввал бошад.»','b','№1283'],['«Ҳароина Аллоҳ бо собирон аст.»','q','Бақара 2:153']],
+ sadaqa:[['«Садақа аз мол кам намекунад.»','m','№2588'],['«Худро аз оташ нигоҳ доред, агарчи бо нимдонаи хурмо бошад.»','b','№1417'],['«Дасти боло аз дасти поён беҳтар аст.»','b','№1429']],
+ ilm:[['«Ҳар кӣ роҳеро барои ҷустани илм пеш гирад, Аллоҳ барояш роҳеро ба ҷаннат осон мекунад.»','m','№2699'],['«Талаби илм бар ҳар мусалмон фарз аст.»','j','№224']],
+ hayo:[['«Ҳаё шӯъбае аз имон аст.»','b','№9'],['«Ҳаё ҷуз хайр чизе намеоварад.»','b','№6117']],
+ xashm:[['Марде гуфт: Маро насиҳат кун. Фармуданд: «Хашмгин нашав». Чанд бор пурсид, фармуданд: «Хашмгин нашав».','b','№6116'],['«Паҳлавон он нест, ки дар гӯштӣ ғолиб ояд, балки касест, ки ҳангоми хашм худро нигоҳ дорад.»','b','№6114']],
+ hamsoya:[['«Ҷабраил ҳамеша маро дар бораи ҳамсоя васият мекард, то гумон кардам, ки ӯро меросхӯр мегардонад.»','b','№6014'],['«Ба Аллоҳ қасам, мӯъмин нест касе, ки ҳамсояаш аз озораш эмин набошад.»','b','№6016']],
+ halol:[['«Аллоҳ пок аст ва ҷуз покро қабул намекунад.»','m','№1015'],['«Ҳеҷ кас хӯроке беҳтар аз дастранҷи худ нахӯрдааст.»','b','№2072']]};
+function hdCfg(){const h=S.hd||{},all={};HD_T.forEach(t=>all[t[0]]=true);return{on:h.on===true,every:+h.every||20,topics:Object.assign(all,h.topics||{})}}
 function hdList(c){const out=[];const tl=HD_T.filter(t=>c.topics[t[0]]);const mx=Math.max(...tl.map(t=>HADITHS[t[0]].length),0);
-  for(let i=0;i<mx;i++)tl.forEach(t=>{const a=HADITHS[t[0]];if(a[i])out.push({t:t[3]+' '+t[1],x:a[i]})});return out}
+  for(let i=0;i<mx;i++)tl.forEach(t=>{const a=HADITHS[t[0]];if(a[i])out.push({t:t[3]+' '+t[1],x:a[i][0],s:BK[a[i][1]]+(a[i][1]==='q'?', ':', ')+a[i][2]})});return out}
 function hdPush(){const c=hdCfg();try{NATIVE&&NATIVE.setHadith&&NATIVE.setHadith(JSON.stringify({on:c.on,every:c.every,list:hdList(c)}))}catch(e){}}
 function renderHd(){const c=hdCfg();$('hdOn').checked=c.on;$('hdEvery').value=String(c.every);
   $('hdTopics').innerHTML=HD_T.map(([k,n,col,ic])=>'<button type="button" data-hd="'+k+'" aria-pressed="'+!!c.topics[k]+'"><i style="background:'+col+'">'+ic+'</i>'+n+'</button>').join('');
@@ -2642,14 +2660,14 @@ $('hdOn').onchange=e=>{const c=hdCfg();c.on=e.target.checked;hdSave(c);toast(c.o
 $('hdEvery').onchange=e=>{const c=hdCfg();c.every=+e.target.value;hdSave(c)};
 $('hdTopics').addEventListener('click',e=>{const b=e.target.closest('[data-hd]');if(!b)return;const c=hdCfg();c.topics[b.dataset.hd]=!c.topics[b.dataset.hd];if(!Object.values(c.topics).some(Boolean)){toast('Ақаллан як мавзӯъ лозим аст');return}hdSave(c)});
 let hdT=null,hdEnd=0,hdLast=Date.now(),hdIdx=0;
-function hdShow(h){const sp=h.t.indexOf(' ');$('hdpI').textContent=h.t.slice(0,sp);$('hdpT').textContent=h.t.slice(sp+1);$('hdpX2').textContent=h.x;
+function hdShow(h){{const r=$('askRow');if(r)r.hidden=true;$('hdpBar').parentNode.hidden=false;$('hdpOk').hidden=false}const sp=h.t.indexOf(' ');$('hdpI').textContent=h.t.slice(0,sp);$('hdpT').textContent=h.t.slice(sp+1);$('hdpX2').textContent=h.x;$('hdpS').textContent=h.s?'— '+h.s:'';
   const pop=$('hdPop');pop.hidden=false;pop.style.animation='none';void pop.offsetWidth;pop.style.animation='';hdEnd=Date.now()+180000;clearInterval(hdT);
   hdT=setInterval(()=>{const l=hdEnd-Date.now();$('hdpBar').style.width=Math.max(0,l/1800).toFixed(1)+'%';if(l<=0)hdHide()},500)}
 function hdHide(){$('hdPop').hidden=true;clearInterval(hdT)}
-$('hdpX').onclick=hdHide;$('hdpOk').onclick=hdHide;
+$('hdpX').onclick=()=>{hdHide();askClose()};$('hdpOk').onclick=hdHide;
 function hdTick(now){const c=hdCfg();if(!c.on||(NATIVE&&NATIVE.setHadith))return;if(now-hdLast<c.every*60000)return;hdLast=now;
   const h=new Date(now).getHours();if(h>=23||now<TT.fajr)return;const l=hdList(c);if(!l.length)return;hdShow(l[hdIdx++%l.length])}
-$('hdTest').onclick=()=>{const l=hdList(hdCfg());if(!l.length)return;const h=l[Math.floor(Math.random()*l.length)];if(NATIVE&&NATIVE.testHadith)NATIVE.testHadith(h.t,h.x);else hdShow(h)};
+$('hdTest').onclick=()=>{const l=hdList(hdCfg());if(!l.length)return;const h=l[Math.floor(Math.random()*l.length)];if(NATIVE&&NATIVE.testHadith2)NATIVE.testHadith2(h.t,h.x,h.s);else if(NATIVE&&NATIVE.testHadith)NATIVE.testHadith(h.t,h.x+' ('+h.s+')');else hdShow(h)};
 window.addEventListener('hashchange',()=>{if(location.hash==='#prefs')try{renderHd()}catch(e){}});
 setTimeout(()=>{try{renderHd();hdPush()}catch(e){}},0);
 
@@ -2660,6 +2678,22 @@ setTimeout(()=>{try{renderHd();hdPush()}catch(e){}},0);
     const items=[];let n=h.nextElementSibling;while(n&&!n.matches('h2.sec')&&!n.classList.contains('about')){items.push(n);n=n.nextElementSibling}
     const d=document.createElement('details');d.className='pset';const sm=document.createElement('summary');sm.innerHTML=h.innerHTML;d.appendChild(sm);
     const body=document.createElement('div');body.className='pbody';items.forEach(x=>body.appendChild(x));d.appendChild(body);h.replaceWith(d)})})();
+
+
+/* ---------- duty questions answered in a popup (native or in-app) ---------- */
+function dApply(y,dq,val){const its=dItems(),g=id=>its.find(i=>i.id===id);
+  if(dq==='dhikr')dSet(y,'dhikr',Math.max(dVal(y,'dhikr')||0,100));
+  else if(dq.startsWith('lvl:'))dq.slice(4).split(',').forEach(id=>dSet(y,id,+val||100));
+  else(dq.startsWith('cust:')?dq.slice(5).split(','):[dq]).forEach(id=>{const it=g(id);if(!it)return;dSet(y,id,it.t==='count'?it.goal:true)});
+  try{renderDuty()}catch(e){}nativeSyncSoon()}
+function pullDMarks(){if(!NATIVE||!NATIVE.takeDMarks)return;let o;try{o=JSON.parse(NATIVE.takeDMarks()||'{}')}catch(e){return}
+  for(const k in o){const i=k.indexOf('|');dApply(k.slice(0,i),k.slice(i+1),o[k])}}
+window.addEventListener('focus',()=>{try{pullDMarks()}catch(e){}});
+setTimeout(()=>{try{pullDMarks()}catch(e){}},0);
+function askPop(icon,title,body,btns){$('hdpI').textContent=icon;$('hdpT').textContent=title;$('hdpX2').textContent=body;$('hdpS').textContent='';
+  const box=$('hdPop');box.hidden=false;$('hdpBar').parentNode.hidden=true;$('hdpOk').hidden=true;let row=$('askRow');if(!row){row=document.createElement('div');row.id='askRow';row.className='askrow';$('hdpOk').after(row)}
+  row.hidden=false;row.innerHTML='';btns.forEach((b,i)=>{const e=document.createElement('button');e.type='button';e.className='wb'+(i===0?' yes':'');e.textContent=b[0];e.onclick=()=>{askClose();try{b[1]&&b[1]()}catch(x){}};row.appendChild(e)})}
+function askClose(){$('hdPop').hidden=true;$('hdpBar').parentNode.hidden=false;$('hdpOk').hidden=false;const r=$('askRow');if(r)r.hidden=true}
 
 /* ---------- prefs ---------- */
 function fillPrefs(){
@@ -2710,7 +2744,7 @@ window.addEventListener('hashchange',route);
 
 function renderAll(){try{renderMiniComp()}catch(e){}renderDuty();renderExtras();renderHeader();renderHero();renderList();renderStats();renderQaza();renderQibla();renderTasbeh();nativeSync()}
 function nativeSync(){compPushSoon();if(!NATIVE)return;try{const L=loc();if(NATIVE.setLocation)NATIVE.setLocation(L.lat,L.lng);widgetSync();
-  NATIVE.schedule(JSON.stringify(buildReminders(Date.now(),3).slice(0,190).map(r=>({t:r.t,title:r.title,text:r.text,iq:r.iq||0,k:r.k||'',n:r.n||'',ask:!!r.ask,u:!!r.u,mk:r.mk||'',az:r.kind==='start'&&S.adhanOn!==false}))));}catch(e){}}
+  NATIVE.schedule(JSON.stringify(buildReminders(Date.now(),3).slice(0,190).map(r=>({t:r.t,title:r.title,text:r.text,iq:r.iq||0,k:r.k||'',n:r.n||'',ask:!!r.ask,u:!!r.u,mk:r.mk||'',az:r.kind==='start'&&S.adhanOn!==false,dq:r.dq||'',dy:r.dy||'',dn:r.dn||''}))));}catch(e){}}
 window.ntHeading=function(h){heading=h;if(!$('v-qibla').hidden){const t=Date.now();if(t-(window._qh||0)>90){window._qh=t;renderQibla()}}};
 
 /* ---------- tick ---------- */

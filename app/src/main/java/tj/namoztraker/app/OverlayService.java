@@ -52,12 +52,110 @@ public class OverlayService extends Service {
     private static long iqUntil, sleepStart, sleepEnd, sleepHiddenUntil;
     private static boolean ticking;
     private static MediaPlayer player;
+    private static View ask;
+    private static long askUntil;
+
+    /** A question card over other apps (same look as the qaza alert); stays until answered (max 10 min). */
+    static boolean showAsk(Context ctx, String icon, String title, String body, String[] labels, Runnable[] acts) {
+        final Context c = ctx.getApplicationContext();
+        if (!canDraw(c)) return false;
+        ui.post(() -> {
+            try {
+                removeAsk(c);
+                LinearLayout card = new LinearLayout(c);
+                card.setOrientation(LinearLayout.VERTICAL);
+                card.setGravity(Gravity.CENTER_HORIZONTAL);
+                int p = (int) dp(c, 18);
+                card.setPadding(p, p, p, (int) dp(c, 14));
+                GradientDrawable g = new GradientDrawable(GradientDrawable.Orientation.TOP_BOTTOM, new int[]{0xFA4A1E14, 0xFA1E0E0A});
+                g.setCornerRadius(dp(c, 26));
+                g.setStroke((int) dp(c, 1.2f), 0x73F28E6D);
+                card.setBackground(g);
+                card.setElevation(dp(c, 12));
+                TextView ic = text(c, icon, 26, 0xFFFFB59A, false);
+                GradientDrawable icb = new GradientDrawable();
+                icb.setShape(GradientDrawable.OVAL);
+                icb.setColor(0x40F28E6D);
+                icb.setStroke((int) dp(c, 1), 0x80F28E6D);
+                ic.setBackground(icb);
+                card.addView(ic, new LinearLayout.LayoutParams((int) dp(c, 56), (int) dp(c, 56)));
+                TextView t = text(c, title, 21, 0xFFFFF3EE, true);
+                t.setPadding(0, (int) dp(c, 8), 0, (int) dp(c, 4));
+                card.addView(t);
+                TextView b = text(c, body, 15, 0xFFFFE1D6, false);
+                b.setLineSpacing(0, 1.25f);
+                card.addView(b);
+                LinearLayout row = new LinearLayout(c);
+                row.setOrientation(LinearLayout.HORIZONTAL);
+                for (int i = 0; i < labels.length; i++) {
+                    Button btn = new Button(c);
+                    btn.setText(labels[i]);
+                    btn.setAllCaps(false);
+                    btn.setTextSize(14);
+                    btn.setTypeface(Typeface.DEFAULT, Typeface.BOLD);
+                    GradientDrawable bb = new GradientDrawable();
+                    bb.setCornerRadius(dp(c, 14));
+                    if (i == 0) {
+                        bb.setOrientation(GradientDrawable.Orientation.LEFT_RIGHT);
+                        bb.setColors(new int[]{0xFF6DBB3C, 0xFFA6DD6A});
+                        btn.setTextColor(0xFF10230F);
+                    } else {
+                        bb.setColor(0x14FFFFFF);
+                        bb.setStroke((int) dp(c, 1), 0x33FFFFFF);
+                        btn.setTextColor(0xFFFFF3EE);
+                    }
+                    btn.setBackground(bb);
+                    btn.setStateListAnimator(null);
+                    final Runnable r = acts[i];
+                    btn.setOnClickListener(v -> {
+                        removeAsk(c);
+                        try { if (r != null) r.run(); } catch (Exception ignored) { }
+                    });
+                    LinearLayout.LayoutParams bp = new LinearLayout.LayoutParams(0, -2, 1f);
+                    bp.leftMargin = i == 0 ? 0 : (int) dp(c, 6);
+                    row.addView(btn, bp);
+                }
+                LinearLayout.LayoutParams rp = new LinearLayout.LayoutParams(-1, -2);
+                rp.topMargin = (int) dp(c, 14);
+                card.addView(row, rp);
+                FrameLayout wrap = new FrameLayout(c);
+                int m = (int) dp(c, 12);
+                wrap.setPadding(m, (int) dp(c, 40), m, m);
+                wrap.addView(card, new FrameLayout.LayoutParams(-1, -2));
+                WindowManager.LayoutParams lp = new WindowManager.LayoutParams(
+                        WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT,
+                        WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY,
+                        WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE | WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN,
+                        PixelFormat.TRANSLUCENT);
+                lp.gravity = Gravity.TOP;
+                lp.windowAnimations = android.R.style.Animation_Toast;
+                wm(c).addView(wrap, lp);
+                ask = wrap;
+                askUntil = System.currentTimeMillis() + 10 * 60_000L;
+                keepAlive(c);
+                startTick(c);
+            } catch (Exception ignored) { }
+        });
+        return true;
+    }
+
+    private static void removeAsk(Context c) {
+        if (ask != null) {
+            try { wm(c).removeView(ask); } catch (Exception ignored) { }
+            ask = null;
+        }
+    }
+
     private static View hadith;
     private static View hadithBar;
     private static long hadithUntil;
 
     /** A hadith card over other apps, styled like the "prayer is becoming qaza" alert; gone after 3 minutes. */
     static boolean showHadith(Context ctx, String title, String text) {
+        return showHadith(ctx, title, text, "");
+    }
+
+    static boolean showHadith(Context ctx, String title, String text, String src) {
         final Context c = ctx.getApplicationContext();
         if (!canDraw(c)) return false;
         ui.post(() -> {
@@ -100,8 +198,14 @@ public class OverlayService extends Service {
                 body.setTypeface(Typeface.SERIF);
                 body.setGravity(Gravity.START);
                 body.setLineSpacing(0, 1.3f);
-                body.setPadding((int) dp(c, 2), (int) dp(c, 10), (int) dp(c, 2), (int) dp(c, 12));
+                body.setPadding((int) dp(c, 2), (int) dp(c, 10), (int) dp(c, 2), (int) dp(c, src == null || src.isEmpty() ? 12 : 2));
                 card.addView(body);
+                if (src != null && !src.isEmpty()) {
+                    TextView so = text(c, "— " + src, 11, 0x99FFE1D6, false);
+                    so.setGravity(Gravity.END);
+                    so.setPadding(0, 0, (int) dp(c, 2), (int) dp(c, 10));
+                    card.addView(so);
+                }
 
                 FrameLayout bar = new FrameLayout(c);
                 GradientDrawable bg = new GradientDrawable();
@@ -482,6 +586,7 @@ public class OverlayService extends Service {
                     Block.scheduleSleep(c);
                 }
                 if (player != null && now >= adhanStopAt) { stopPlayer(); refreshNote(c); }
+                if (ask != null && now >= askUntil) removeAsk(c);
                 if (hadith != null) {
                     long hl = hadithUntil - now;
                     if (hl <= 0) removeHadith(c);
@@ -490,7 +595,7 @@ public class OverlayService extends Service {
                         hadithBar.setTranslationX(-w * (1f - hl / 180_000f));
                     }
                 }
-                if (pill == null && sleepEnd <= now && player == null && hadith == null) {
+                if (pill == null && sleepEnd <= now && player == null && hadith == null && ask == null) {
                     ticking = false;
                     try { c.stopService(new Intent(c, OverlayService.class)); } catch (Exception ignored) { }
                     return;
@@ -519,7 +624,7 @@ public class OverlayService extends Service {
         } catch (Exception e) {
             stopSelf();
         }
-        if (pill == null && sleepEnd <= System.currentTimeMillis() && player == null && hadith == null) stopSelf();
+        if (pill == null && sleepEnd <= System.currentTimeMillis() && player == null && hadith == null && ask == null) stopSelf();
         return START_NOT_STICKY;
     }
 

@@ -121,6 +121,9 @@ final class Notif {
                 in.putExtra("u", o.optBoolean("u", false));
                 in.putExtra("mk", o.optString("mk", ""));
                 in.putExtra("az", o.optBoolean("az", false));
+                in.putExtra("dq", o.optString("dq", ""));
+                in.putExtra("dy", o.optString("dy", ""));
+                in.putExtra("dn", o.optString("dn", ""));
                 PendingIntent pi = PendingIntent.getBroadcast(c, count, in,
                         PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
                 setAlarm(am, t, pi);
@@ -293,6 +296,10 @@ final class Notif {
             o.put(key, ans);
             p.edit().putString("wudu_" + key, ans).putString("wudu_all", o.toString()).apply();
         } catch (Exception ignored) { }
+    }
+
+    static boolean answered(Context c, String key) {
+        return !prefs(c).getString("wudu_" + key, "").isEmpty();
     }
 
     static String answers(Context c) {

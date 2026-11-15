@@ -65,8 +65,8 @@ final class Hadith {
                 int i = prefs(c).getInt("hadith_i", 0) % l.length();
                 prefs(c).edit().putInt("hadith_i", i + 1).apply();
                 JSONObject o = l.getJSONObject(i);
-                String t = o.optString("t", "Ҳадис"), x = o.optString("x", "");
-                if (!OverlayService.showHadith(c, t, x)) show(c, t, x);
+                String t = o.optString("t", "Ҳадис"), x = o.optString("x", ""), s = o.optString("s", "");
+                if (!OverlayService.showHadith(c, t, x, s)) show(c, t, s.isEmpty() ? x : x + "\n— " + s);
             }
         } catch (Exception ignored) { }
         schedule(c);
