@@ -665,8 +665,8 @@ body.iq-on .app{padding-top:calc(74px + env(safe-area-inset-top,0px))}
 .cb-row[data-mid]{cursor:pointer}
 .msheet{position:fixed;inset:0;z-index:65;display:flex;align-items:flex-end;justify-content:center;background:rgba(0,0,0,.55);-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);animation:wfade .2s ease}
 .mcard{width:100%;max-width:520px;max-height:88vh;overflow:auto;border-radius:26px 26px 0 0;padding:18px 16px calc(18px + env(safe-area-inset-bottom,0px));background:linear-gradient(180deg,#1C3529,#0F1F18);border:1px solid rgba(230,188,94,.25);border-bottom:0;animation:wup .28s cubic-bezier(.2,.9,.3,1.1)}
-.mhead{display:flex;align-items:center;gap:12px}
-.mhead .cb-av{width:48px;height:48px;font-size:19px;flex:none}
+.msh-head{display:flex;align-items:center;gap:12px}
+.msh-head .cb-av{width:48px;height:48px;font-size:19px;flex:none}
 .mhn{flex:1;min-width:0}.mhn b{display:block;font-size:19px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.mhn small{color:var(--muted);font-size:12.5px}
 .mclose{flex:none;width:34px;height:34px;border-radius:50%;border:1px solid var(--line);background:rgba(255,255,255,.06);color:inherit;font-size:15px}
 .mstats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin:14px 0 12px}
@@ -687,6 +687,41 @@ body.iq-on .app{padding-top:calc(74px + env(safe-area-inset-top,0px))}
 .mleg i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:4px;vertical-align:-1px;border:1px dashed rgba(255,255,255,.3)}
 .mleg i.ontime{background:#F2F7F4;border:0}.mleg i.jamaat{background:#E6BC5E;border:0}.mleg i.late{background:#B9A3F2;border:0}.mleg i.missed{background:#F28E6D;border:0}
 .mnote{font-size:12px;color:var(--muted);text-align:center;margin:10px 0 0}.mnote:empty{display:none}
+.hayz{display:flex;align-items:center;gap:10px;margin:8px 0 2px;padding:9px 12px;border-radius:16px;background:rgba(232,140,190,.1);border:1px solid rgba(232,140,190,.35);font-size:13px;line-height:1.35}
+.hayz span{flex:1}.hayz b{color:#F2B8D8}
+.hayz button{flex:none;border:1px solid rgba(232,140,190,.5);background:rgba(232,140,190,.15);color:#F7D2E6;border-radius:999px;padding:7px 12px;font-weight:800;font-size:12.5px}
+.hayz.off{background:none;border-style:dashed;justify-content:center}.hayz.off span{display:none}
+.ram{margin:10px 0 2px;padding:14px;border-radius:20px;background:radial-gradient(120% 120% at 100% 0%,rgba(230,188,94,.18),rgba(255,255,255,.03) 60%);border:1px solid rgba(230,188,94,.35)}
+.ram-h{display:flex;align-items:baseline;gap:8px}.ram-i{color:#E6BC5E;font-size:20px}.ram-h b{font-size:16px}.ram-h small{margin-left:auto;color:var(--muted);font-size:12px}
+.ram-g{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 0}
+.ram-g div{padding:8px 10px;border-radius:12px;background:rgba(0,0,0,.2)}.ram-g span{display:block;font-size:11.5px;color:var(--muted)}.ram-g b{font-size:22px}
+.ram-c{display:flex;justify-content:space-between;align-items:baseline;font-size:13px;color:var(--muted)}.ram-c b{font-size:20px;color:#B8F07E}
+.ram-b{width:100%;margin-top:10px;padding:10px;border-radius:12px;border:1px solid rgba(147,212,92,.45);background:rgba(147,212,92,.08);color:inherit;font-weight:800}
+.ram-b[aria-pressed="true"]{background:linear-gradient(90deg,#6DBB3C,#A6DD6A);color:#10230F;border:0}
+.ram-d{margin-top:10px;font-size:13px;line-height:1.5;color:rgba(242,247,244,.8)}.ram-d summary{cursor:pointer;color:var(--gold);font-weight:700}
+.ram-d .ar{display:block;font-family:var(--f-ar);direction:rtl;font-size:20px;color:var(--gold);margin:6px 0}
+.chip-st.ex{background:rgba(232,140,190,.14);color:#F2B8D8}
+.cb-dots i.ex{background:#E88CBE;border-color:#E88CBE}.mc.ex{background:#E88CBE;border:0;color:#3A1028}
+.qp-row{display:flex;align-items:center;justify-content:space-between;gap:10px;font-weight:700}
+.qp-today{display:grid;gap:6px;font-size:13px}
+.st-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}.st-nav b{font-size:16px}
+.st-cal{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px}
+.st-cal .h{font-size:10.5px;color:var(--muted);text-align:center;font-weight:700}
+.st-cal .d{aspect-ratio:1;border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:12.5px;font-weight:800;background:rgba(255,255,255,.04);color:var(--muted)}
+.st-cal .d small{font-size:9px;font-weight:700;opacity:.85}
+.st-cal .d.today{outline:2px solid var(--gold);outline-offset:1px}
+.st-leg{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;font-size:11px;color:var(--muted);margin-top:10px}
+.st-leg i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:4px;vertical-align:-1px}.st-leg i.ex{background:#E88CBE}
+.st-sum{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:12px 0}
+.st-sum div{text-align:center;padding:10px 4px;border-radius:14px;background:var(--surface);border:1px solid var(--line)}.st-sum b{display:block;font-size:20px}.st-sum span{font-size:11px;color:var(--muted)}
+.st-pr{display:grid;grid-template-columns:70px 1fr 44px;align-items:center;gap:8px;margin:6px 0;font-size:13px;font-weight:700}
+.st-pr .bar{height:10px;border-radius:5px;background:rgba(255,255,255,.07);overflow:hidden;display:flex}
+.st-pr .bar i{display:block;height:100%}
+.st-pr em{font-style:normal;text-align:right;color:var(--muted)}
+.st-ins{display:grid;gap:8px;margin-top:12px}
+.st-ins div{padding:10px 12px;border-radius:14px;font-size:13px;line-height:1.45;background:rgba(255,255,255,.04);border:1px solid var(--line)}
+.az-box{display:grid;gap:10px;padding:10px 12px;border-radius:14px;background:rgba(0,0,0,.18);border:1px solid var(--line)}
+.az-src{display:flex;flex-wrap:wrap;align-items:center;gap:8px;font-size:13px}.az-src b{flex:1;min-width:120px;color:var(--gold)}
 .slptimes{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .slpview{position:fixed;inset:0;z-index:80;display:flex;align-items:center;justify-content:center;text-align:center;color:#F2F7F4;
   background:radial-gradient(120% 80% at 50% 0%,#1E3B2E,#0F2119 55%,#0A1412);padding:calc(20px + env(safe-area-inset-top,0px)) 20px calc(20px + env(safe-area-inset-bottom,0px));overflow:auto}
@@ -877,7 +912,7 @@ body.iq-on .app{padding-top:calc(74px + env(safe-area-inset-top,0px))}
 </div>
 <div class="msheet" id="mSheet" hidden role="dialog" aria-modal="true" aria-labelledby="mName">
   <div class="mcard">
-    <div class="mhead"><span class="cb-av" id="mAv"></span><div class="mhn"><b id="mName"></b><small id="mSub"></small></div><button class="mclose" id="mClose" type="button" aria-label="Пӯшидан">✕</button></div>
+    <div class="msh-head"><span class="cb-av" id="mAv"></span><div class="mhn"><b id="mName"></b><small id="mSub"></small></div><button class="mclose" id="mClose" type="button" aria-label="Пӯшидан">✕</button></div>
     <div class="mstats" id="mStats"></div>
     <div class="mtbl" id="mTbl"></div>
     <div class="mleg"><span><i class="ontime"></i>Ба вақт</span><span><i class="jamaat"></i>Ҷамоат</span><span><i class="late"></i>Дер</span><span><i class="missed"></i>Қазо</span><span><i></i>Ҳанӯз</span></div>
@@ -946,6 +981,17 @@ body.iq-on .app{padding-top:calc(74px + env(safe-area-inset-top,0px))}
 
     <div class="ppills" id="ppills"></div>
     <a class="mcmp" id="miniComp" href="#comp" hidden aria-label="Натиҷаи мусобиқа"></a>
+    <div class="hayz" id="hayzBar" hidden></div>
+    <div class="ram" id="ramCard" hidden>
+      <div class="ram-h"><span class="ram-i" aria-hidden="true">☾</span><b id="ramT"></b><small id="ramN"></small></div>
+      <div class="ram-g"><div><span>Саҳарӣ (имсок)</span><b class="num" id="ramS"></b></div><div><span>Ифтор</span><b class="num" id="ramI"></b></div></div>
+      <div class="ram-c"><span id="ramCl"></span><b class="num" id="ramC"></b></div>
+      <button class="ram-b" id="ramFast" type="button"></button>
+      <details class="ram-d"><summary>Нияти рӯза ва дуои ифтор</summary>
+        <p><b>Нияти рӯза</b> (бо дил кифоя аст): «Фардо барои ризои Аллоҳ рӯзаи моҳи Рамазонро медорам».</p>
+        <p><b>Дуои ифтор:</b><span class="ar">ذَهَبَ ٱلظَّمَأُ وَٱبْتَلَّتِ ٱلْعُرُوقُ وَثَبَتَ ٱلْأَجْرُ إِنْ شَاءَ ٱللَّٰهُ</span>«Заҳабаз-замаъу вабталлатил-ъуруқу ва сабатал-аҷру иншоаллоҳ». Ташнагӣ рафт, рагҳо тар шуданд ва савоб собит гашт, иншоаллоҳ. (Абудовуд)</p>
+      </details>
+    </div>
 
     <div class="daynav">
       <button class="iconbtn" id="prevDay" aria-label="Рӯзи гузашта"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg></button>
@@ -1023,6 +1069,13 @@ body.iq-on .app{padding-top:calc(74px + env(safe-area-inset-top,0px))}
     </div>
     <h2 class="sec">Ҳар намоз <small>«Адо» — як қазо хонда шуд</small></h2>
     <div class="qlist" id="qlist"></div>
+
+    <h2 class="sec">Нақшаи адо</h2>
+    <div class="card stack" id="qPlan">
+      <div class="qp-row"><span>Ҳар рӯз чанд қазо мехонам?</span><div class="stepper"><button id="qpMinus" type="button" aria-label="Кам">−</button><span class="v num" id="qpN">0</span><button id="qpPlus" type="button" aria-label="Зиёд">+</button></div></div>
+      <div class="qp-today"><span id="qpToday"></span><div class="prog"><i id="qpBar" style="width:0%"></i></div></div>
+      <div class="note" id="qpEta"></div>
+    </div>
 
     <h2 class="sec">Ҳисоби тахминӣ</h2>
     <div class="card stack">
@@ -1107,9 +1160,23 @@ body.iq-on .app{padding-top:calc(74px + env(safe-area-inset-top,0px))}
       <a class="tile" href="#qibla"><span class="ti" style="--c:var(--gold)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="m15.5 8.5-2 5-5 2 2-5 5-2Z"/></svg></span><b>Қибланамо</b><small>Самти Каъба</small></a>
       <a class="tile" href="#asma"><span class="ti" style="--c:var(--ok)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3 14 8.5 20 9l-4.6 3.8L17 19l-5-3.2L7 19l1.6-6.2L4 9l6-.5z"/></svg></span><b>Асмо-ул-Ҳусно</b><small>99 номи Аллоҳ</small></a>
       <a class="tile" id="mosqueLink" href="https://www.google.com/maps/search/mosque" target="_blank" rel="noopener"><span class="ti" style="--c:var(--late)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 20V11h16v9M2.5 20h19M12 4c-3 2-5 3.4-5 7h10c0-3.6-2-5-5-7zM12 2v2M10 20v-4a2 2 0 0 1 4 0v4"/></svg></span><b>Масҷиди наздик</b><small>Дар Google Maps</small></a>
+      <a class="tile" href="#stats"><span class="ti" style="--c:#93D45C"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg></span><b>Омори моҳона</b><small>Тақвим ва таҳлил</small></a>
       <a class="tile" href="#khushu"><span class="ti" style="--c:#7CC8F2"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12 21c-4-2.6-7-5.6-7-9.2A3.8 3.8 0 0 1 12 9.6a3.8 3.8 0 0 1 7 2.2c0 3.6-3 6.6-7 9.2z"/><path d="M12 3v3M8.5 4.2l1 2M15.5 4.2l-1 2"/></svg></span><b>Хушуъ</b><small>Намоз бе шитоб</small></a>
       <a class="tile wide" href="#prefs"><span class="ti" style="--c:var(--muted)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12"/><circle cx="16" cy="6" r="2"/><circle cx="10" cy="12" r="2"/><circle cx="18" cy="18" r="2"/></svg></span><b>Танзимот</b><small id="moreCity">Шаҳр, усули ҳисоб, огоҳӣ</small></a>
     </div>
+  </section>
+
+  <section id="v-stats" hidden>
+    <a class="back" href="#more"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg>Бештар</a><h2 class="sec" style="margin-top:2px">Омори моҳона</h2>
+    <div class="card">
+      <div class="st-nav"><button class="iconbtn" id="stPrev" type="button" aria-label="Моҳи гузашта"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg></button><b id="stTitle"></b><button class="iconbtn" id="stNext" type="button" aria-label="Моҳи оянда"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg></button></div>
+      <div class="st-cal" id="stCal"></div>
+      <div class="st-leg"><span><i style="background:#93D45C"></i>90–100%</span><span><i style="background:#E6BC5E"></i>60–89%</span><span><i style="background:#F2A26D"></i>30–59%</span><span><i style="background:#E2725B"></i>0–29%</span><span><i class="ex"></i>Узр</span></div>
+    </div>
+    <div class="st-sum" id="stSum"></div>
+    <h2 class="sec">Ҳар намоз</h2>
+    <div class="card" id="stPr"></div>
+    <div class="st-ins" id="stIns"></div>
   </section>
 
   <section id="v-hijri" hidden>
@@ -1223,6 +1290,13 @@ body.iq-on .app{padding-top:calc(74px + env(safe-area-inset-top,0px))}
     <h2 class="sec">Азон то қомат</h2>
     <div class="card stack">
       <label class="switch"><span><b>Ҳисоби баръакс то қомат</b><br><span class="note">Аз оғози вақт (азон) дар болои экран вақти боқимонда то қомат нишон дода мешавад.</span></span><input type="checkbox" id="iqOn"></label>
+      <label class="switch"><span><b>Садои азон</b><br><span class="note">Дар вақти намоз садои азон баланд садо медиҳад. Тугмаи «Хомӯш кардан» дар менюи болои телефон пайдо мешавад.</span></span><input type="checkbox" id="azOn"></label>
+      <div class="az-box" id="azBox">
+        <div class="az-src"><span>Садо:</span><b id="azName">Будилники телефон</b><button class="btn" id="azPick" type="button">Файли азон…</button><button class="btn ghost" id="azDef" type="button" hidden>Пешфарз</button></div>
+        <label class="switch"><span><b>Ҳатто дар ҳолати бесадо</b><br><span class="note">Азон бо садои будилник садо медиҳад, ҳатто агар телефон бесадо бошад.</span></span><input type="checkbox" id="azLoud"></label>
+        <div class="row"><button class="btn" id="azTest" type="button">▶ Санҷиш</button><button class="btn ghost" id="azStop" type="button">■ Қатъ</button></div>
+        <div class="note" id="azNote"></div>
+      </div>
       <label class="switch"><span><b>Равзанаи ҳисоб дар болои ҳамаи барномаҳо</b><br><span class="note">Ҳангоми азон дар болои экран равзанаи хурд бо ҳисоби баръакс то қомат худаш пайдо мешавад ва дар вақти қомат худаш нест мешавад.</span></span><input type="checkbox" id="ovOn"></label>
       <div class="blkst" id="ovSt" hidden></div>
       <label class="switch"><span><b>Саволи таҳорат ҳангоми азон</b><br><span class="note">«Оё таҳорат доред?» · Ҳа · Не · 3 дақиқа пас</span></span><input type="checkbox" id="wuduAsk"></label>
@@ -1239,6 +1313,12 @@ body.iq-on .app{padding-top:calc(74px + env(safe-area-inset-top,0px))}
       <div class="field"><label for="blkMin">Чанд дақиқа баста бошад (аз азон)</label><select id="blkMin"><option value="15">15 дақиқа</option><option value="20">20 дақиқа</option><option value="25">25 дақиқа</option><option value="30">30 дақиқа</option><option value="45">45 дақиқа</option><option value="60">1 соат</option></select></div>
       <div class="blkapps" id="blkApps" role="group" aria-label="Барномаҳои басташаванда"></div>
       <div class="blkst" id="blkSt"></div>
+    </div>
+
+    <h2 class="sec">Рӯза ва занон</h2>
+    <div class="card stack">
+      <div class="field"><label for="fastCard">Корти рӯза дар саҳифаи «Имрӯз»</label><select id="fastCard"><option value="ram">Танҳо дар моҳи Рамазон</option><option value="always">Ҳамеша (рӯзаи нафл)</option><option value="off">Пинҳон</option></select></div>
+      <label class="switch"><span><b>Ҳолати занон (айёми узр)</b><br><span class="note">Дар саҳифаи «Имрӯз» тугмаи «Айёми узр» пайдо мешавад. Дар ин рӯзҳо намозҳо қазо ҳисоб намешаванд, пайдарпайӣ канда намешавад ва огоҳиҳо, азон ва бастани барномаҳо хомӯш мешаванд.</span></span><input type="checkbox" id="womenOn"></label>
     </div>
 
     <h2 class="sec">Вақти хоб</h2>
@@ -1442,7 +1522,7 @@ function ms2hm(ms){return ms==null?'':hm(ms,loc().tz)}
 function hm2ms(ymd,k,val,W){if(!val)return null;const [h,m]=val.split(':').map(Number),target=h*60+m,st=W[k][0],sm=minsIn(st,loc().tz);
   let diff=target-sm;if(diff<0&&(k==='isha'||diff<-720))diff+=1440;if(diff<0)return -1;return st+diff*60000}
 const MIN30=30*60000;
-function statusLine(ymd,k,W,now,st){const r=rec(ymd,k),w=W[k],tz=loc().tz;
+function statusLine(ymd,k,W,now,st){const r=rec(ymd,k),w=W[k],tz=loc().tz;if(st==='ex')return'<span class="st">Айёми узр · қазо ҳисоб намешавад</span>';
   if(st==='ontime'){const d=r.at!=null?' · '+hm(r.at,tz)+(r.at-w[0]<60000?' · аввали вақт':' · +'+fm((r.at-w[0])/60000)):'';return'<span class="st ok">'+(r.j?'Ҷамоат':'Ба вақт')+d+'</span>'}
   if(st==='late')return'<span class="st late">Дер хонда шуд'+(r.at!=null?' · '+hm(r.at,tz):'')+'</span>';
   if(st==='missed')return'<span class="st bad">Вақт гузашт</span>';
@@ -1464,7 +1544,7 @@ function rowHTML(ymd,p,W,now,opts){
     right='<div class="seg">'+
      '<button class="s-jamaat" data-y="'+ymd+'" data-p="'+p.k+'" data-a="jamaat" aria-pressed="'+jP+'"'+(jDis?' disabled':'')+' title="'+(jDis&&open&&now<jw[0]?'Ҷамоат 2 дақиқа пеш аз қомат ('+hm(jw[2],L.tz)+') фаъол мешавад':'Бо ҷамоат')+'">'+ICON.jamaat+'<span class="tx">Ҷамоат</span>'+(open&&!jDis?'<small class="jcd num" data-jcd="'+jw[2]+'">'+(jcd?jcd:'')+'</small>':open&&now<jw[0]?'<small class="jcd wait num">'+hm(jw[2],L.tz)+'</small>':'')+'</button>'+
      '<button class="'+(late&&!oP?'s-late':'s-ontime')+(oP&&r.s==='late'?' s-late':'')+'" data-y="'+ymd+'" data-p="'+p.k+'" data-a="read" aria-pressed="'+oP+'"'+(oDis?' disabled':'')+' title="'+((late&&!oP)||(oP&&r.s==='late')?'Дер хондам':'Хондам')+'" aria-label="'+((late&&!oP)||(oP&&r.s==='late')?'Дер хондам':'Хондам')+'">'+ICON.ontime+'<span class="tx"></span></button></div>';}
-  else if(r){const chip='<span class="chip-st '+(r.j?'jamaat':r.s)+'">'+(r.j?'Ҷамоат':r.s==='ontime'?'Ба вақт':r.s==='late'?'Дер':'Қазо')+'</span>',uk=ymd+'|'+p.k,ul=(UNDO[uk]||0)-now;right=ul>0?'<div class="undo-wrap">'+chip+'<button class="undo" data-undo="'+uk+'">Бекор кардан <b class="num">'+Math.ceil(ul/1000)+'</b></button></div>':chip;}
+  else if(r){const chip='<span class="chip-st '+(r.j?'jamaat':r.s)+'">'+(r.j?'Ҷамоат':r.s==='ontime'?'Ба вақт':r.s==='late'?'Дер':r.s==='ex'?'Узр':'Қазо')+'</span>',uk=ymd+'|'+p.k,ul=(UNDO[uk]||0)-now;right=ul>0?'<div class="undo-wrap">'+chip+'<button class="undo" data-undo="'+uk+'">Бекор кардан <b class="num">'+Math.ceil(ul/1000)+'</b></button></div>':chip;}
   let extra='';if(open&&!r){const len=w[1]-w[0],pc=Math.min(100,(now-w[0])/len*100),jm=Math.min(100,MIN30/len*100),lm=Math.max(0,100-jm),jw=jWin(p.k,w),jl=Math.max(0,(jw[0]-w[0])/len*100),jwd=Math.min(100-jl,(jw[1]-jw[0])/len*100);
     extra='<div class="wbar"><b class="z1" style="left:'+jl.toFixed(1)+'%;width:'+jwd.toFixed(1)+'%"></b><b class="z3" style="left:'+lm.toFixed(1)+'%;width:'+jm.toFixed(1)+'%"></b><i style="left:'+pc.toFixed(1)+'%"></i></div>'}
   return'<div class="prow'+(opts.cur?' cur':'')+'"><div><div class="tm num">'+hm(w[0],L.tz)+'</div><div class="end num">то '+hm(w[1],L.tz)+'</div></div>'+
@@ -1540,7 +1620,7 @@ function sunArc(now){
    prog+mk+body+'</svg>';
 }
 function daySum(ymd,now){const W=windowsFor(ymd),o={ontime:0,jamaat:0,late:0,missed:0,pending:0,eligible:0,delay:[]};
-  TRACK.forEach(p=>{const st=stateOf(ymd,p.k,W,now),r=rec(ymd,p.k);if(st!=='future')o.eligible++;
+  o.ex=0;TRACK.forEach(p=>{const st=stateOf(ymd,p.k,W,now),r=rec(ymd,p.k);if(st==='ex'){o.ex++;return}if(st!=='future')o.eligible++;
     if(st==='ontime'){o.ontime++;if(r.j)o.jamaat++;if(r.at!=null)o.delay.push((r.at-W[p.k][0])/60000)}
     else if(st==='late')o.late++;else if(st==='missed'||st==='none')o.missed++;else o.pending++;});
   const settledOpen=TRACK.filter(p=>stateOf(ymd,p.k,W,now)==='open').length;
@@ -1820,7 +1900,7 @@ function buildReminders(now,days){const L=loc(),out=[],lv=+S.rlevel||2,pd=prayer
   let curMK='';const add=(t,title,text,kind,iq)=>{if(t>now)out.push({t:Math.round(t),title,text,kind,iq:iq||0,mk:(kind==='miss'||kind==='warn'||kind==='qaza')?curMK:''})};
   for(let i=0;i<days;i++){const y=addDays(pd,i),W=windowsFor(y),T=W.t,fri=wday(y)===5;
     TRACK.forEach(p=>{const nm=(p.k==='dhuhr'&&fri)?'Ҷумъа':p.n,w=W[p.k],done=!!rec(y,p.k),sd=y+p.k;
-      if(S.notify!==false){const iq=iqamaAt(p.k,w);add(w[0],'Азон · вақти намози '+nm,(iq?'Қомат соати '+hm(iq,L.tz)+' · ':'')+'вақт то '+hm(w[1],L.tz)+' · '+L.name,'start',iq);const last=out[out.length-1];if(last&&last.t===Math.round(w[0])&&last.kind==='start'){last.k=y+'|'+p.k;last.n=nm;last.ask=S.wuduAsk!==false}}
+      const exd=(rec(y,p.k)||{}).s==='ex';if(S.notify!==false&&!exd){const iq=iqamaAt(p.k,w);add(w[0],'Азон · вақти намози '+nm,(iq?'Қомат соати '+hm(iq,L.tz)+' · ':'')+'вақт то '+hm(w[1],L.tz)+' · '+L.name,'start',iq);const last=out[out.length-1];if(last&&last.t===Math.round(w[0])&&last.kind==='start'){last.k=y+'|'+p.k;last.n=nm;last.ask=S.wuduAsk!==false}}
       if(S.remind===false||done)return;curMK=y+'|'+p.k;
       {const iq=iqamaAt(p.k,w)||jamaatAt(p.k,w),stop=w[1]-65*MINm;
         if(iq>w[0]&&iq<stop)add(iq,'Қомат · '+nm,'Намози ҷамоат сар шуд. Ба намоз шитоб кун! '+pick(RM[p.k],sd+'iq'),'miss');
@@ -1830,6 +1910,8 @@ function buildReminders(now,days){const L=loc(),out=[],lv=+S.rlevel||2,pd=prayer
         for(let t=w[0]+60*MINm,n=1;t<cap;t+=rep*MINm,n++){const h=(t-w[0])/3600000;add(t,(h%1?Math.floor(h)+' соату 30 дақиқа':h+' соат')+' гузашт · '+nm,'Ту ҳанӯз нахондаӣ. '+pick(RM[p.k],sd+'r'+n),'miss')}}
       for(const mins of [60,30]){const t=w[1]-mins*MINm;if(t>w[0]){add(t,'Намоз қазо шуда истодааст!','Ту '+nm+'ро ҳанӯз нахондаӣ. То қазо '+(mins===60?'1 соат':'30 дақиқа')+' монд ('+hm(w[1],L.tz)+'). '+pick(RM[p.k],sd+'w'+mins),'warn');const l=out[out.length-1];if(l&&l.kind==='warn'&&l.t===Math.round(t)){l.u=1;l.k=y+'|'+p.k;l.pk=p.k;l.y=y;l.nm=nm;l.mins=mins;l.end=w[1]}}}
       add(w[1]+MINm,nm+' қазо шуд',pick(RM.qaza,sd+'q'),'qaza');});
+    if(ramOn(y)){add(T.fajr-45*MINm,'Саҳарӣ · Рамазон','То имсок 45 дақиқа монд ('+hm(T.fajr,L.tz)+'). Саҳарӣ бихӯред, дар саҳарӣ баракат аст. (Бухорӣ)','ram');add(T.maghrib,'Вақти ифтор','Заҳабаз-замаъу вабталлатил-ъуруқу ва сабатал-аҷру иншоаллоҳ. Рӯзаатон қабул бод!','ram')}
+    if(QZ.plan>0&&y===todayYMD){const dn=(QZ.log||{})[y]||0,tot=QK.reduce((a,[k])=>a+QZ[k],0);if(dn<QZ.plan&&tot>0)add(T.isha+40*MINm,'Нақшаи қазо','Имрӯз '+dn+' аз '+QZ.plan+' қазо адо шуд. Боз '+(QZ.plan-dn)+' монд.','duty')}
     if(S.dremind===false)continue;
     const its=dItems(),undone=[];
     its.forEach(it=>{const v=dVal(y,it.id);let ok;
@@ -1938,7 +2020,7 @@ window.addEventListener('focus',()=>window.ntLockSync());
 function widgetSync(){if(!NATIVE||!NATIVE.widget)return;pullWMarks();try{const L=loc(),pd=prayerDay(),days=[];
   for(let i=-1;i<3;i++){const y=addDays(pd,i),W=windowsFor(y),fri=wday(y)===5;
     days.push({d:y,hijri:hijri(y),p:TRACK.map(pr=>{const r=rec(y,pr.k),w=W[pr.k];
-      const st=!r?'':r.s==='missed'?'missed':r.s==='late'?'late':r.j?'jamaat':'ontime';
+      const st=!r?'':r.s==='ex'?'ex':r.s==='missed'?'missed':r.s==='late'?'late':r.j?'jamaat':'ontime';
       const iq=iqamaAt(pr.k,w);return{k:pr.k,n:(pr.k==='dhuhr'&&fri)?'Ҷумъа':pr.n,s:w[0],e:w[1],h:hm(w[0],L.tz),st,iq,qh:iq?hm(iq,L.tz):''}})})}
   NATIVE.widget(JSON.stringify({city:L.name,days}))}catch(e){}}
 
@@ -2021,7 +2103,7 @@ setTimeout(()=>{try{renderSleep()}catch(e){}},0);
 
 
 /* ---------- backup: export / import ---------- */
-const BK_KEYS=['settings','log','qaza','tasbeh','duty','first','firstTs','comp','fb'];
+const BK_KEYS=['settings','log','qaza','tasbeh','duty','first','firstTs','comp','fb','fast'];
 function bkCount(log){let d=0,n=0;for(const y in (log||{})){const o=log[y]||{};const c=Object.keys(o).length;if(c){d++;n+=c}}return{d,n}}
 function renderBackup(){const c=bkCount(LOG),q=QK.reduce((a,[k])=>a+(QZ[k]||0),0);
   $('bkStat').innerHTML='<div><b class="num">'+c.d+'</b><span>рӯз</span></div><div><b class="num">'+c.n+'</b><span>намози қайдшуда</span></div><div><b class="num">'+q+'</b><span>қазо</span></div>'}
@@ -2110,15 +2192,16 @@ const fbReady=()=>!!(FB.apiKey&&FB.projectId);
 const compLive=()=>!!(NATIVE&&fbReady());
 let CMP=store.get('comp',{name:'',code:'',gname:''}),CMPC=store.get('comp_cache',null),cmpPushT=null,cmpLastPull=0;
 const cmpSave=()=>store.set('comp',CMP);
-function calcStreak(){let n=0,d=todayYMD;if(onTimeCount(d)<5)d=addDays(d,-1);while(onTimeCount(d)===5&&n<3650){n++;d=addDays(d,-1)}return n}
+function exCount(ymd){let n=0;TRACK.forEach(p=>{const r=rec(ymd,p.k);if(r&&r.s==='ex')n++});return n}
+function calcStreak(){let n=0,d=todayYMD,g=0;const ok=y=>onTimeCount(y)+exCount(y)===5;if(!ok(d))d=addDays(d,-1);while(ok(d)&&g<3650){if(onTimeCount(d)>0)n++;g++;d=addDays(d,-1)}return n}
 function compSummary(){const now=Date.now(),pd=prayerDay(),W=windowsFor(pd);let pts=0,on=0,jm=0,late=0,miss=0,elig=0;
   for(let i=0;i<7;i++){const y=addDays(pd,-i);if(y<FIRST)continue;const d=daySum(y,now);
     pts+=(d.ontime-d.jamaat)*2+d.jamaat*3+d.late;on+=d.ontime;jm+=d.jamaat;late+=d.late;miss+=d.missed;elig+=d.ontime+d.late+d.missed}
-  const st=TRACK.map(p=>{const r=rec(pd,p.k);if(!r)return now>=W[p.k][1]?'missed':'';return r.s==='missed'?'missed':r.s==='late'?'late':r.j?'jamaat':'ontime'});
+  const st=TRACK.map(p=>{const r=rec(pd,p.k);if(!r)return now>=W[p.k][1]?'missed':'';return r.s==='ex'?'ex':r.s==='missed'?'missed':r.s==='late'?'late':r.j?'jamaat':'ontime'});
   const q=QK.reduce((a,[k])=>a+QZ[k],0),dd=[];for(let i=6;i>=0;i--){const y=addDays(pd,-i);const x=y<FIRST?null:daySum(y,now);dd.push(x&&x.pct!=null?x.pct:0)}
   const L=loc(),wk=[];for(let i=6;i>=0;i--){const y=addDays(pd,-i);if(y<FIRST)continue;const Wy=windowsFor(y);
-    wk.push({d:y,s:TRACK.map(p=>{const r=rec(y,p.k);if(!r)return now>=Wy[p.k][1]?'missed':'';return r.s==='missed'?'missed':r.s==='late'?'late':r.j?'jamaat':'ontime'}),
-      t:TRACK.map(p=>{const r=rec(y,p.k);return r&&r.at&&r.s!=='missed'?hm(r.at,L.tz):''})})}
+    wk.push({d:y,s:TRACK.map(p=>{const r=rec(y,p.k);if(!r)return now>=Wy[p.k][1]?'missed':'';return r.s==='ex'?'ex':r.s==='missed'?'missed':r.s==='late'?'late':r.j?'jamaat':'ontime'}),
+      t:TRACK.map(p=>{const r=rec(y,p.k);return r&&r.at&&r.s!=='missed'&&r.s!=='ex'?hm(r.at,L.tz):''})})}
   return{n:CMP.name,u:now,pd,st,pts,dd,wk,pct:elig?Math.round((on+late*.5)/elig*100):0,miss,on,jm,late,s:calcStreak(),q}}
 /* auth */
 let FBA=store.get('fb',null);
@@ -2263,10 +2346,11 @@ window.ntUrgent=function(key){try{const [y,k]=String(key).split('|');const nm=(k
 function renderQaza(){
   const tot=QK.reduce((a,[k])=>a+QZ[k],0);$('qTotal').textContent=tot.toLocaleString('ru-RU');$('qPaid').textContent=QZ.paid.toLocaleString('ru-RU');
   const all=tot+QZ.paid;$('qBar').style.width=(all?QZ.paid/all*100:0).toFixed(1)+'%';
+  try{renderQPlan()}catch(e){}
   $('qlist').innerHTML=QK.map(([k,n,s])=>'<div class="qrow"><div class="nm">'+n+'<small>'+s+'</small></div><div class="stepper"><button data-q="'+k+'" data-a="-1" aria-label="Кам кардан">−</button><span class="v num">'+QZ[k].toLocaleString('ru-RU')+'</span><button data-q="'+k+'" data-a="1" aria-label="Зиёд кардан">+</button><button class="pay" data-q="'+k+'" data-a="pay"'+(QZ[k]?'':' disabled')+'>Адо</button></div></div>').join('');
 }
 $('qlist').addEventListener('click',e=>{const b=e.target.closest('button[data-q]');if(!b)return;const k=b.dataset.q,a=b.dataset.a;
-  if(a==='pay'){if(QZ[k]>0){QZ[k]--;QZ.paid++;toast('Як қазои '+QK.find(x=>x[0]===k)[1]+' адо шуд')}}
+  if(a==='pay'){if(QZ[k]>0){QZ[k]--;QZ.paid++;QZ.log=QZ.log||{};QZ.log[todayYMD]=(QZ.log[todayYMD]||0)+1;toast('Як қазои '+QK.find(x=>x[0]===k)[1]+' адо шуд')}}
   else QZ[k]=Math.max(0,QZ[k]+Number(a));
   save();renderQaza();});
 function estDays(){const y=+$('eY').value||0,m=+$('eM').value||0,d=+$('eD').value||0;return Math.max(0,Math.round(y*354.37+m*29.53+d))}
@@ -2369,7 +2453,7 @@ function renderTasbehTotal(){$('tsToday').textContent='Имрӯз: '+TS.total.to
 
 /* ---------- member detail: which prayers were on time, jamaat, late or missed ---------- */
 let CMP_SHOWN=null;
-const MSYM={ontime:'✓',jamaat:'Ҷ',late:'Д',missed:'✕'},MDN=['Як','Ду','Се','Чр','Пн','Ҷм','Шн'];
+const MSYM={ontime:'✓',jamaat:'Ҷ',late:'Д',missed:'✕',ex:'У'},MDN=['Як','Ду','Се','Чр','Пн','Ҷм','Шн'];
 function openMember(id){if(!CMP_SHOWN)return;const i=CMP_SHOWN.list.findIndex(x=>x.id===id);if(i<0)return;const m=CMP_SHOWN.list[i],r=CMP_SHOWN.rk[i],pd=CMP_SHOWN.pd;
   $('mAv').textContent=initials(m.n);$('mAv').style.setProperty('--bgc',avColor(m.id));$('mName').textContent=m.n||'Иштирокчӣ';
   const myId=compLive()?(FBA&&FBA.uid):'me';$('mSub').textContent='Ҷойи '+r+(m.id===myId?' · Шумо':'')+(m.u?' · навсозӣ '+hm(m.u,loc().tz):'');
@@ -2379,7 +2463,7 @@ function openMember(id){if(!CMP_SHOWN)return;const i=CMP_SHOWN.list.findIndex(x=
   const head='<tr><th>Рӯз</th>'+TRACK.map(p=>'<th>'+p.n+'</th>').join('')+'</tr>';
   const rows=wk.slice().reverse().map(d=>{const dt=new Date(d.d+'T12:00:00Z'),lbl=d.d===pd?'Имрӯз':d.d===addDays(pd,-1)?'Дирӯз':MDN[dt.getUTCDay()];
     return'<tr class="'+(d.d===pd?'today':'')+'"><td>'+lbl+'<small class="num">'+d.d.slice(8)+'.'+d.d.slice(5,7)+'</small></td>'+TRACK.map((p,j)=>{const x=(d.s||[])[j]||'',t=(d.t||[])[j]||'';
-      const title=x?({ontime:'Ба вақт',jamaat:'Бо ҷамоат',late:'Дер',missed:'Қазо'})[x]:'Ҳанӯз';
+      const title=x?({ontime:'Ба вақт',jamaat:'Бо ҷамоат',late:'Дер',missed:'Қазо',ex:'Айёми узр'})[x]:'Ҳанӯз';
       return'<td><span class="mc '+x+(t?' t':'')+'" title="'+p.n+': '+title+(t?' · '+t:'')+'">'+(MSYM[x]||'–')+(t?'<small class="num">'+t+'</small>':'')+'</span></td>'}).join('')+'</tr>'}).join('');
   $('mTbl').innerHTML='<table>'+head+rows+'</table>';
   $('mNote').textContent=Array.isArray(m.wk)?'':'Ин иштирокчӣ версияи кӯҳнаи барномаро дорад, барои ҳамин танҳо намозҳои имрӯз нишон дода мешаванд.';
@@ -2403,6 +2487,96 @@ $('ovOn').onchange=e=>{S.ovOn=e.target.checked;save();try{NATIVE&&NATIVE.setOver
 window.addEventListener('focus',()=>{try{if(!$('v-prefs').hidden)ovRender()}catch(e){}});
 window.addEventListener('hashchange',()=>{if(location.hash==='#prefs')try{ovRender()}catch(e){}});
 setTimeout(()=>{try{NATIVE&&NATIVE.setOverlay&&NATIVE.setOverlay(S.ovOn!==false);ovRender()}catch(e){}},0);
+
+
+/* ---------- women: excused days (hayz/nifas) ---------- */
+function hayzOn(){return S.women===true&&S.hayz&&S.hayz.on}
+function hayzSync(){if(!hayzOn())return false;const now=Date.now(),pd=prayerDay();let ch=false;
+  [pd,addDays(pd,1)].forEach(y=>TRACK.forEach(p=>{if(!rec(y,p.k)){setRecAt(y,p.k,{s:'ex',at:now});ch=true}}));
+  if(ch){save();setTimeout(()=>{try{renderList();renderStats();nativeSync()}catch(e){}},0)}return ch}
+function hayzStart(){S.hayz={on:true,from:todayYMD};save();hayzSync();renderHayz();renderList();renderStats();nativeSync();toast('Айёми узр фаъол шуд. Намозҳо қазо ҳисоб намешаванд.')}
+function hayzEnd(){const now=Date.now();S.hayz={on:false};save();
+  for(const y in LOG){const W=windowsFor(y);TRACK.forEach(p=>{const r=rec(y,p.k);if(r&&r.s==='ex'&&now<W[p.k][1])setRecAt(y,p.k,null)})}
+  save();renderHayz();renderList();renderStats();nativeSync();toast('Айёми узр тамом шуд. Намозҳоро аз нав қайд кунед.')}
+function renderHayz(){const el=$('hayzBar');if(S.women!==true){el.hidden=true;return}el.hidden=false;
+  if(hayzOn()){const f=S.hayz.from;el.className='hayz';el.innerHTML='<span><b>Айёми узр</b> аз '+escapeHTML(f.slice(8)+'.'+f.slice(5,7))+'. Намозҳо қазо ҳисоб намешаванд.</span><button type="button" id="hzEnd">Тамом шуд</button>';$('hzEnd').onclick=hayzEnd}
+  else{el.className='hayz off';el.innerHTML='<span></span><button type="button" id="hzStart">Айёми узр сар шуд</button>';$('hzStart').onclick=hayzStart}}
+$('womenOn').onchange=e=>{S.women=e.target.checked;if(!S.women&&hayzOn())hayzEnd();save();renderHayz()};
+
+/* ---------- Ramadan / fasting card ---------- */
+let FAST=store.get('fast',{});
+function hijriNum(ymd){try{const [y,m,d]=ymd.split('-').map(Number);const p=new Intl.DateTimeFormat('en-u-ca-islamic-umalqura-nu-latn',{day:'numeric',month:'numeric',year:'numeric',timeZone:'UTC'}).formatToParts(new Date(Date.UTC(y,m-1,d,12)));
+  const g=t=>parseInt((p.find(x=>x.type===t)||{}).value,10);return{d:g('day'),m:g('month'),y:g('year')}}catch(e){return{d:0,m:0,y:0}}}
+function ramOn(y){return S.fastCard!=='off'&&hijriNum(y).m===9}
+function renderRam(now){const el=$('ramCard'),mode=S.fastCard||'ram',h=hijriNum(todayYMD),ram=h.m===9;
+  if(mode==='off'||(!ram&&mode!=='always')){el.hidden=true;return}el.hidden=false;
+  const L=loc(),T=TT,tom=TOM;$('ramT').textContent=ram?'Рамазон · рӯзи '+h.d:'Рӯзаи нафл';
+  const cnt=Object.keys(FAST).filter(k=>FAST[k]&&(!ram||hijriNum(k).m===9&&hijriNum(k).y===h.y)).length;$('ramN').textContent=(ram?'Рӯзаҳо: ':'Ҳамагӣ: ')+cnt;
+  $('ramS').textContent=hm(T.fajr,L.tz);$('ramI').textContent=hm(T.maghrib,L.tz);
+  let lbl,t;if(now<T.fajr){lbl='То охири саҳарӣ';t=T.fajr}else if(now<T.maghrib){lbl='То ифтор';t=T.maghrib}else{lbl='Саҳарии фардо '+hm(tom.fajr,L.tz)+' · то он';t=tom.fajr}
+  $('ramCl').textContent=lbl;$('ramC').textContent=dur(t-now);
+  const f=!!FAST[todayYMD];const b=$('ramFast');b.setAttribute('aria-pressed',String(f));b.textContent=f?'✓ Имрӯз рӯза доштам':'Имрӯз рӯза медорам / доштам'}
+$('ramFast').onclick=()=>{FAST[todayYMD]=!FAST[todayYMD];if(!FAST[todayYMD])delete FAST[todayYMD];store.set('fast',FAST);renderRam(Date.now());if(FAST[todayYMD])toast('Рӯзаатон қабул бод!')};
+$('fastCard').onchange=e=>{S.fastCard=e.target.value;save();renderRam(Date.now());nativeSync()};
+
+/* ---------- qaza make-up plan ---------- */
+function renderQPlan(){const n=+QZ.plan||0,tot=QK.reduce((a,[k])=>a+QZ[k],0),dn=(QZ.log||{})[todayYMD]||0;
+  $('qpN').textContent=n;$('qpToday').textContent=n?'Имрӯз адо шуд: '+dn+' аз '+n:'Ҳадафи рӯзонаро интихоб кунед.';
+  $('qpBar').style.width=(n?Math.min(100,dn/n*100):0).toFixed(1)+'%';
+  if(!tot){$('qpEta').textContent='Қазои боқимонда нест. Алҳамдулиллоҳ!';return}
+  if(!n){$('qpEta').textContent='Масалан, ҳар рӯз 5 қазо (як рӯзи пурра) бихонед.';return}
+  const days=Math.ceil(tot/n),end=addDays(todayYMD,days),[ey,em,ed]=end.split('-');
+  $('qpEta').innerHTML='Бо ин суръат ҳамаи <b class="num">'+tot.toLocaleString('ru-RU')+'</b> қазо дар <b class="num">'+days.toLocaleString('ru-RU')+'</b> рӯз, то <b class="num">'+ed+'.'+em+'.'+ey+'</b> адо мешавад'+(days>365?' (тақрибан '+(days/365).toFixed(1)+' сол)':'')+'.'}
+$('qpMinus').onclick=()=>{QZ.plan=Math.max(0,(+QZ.plan||0)-1);save();renderQPlan();nativeSync()};
+$('qpPlus').onclick=()=>{QZ.plan=Math.min(60,(+QZ.plan||0)+1);save();renderQPlan();nativeSync()};
+
+/* ---------- monthly statistics ---------- */
+let stMonth=null;
+function renderStatsView(){const now=Date.now();if(!stMonth)stMonth=todayYMD.slice(0,7);const [Y,M]=stMonth.split('-').map(Number);
+  const MN=['Январ','Феврал','Март','Апрел','Май','Июн','Июл','Август','Сентябр','Октябр','Ноябр','Декабр'];
+  $('stTitle').textContent=MN[M-1]+' '+Y;$('stNext').disabled=stMonth>=todayYMD.slice(0,7);
+  const dim=new Date(Date.UTC(Y,M,0)).getUTCDate(),first=(new Date(Date.UTC(Y,M-1,1)).getUTCDay()+6)%7;
+  let html=['Ду','Се','Чр','Пн','Ҷм','Шн','Як'].map(x=>'<span class="h">'+x+'</span>').join('')+'<span></span>'.repeat(first);
+  const tot={ontime:0,jamaat:0,late:0,missed:0,ex:0},per={};TRACK.forEach(p=>per[p.k]={ontime:0,jamaat:0,late:0,missed:0});let perfect=0,days=0,pcts=[],run=0,best=0;
+  for(let d=1;d<=dim;d++){const y=Y+'-'+String(M).padStart(2,'0')+'-'+String(d).padStart(2,'0');let cls='',sub='',bg='';
+    if(y>=FIRST&&y<=todayYMD){const sm=daySum(y,now),W=windowsFor(y);days++;
+      TRACK.forEach(p=>{const st=stateOf(y,p.k,W,now),r=rec(y,p.k);if(st==='ontime'){if(r.j){per[p.k].jamaat++;tot.jamaat++}else{per[p.k].ontime++;tot.ontime++}}else if(st==='late'){per[p.k].late++;tot.late++}else if(st==='missed'||st==='none'){per[p.k].missed++;tot.missed++}else if(st==='ex')tot.ex++});
+      if(sm.ex===5){bg='#E88CBE';sub='узр'}else if(sm.pct!=null){pcts.push(sm.pct);bg=sm.pct>=90?'#93D45C':sm.pct>=60?'#E6BC5E':sm.pct>=30?'#F2A26D':'#E2725B';sub=sm.pct+'%'}
+      const full=onTimeCount(y)+sm.ex===5&&sm.ex<5;if(full){perfect++;run++;best=Math.max(best,run)}else if(y<todayYMD||sm.final)run=0}
+    html+='<span class="d'+(y===todayYMD?' today':'')+'"'+(bg?' style="background:'+bg+';color:#10230F"':'')+'>'+d+(sub?'<small>'+sub+'</small>':'')+'</span>'}
+  $('stCal').innerHTML=html;
+  const avg=pcts.length?Math.round(pcts.reduce((a,b)=>a+b,0)/pcts.length):0;
+  $('stSum').innerHTML='<div><b class="num">'+avg+'%</b><span>фоизи миёна</span></div><div><b class="num">'+perfect+'</b><span>рӯзи комил</span></div><div><b class="num">'+best+'</b><span>беҳтарин силсила</span></div><div><b class="num">'+tot.jamaat+'</b><span>бо ҷамоат</span></div><div><b class="num">'+tot.late+'</b><span>дер</span></div><div><b class="num">'+tot.missed+'</b><span>қазо</span></div>';
+  let worst=null,bestP=null;
+  $('stPr').innerHTML=TRACK.map(p=>{const c=per[p.k],n=c.ontime+c.jamaat+c.late+c.missed,good=n?Math.round((c.ontime+c.jamaat)/n*100):0;
+    if(n){if(!worst||c.missed>per[worst.k].missed)worst=p;if(!bestP||good>bestP.g)bestP={k:p.k,n:p.n,g:good}}
+    const w=x=>n?(x/n*100).toFixed(1):0;
+    return'<div class="st-pr"><span>'+p.n+'</span><span class="bar"><i style="width:'+w(c.jamaat)+'%;background:#E6BC5E"></i><i style="width:'+w(c.ontime)+'%;background:#F2F7F4"></i><i style="width:'+w(c.late)+'%;background:#B9A3F2"></i><i style="width:'+w(c.missed)+'%;background:#F28E6D"></i></span><em class="num">'+good+'%</em></div>'}).join('')+
+    '<div class="mleg" style="margin-top:8px"><span><i class="jamaat"></i>Ҷамоат</span><span><i class="ontime"></i>Ба вақт</span><span><i class="late"></i>Дер</span><span><i class="missed"></i>Қазо</span></div>';
+  const ins=[];if(!days)ins.push('Барои ин моҳ ҳанӯз маълумот нест.');
+  else{if(bestP)ins.push('💚 Беҳтарин намоз: <b>'+bestP.n+'</b> — '+bestP.g+'% ба вақт.');
+    if(worst&&per[worst.k].missed)ins.push('⚠️ Бештар қазо мешавад: <b>'+worst.n+'</b> ('+per[worst.k].missed+' бор). Барои он огоҳии иловагӣ гузоред.');
+    if(tot.jamaat)ins.push('🕌 Бо ҷамоат: <b>'+tot.jamaat+'</b> намоз — ҳар кадом 27 дараҷа афзалтар.');
+    if(tot.ex)ins.push('🌸 Айёми узр: '+tot.ex+' намоз (қазо ҳисоб нашуд).')}
+  $('stIns').innerHTML=ins.map(x=>'<div>'+x+'</div>').join('')}
+$('stPrev').onclick=()=>{const [Y,M]=stMonth.split('-').map(Number),d=new Date(Date.UTC(Y,M-2,1));stMonth=d.getUTCFullYear()+'-'+String(d.getUTCMonth()+1).padStart(2,'0');renderStatsView()};
+$('stNext').onclick=()=>{const [Y,M]=stMonth.split('-').map(Number),d=new Date(Date.UTC(Y,M,1));stMonth=d.getUTCFullYear()+'-'+String(d.getUTCMonth()+1).padStart(2,'0');renderStatsView()};
+
+/* ---------- adhan sound (APK) ---------- */
+function azPush(){try{NATIVE&&NATIVE.setAdhan&&NATIVE.setAdhan(JSON.stringify({on:S.adhanOn!==false,loud:S.adhanLoud!==false}))}catch(e){}}
+function renderAz(){const on=S.adhanOn!==false;$('azOn').checked=on;$('azBox').hidden=!on;$('azLoud').checked=S.adhanLoud!==false;
+  let nm='';try{nm=NATIVE&&NATIVE.adhanName?NATIVE.adhanName():''}catch(e){}$('azName').textContent=nm||'Будилники телефон';$('azDef').hidden=!nm;
+  $('azNote').innerHTML=!NATIVE?'Садои азон танҳо дар <b>APK</b> кор мекунад.':!NATIVE.setAdhan?'Барои садои азон версияи нави APK лозим аст.':'Файли азонро (mp3) пеш аз ин ба телефон гиред, масалан аз Telegram ё YouTube, ва бо «Файли азон…» интихоб кунед. Бе файл садои будилники телефон садо медиҳад.'}
+$('azOn').onchange=e=>{S.adhanOn=e.target.checked;save();azPush();renderAz();nativeSync()};
+$('azLoud').onchange=e=>{S.adhanLoud=e.target.checked;save();azPush()};
+$('azPick').onclick=()=>{try{NATIVE&&NATIVE.pickAdhan?NATIVE.pickAdhan():toast('Танҳо дар APK')}catch(e){}};
+$('azDef').onclick=()=>{try{NATIVE.clearAdhan();renderAz()}catch(e){}};
+$('azTest').onclick=()=>{try{NATIVE&&NATIVE.testAdhan?NATIVE.testAdhan():toast('Танҳо дар APK')}catch(e){}};
+$('azStop').onclick=()=>{try{NATIVE&&NATIVE.stopAdhan&&NATIVE.stopAdhan()}catch(e){}};
+window.ntAdhanPicked=()=>{renderAz();toast('Файли азон интихоб шуд')};
+function renderExtraPrefs(){$('fastCard').value=S.fastCard||'ram';$('womenOn').checked=S.women===true;renderAz()}
+window.addEventListener('hashchange',()=>{if(location.hash==='#prefs')try{renderExtraPrefs()}catch(e){}});
+setTimeout(()=>{try{azPush();renderExtraPrefs();renderHayz();hayzSync();renderRam(Date.now())}catch(e){}},0);
 
 /* ---------- prefs ---------- */
 function fillPrefs(){
@@ -2444,16 +2618,16 @@ function chime(vol){try{AC=AC||new (window.AudioContext||window.webkitAudioConte
 let tT;function toast(m){const t=$('toast');t.textContent=m;t.hidden=false;clearTimeout(tT);tT=setTimeout(()=>t.hidden=true,2600)}
 
 /* ---------- routing ---------- */
-const VIEWS=['today','duty','qaza','qibla','tasbeh','more','hijri','month','asma','prefs','khushu','comp'];const UNDER_MORE=['hijri','month','asma','prefs','qibla','khushu','comp'];
+const VIEWS=['today','duty','qaza','qibla','tasbeh','more','hijri','month','asma','prefs','khushu','comp','stats'];const UNDER_MORE=['hijri','month','asma','prefs','qibla','khushu','comp','stats'];
 function route(){const v=VIEWS.includes(location.hash.slice(1))?location.hash.slice(1):'today';
   VIEWS.forEach(x=>{$('v-'+x).hidden=x!==v});
   const nv=UNDER_MORE.includes(v)?'more':v;document.querySelectorAll('.nav a').forEach(a=>{if(a.dataset.v===nv)a.setAttribute('aria-current','page');else a.removeAttribute('aria-current')});
-  if(v==='duty')renderDuty();if(v==='hijri')renderHijri();if(v==='month')renderMonth();if(v==='asma')renderAsma();if(v==='more')renderMore();if(v==='khushu')renderKhushu();if(v==='comp')compOpen();if(v==='prefs')renderRemList();if(v==='qibla')renderQibla();if(v==='tasbeh')renderTasbeh();window.scrollTo(0,0)}
+  if(v==='duty')renderDuty();if(v==='hijri')renderHijri();if(v==='month')renderMonth();if(v==='asma')renderAsma();if(v==='more')renderMore();if(v==='khushu')renderKhushu();if(v==='comp')compOpen();if(v==='prefs')renderRemList();if(v==='qibla')renderQibla();if(v==='tasbeh')renderTasbeh();if(v==='stats')renderStatsView();window.scrollTo(0,0)}
 window.addEventListener('hashchange',route);
 
 function renderAll(){try{renderMiniComp()}catch(e){}renderDuty();renderExtras();renderHeader();renderHero();renderList();renderStats();renderQaza();renderQibla();renderTasbeh();nativeSync()}
 function nativeSync(){compPushSoon();if(!NATIVE)return;try{const L=loc();if(NATIVE.setLocation)NATIVE.setLocation(L.lat,L.lng);widgetSync();
-  NATIVE.schedule(JSON.stringify(buildReminders(Date.now(),3).slice(0,190).map(r=>({t:r.t,title:r.title,text:r.text,iq:r.iq||0,k:r.k||'',n:r.n||'',ask:!!r.ask,u:!!r.u,mk:r.mk||''}))));}catch(e){}}
+  NATIVE.schedule(JSON.stringify(buildReminders(Date.now(),3).slice(0,190).map(r=>({t:r.t,title:r.title,text:r.text,iq:r.iq||0,k:r.k||'',n:r.n||'',ask:!!r.ask,u:!!r.u,mk:r.mk||'',az:r.kind==='start'&&S.adhanOn!==false}))));}catch(e){}}
 window.ntHeading=function(h){heading=h;if(!$('v-qibla').hidden){const t=Date.now();if(t-(window._qh||0)>90){window._qh=t;renderQibla()}}};
 
 /* ---------- tick ---------- */
@@ -2465,8 +2639,8 @@ function jcdTick(now){try{const pd=prayerDay(),W=windowsFor(pd),key=TRACK.map(p=
 function tick(){const L=loc(),now=Date.now();
   if(ymdIn(now,L.tz)!==todayYMD){compute();renderAll();}
   const pd=prayerDay();if(lastPD&&pd!==lastPD){const old=lastPD;if(viewYMD===old)viewYMD=pd;if(dView===old)dView=pd;renderAll();const ys=daySum(old,now);if(ys.pct!=null)toast('Ҷамъбасти рӯзи гузашта: '+ys.pct+'% · дар вақташ '+ys.ontime+' аз 5');}lastPD=pd;
-  renderHero();renderIqBar();wuCheck();jcdTick(now);
-  const m=Math.floor(now/60000);if(m!==lastMinute){lastMinute=m;pullWMarks();if(compLive()&&CMP.code&&Date.now()-cmpLastPull>(!$('v-comp').hidden?60000:600000))compPull().then(()=>{renderComp();renderMiniComp()}).catch(()=>{});renderExtras();webReminders(now);if(!$('v-qibla').hidden)renderQibla();if(autoQaza(now)){renderStats();renderQaza()}if(!$('v-today').hidden)renderList()}
+  renderHero();renderIqBar();wuCheck();jcdTick(now);try{renderRam(now)}catch(e){}
+  const m=Math.floor(now/60000);if(m!==lastMinute){lastMinute=m;pullWMarks();try{hayzSync()}catch(e){}if(compLive()&&CMP.code&&Date.now()-cmpLastPull>(!$('v-comp').hidden?60000:600000))compPull().then(()=>{renderComp();renderMiniComp()}).catch(()=>{});renderExtras();webReminders(now);if(!$('v-qibla').hidden)renderQibla();if(autoQaza(now)){renderStats();renderQaza()}if(!$('v-today').hidden)renderList()}
   for(const p of TRACK){const t=TT[p.k];if(now>=t&&now-t<60000){const id=todayYMD+p.k;if(lastFired!==id){lastFired=id;store.set('fired',id);toast('Вақти намози '+p.n+' расид');if(S.sound)chime(1);renderList();}}}
 }
 

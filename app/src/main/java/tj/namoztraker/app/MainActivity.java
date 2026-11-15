@@ -33,6 +33,7 @@ public class MainActivity extends Activity implements SensorEventListener {
     private static final int REQ_LOCATION = 11;
     private static final int REQ_NOTIFY = 12;
     private static final int REQ_FILE = 13;
+    private static final int REQ_AUDIO = 14;
     private android.webkit.ValueCallback<Uri[]> fileCallback;
 
     private WebView web;
@@ -145,6 +146,19 @@ public class MainActivity extends Activity implements SensorEventListener {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQ_AUDIO) {
+            if (resultCode == RESULT_OK && data != null && data.getData() != null) {
+                Uri u = data.getData();
+                try { getContentResolver().takePersistableUriPermission(u, Intent.FLAG_GRANT_READ_URI_PERMISSION); } catch (Exception ignored) { }
+                String name = "Азон";
+                try (android.database.Cursor cur = getContentResolver().query(u, new String[]{android.provider.OpenableColumns.DISPLAY_NAME}, null, null, null)) {
+                    if (cur != null && cur.moveToFirst()) name = cur.getString(0);
+                } catch (Exception ignored) { }
+                ntPrefs().edit().putString("adhan_uri", u.toString()).putString("adhan_name", name).apply();
+                if (web != null) web.evaluateJavascript("window.ntAdhanPicked&&window.ntAdhanPicked()", null);
+            }
+            return;
+        }
         if (requestCode == REQ_FILE && fileCallback != null) {
             Uri[] r = null;
             if (resultCode == RESULT_OK && data != null && data.getData() != null) r = new Uri[]{data.getData()};
@@ -354,6 +368,49 @@ public class MainActivity extends Activity implements SensorEventListener {
         public String saveBackup(String name, String text) {
             String safe = name == null ? "namozkhon.json" : name.replaceAll("[^A-Za-z0-9._-]", "_");
             return writeBackup(safe, text == null ? "" : text);
+        }
+
+        @JavascriptInterface
+        public void setAdhan(String json) {
+            try {
+                org.json.JSONObject o = new org.json.JSONObject(json);
+                ntPrefs().edit().putBoolean("adhan_on", o.optBoolean("on", true)).putBoolean("adhan_loud", o.optBoolean("loud", true)).apply();
+            } catch (Exception ignored) { }
+        }
+
+        @JavascriptInterface
+        public String adhanName() {
+            return ntPrefs().getString("adhan_uri", "").isEmpty() ? "" : ntPrefs().getString("adhan_name", "Азон");
+        }
+
+        @JavascriptInterface
+        public void pickAdhan() {
+            runOnUiThread(() -> {
+                try {
+                    Intent i = new Intent(Intent.ACTION_OPEN_DOCUMENT).addCategory(Intent.CATEGORY_OPENABLE).setType("audio/*");
+                    startActivityForResult(i, REQ_AUDIO);
+                } catch (Exception e) {
+                    try { startActivityForResult(new Intent(Intent.ACTION_GET_CONTENT).setType("audio/*"), REQ_AUDIO); } catch (Exception ignored) { }
+                }
+            });
+        }
+
+        @JavascriptInterface
+        public void clearAdhan() {
+            ntPrefs().edit().remove("adhan_uri").remove("adhan_name").apply();
+        }
+
+        @JavascriptInterface
+        public void testAdhan() {
+            boolean was = ntPrefs().getBoolean("adhan_on", true);
+            ntPrefs().edit().putBoolean("adhan_on", true).apply();
+            OverlayService.playAdhan(getApplicationContext(), "Санҷиш");
+            if (!was) ui.postDelayed(() -> ntPrefs().edit().putBoolean("adhan_on", false).apply(), 1500);
+        }
+
+        @JavascriptInterface
+        public void stopAdhan() {
+            OverlayService.stopAdhan(getApplicationContext());
         }
 
         @JavascriptInterface

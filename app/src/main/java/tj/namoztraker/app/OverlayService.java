@@ -9,6 +9,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ServiceInfo;
 import android.graphics.PixelFormat;
+import android.media.AudioAttributes;
+import android.media.MediaPlayer;
+import android.media.RingtoneManager;
+import android.os.PowerManager;
 import android.graphics.Typeface;
 import android.graphics.drawable.GradientDrawable;
 import android.net.Uri;
@@ -38,6 +42,7 @@ import java.util.Locale;
 public class OverlayService extends Service {
 
     static final String CH = "namoz_overlay";
+    static final String CH_AZ = "namoz_adhan_play";
     private static final int NOTE_ID = 79;
 
     private static final Handler ui = new Handler(Looper.getMainLooper());
@@ -46,6 +51,105 @@ public class OverlayService extends Service {
     private static SleepActivity.Ring sleepRing;
     private static long iqUntil, sleepStart, sleepEnd, sleepHiddenUntil;
     private static boolean ticking;
+    private static MediaPlayer player;
+    private static long adhanStopAt;
+    private static String adhanName = "";
+
+    static boolean adhanPlaying() {
+        return player != null;
+    }
+
+    /** Plays the adhan: the user's own file if chosen, otherwise the phone's alarm sound. */
+    static void playAdhan(Context ctx, String name) {
+        final Context c = ctx.getApplicationContext();
+        android.content.SharedPreferences p = c.getSharedPreferences("nt", MODE_PRIVATE);
+        if (!p.getBoolean("adhan_on", true)) return;
+        ui.post(() -> {
+            stopPlayer();
+            try {
+                boolean loud = p.getBoolean("adhan_loud", true);
+                String u = p.getString("adhan_uri", "");
+                Uri src = u.isEmpty() ? RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM) : Uri.parse(u);
+                if (src == null) src = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE);
+                MediaPlayer mp = new MediaPlayer();
+                mp.setAudioAttributes(new AudioAttributes.Builder()
+                        .setUsage(loud ? AudioAttributes.USAGE_ALARM : AudioAttributes.USAGE_NOTIFICATION_RINGTONE)
+                        .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC).build());
+                mp.setWakeMode(c, PowerManager.PARTIAL_WAKE_LOCK);
+                mp.setDataSource(c, src);
+                mp.setLooping(u.isEmpty());
+                mp.setOnCompletionListener(m -> stopAdhan(c));
+                mp.setOnErrorListener((m, w, x) -> { stopAdhan(c); return true; });
+                mp.prepare();
+                mp.start();
+                player = mp;
+                adhanName = name == null ? "" : name;
+                adhanStopAt = System.currentTimeMillis() + (u.isEmpty() ? 60_000L : 6 * 60_000L);
+                keepAlive(c);
+                startTick(c);
+                refreshNote(c);
+            } catch (Exception e) {
+                stopPlayer();
+            }
+        });
+    }
+
+    static void stopAdhan(Context ctx) {
+        final Context c = ctx.getApplicationContext();
+        ui.post(() -> {
+            stopPlayer();
+            refreshNote(c);
+        });
+    }
+
+    private static void stopPlayer() {
+        if (player != null) {
+            try { player.stop(); } catch (Exception ignored) { }
+            try { player.release(); } catch (Exception ignored) { }
+            player = null;
+        }
+    }
+
+    /** Updates the service notification (shows "stop adhan" while it plays). */
+    private static void refreshNote(Context c) {
+        try {
+            NotificationManager nm = c.getSystemService(NotificationManager.class);
+            if (nm == null) return;
+            ensureChannels(nm);
+            nm.notify(NOTE_ID, buildNote(c));
+        } catch (Exception ignored) { }
+    }
+
+    private static void ensureChannels(NotificationManager nm) {
+        NotificationChannel ch = new NotificationChannel(CH, "Ҳисоби қомат ва вақти хоб", NotificationManager.IMPORTANCE_MIN);
+        ch.setShowBadge(false);
+        nm.createNotificationChannel(ch);
+        NotificationChannel az = new NotificationChannel(CH_AZ, "Садои азон", NotificationManager.IMPORTANCE_LOW);
+        az.setShowBadge(false);
+        az.setLockscreenVisibility(Notification.VISIBILITY_PUBLIC);
+        nm.createNotificationChannel(az);
+    }
+
+    private static Notification buildNote(Context c) {
+        PendingIntent pi = PendingIntent.getActivity(c, 0, new Intent(c, MainActivity.class),
+                PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+        boolean az = player != null;
+        Notification.Builder b = new Notification.Builder(c, az ? CH_AZ : CH)
+                .setSmallIcon(R.drawable.ic_stat)
+                .setColor(0xFF93D45C)
+                .setContentIntent(pi)
+                .setOngoing(true)
+                .setVisibility(Notification.VISIBILITY_PUBLIC);
+        if (az) {
+            b.setContentTitle("Азон · " + (adhanName.isEmpty() ? "вақти намоз" : adhanName))
+                    .setContentText("Садои азон садо медиҳад")
+                    .addAction(Notif.stopAdhanAction(c))
+                    .setDeleteIntent(Notif.stopAdhanIntent(c));
+        } else {
+            b.setContentTitle(sleep != null || sleepEnd > System.currentTimeMillis() ? "Вақти хоб" : "Ҳисоби баръакс то қомат");
+        }
+        return b.build();
+    }
 
     static boolean canDraw(Context c) {
         return Settings.canDrawOverlays(c);
@@ -110,6 +214,7 @@ public class OverlayService extends Service {
                     cp.leftMargin = (int) dp(c, 14);
                     box.addView(pillCount, cp);
                     box.setOnClickListener(v -> {
+                        stopAdhan(c);
                         try {
                             c.startActivity(new Intent(c, MainActivity.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP));
                         } catch (Exception ignored) { }
@@ -271,7 +376,8 @@ public class OverlayService extends Service {
                     sleepEnd = 0;
                     Block.scheduleSleep(c);
                 }
-                if (pill == null && sleepEnd <= now) {
+                if (player != null && now >= adhanStopAt) { stopPlayer(); refreshNote(c); }
+                if (pill == null && sleepEnd <= now && player == null) {
                     ticking = false;
                     try { c.stopService(new Intent(c, OverlayService.class)); } catch (Exception ignored) { }
                     return;
@@ -292,26 +398,15 @@ public class OverlayService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         NotificationManager nm = getSystemService(NotificationManager.class);
-        if (nm != null) {
-            NotificationChannel ch = new NotificationChannel(CH, "Ҳисоби қомат ва вақти хоб", NotificationManager.IMPORTANCE_MIN);
-            ch.setShowBadge(false);
-            nm.createNotificationChannel(ch);
-        }
-        PendingIntent pi = PendingIntent.getActivity(this, 0, new Intent(this, MainActivity.class),
-                PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
-        Notification n = new Notification.Builder(this, CH)
-                .setSmallIcon(R.drawable.ic_stat)
-                .setContentTitle(sleep != null || sleepEnd > System.currentTimeMillis() ? "Вақти хоб" : "Ҳисоби баръакс то қомат")
-                .setContentIntent(pi)
-                .setOngoing(true)
-                .build();
+        if (nm != null) ensureChannels(nm);
+        Notification n = buildNote(this);
         try {
             if (Build.VERSION.SDK_INT >= 34) startForeground(NOTE_ID, n, ServiceInfo.FOREGROUND_SERVICE_TYPE_SPECIAL_USE);
             else startForeground(NOTE_ID, n);
         } catch (Exception e) {
             stopSelf();
         }
-        if (pill == null && sleepEnd <= System.currentTimeMillis()) stopSelf();
+        if (pill == null && sleepEnd <= System.currentTimeMillis() && player == null) stopSelf();
         return START_NOT_STICKY;
     }
 

@@ -8,6 +8,10 @@ public class AlarmReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context c, Intent in) {
         Widgets.updateAll(c);
+        if (Notif.ACTION_STOP_ADHAN.equals(in.getAction())) {
+            OverlayService.stopAdhan(c);
+            return;
+        }
         if (Block.ACTION_SLEEP.equals(in.getAction())) {
             Block.scheduleSleep(c);
             return;
@@ -26,6 +30,7 @@ public class AlarmReceiver extends BroadcastReceiver {
         boolean ask = in.getBooleanExtra("ask", false);
         if (title == null) title = "НАМОЗХОН TJ";
         if (text == null) text = "";
+        if (in.getBooleanExtra("az", false)) OverlayService.playAdhan(c, name);
         if (iq > System.currentTimeMillis()) OverlayService.showIqama(c, name, iq);
         if (in.getBooleanExtra("u", false)) {
             Notif.showUrgent(c, title, text, key == null ? "" : key);

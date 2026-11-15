@@ -162,7 +162,7 @@ final class Block {
                             && !Widgets.isMarked(c, d + "|" + key))
                         return new Win(o.optString("n"), s, e, true, d, key);
                     // 2) from adhan for N minutes (until the congregation)
-                    if (adhan && now >= s && now < s + len) return new Win(o.optString("n"), s, s + len, false, d, key);
+                    if (adhan && now >= s && now < s + len && !"ex".equals(o.optString("st"))) return new Win(o.optString("n"), s, s + len, false, d, key);
                 }
             }
         } catch (Exception ignored) { }

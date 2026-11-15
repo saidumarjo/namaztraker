@@ -120,6 +120,7 @@ final class Notif {
                 in.putExtra("ask", o.optBoolean("ask", false));
                 in.putExtra("u", o.optBoolean("u", false));
                 in.putExtra("mk", o.optString("mk", ""));
+                in.putExtra("az", o.optBoolean("az", false));
                 PendingIntent pi = PendingIntent.getBroadcast(c, count, in,
                         PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
                 setAlarm(am, t, pi);
@@ -151,6 +152,10 @@ final class Notif {
         if (nm == null) return;
         createChannels(c);
         Notification.Builder b = base(c, title, text).setAutoCancel(true);
+        if (OverlayService.adhanPlaying()) {
+            b.addAction(stopAdhanAction(c));
+            b.setDeleteIntent(stopAdhanIntent(c));
+        }
         nm.notify(1000 + id, b.build());
     }
 
@@ -176,6 +181,10 @@ final class Notif {
             b.setAutoCancel(true);
         }
         if (!alert) b.setOnlyAlertOnce(true);
+        if (OverlayService.adhanPlaying()) {
+            b.addAction(stopAdhanAction(c));
+            b.setDeleteIntent(stopAdhanIntent(c));
+        }
         if (ask) {
             b.addAction(action(c, "yes", "Ҳа", title, text, iqama, key, name, 1));
             b.addAction(action(c, "no", "Не", title, text, iqama, key, name, 2));
@@ -223,6 +232,17 @@ final class Notif {
         PendingIntent pi = PendingIntent.getBroadcast(c, REASK_CODE, in,
                 PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
         setAlarm(am, at, pi);
+    }
+
+    static final String ACTION_STOP_ADHAN = "tj.namoztraker.app.STOP_ADHAN";
+
+    static PendingIntent stopAdhanIntent(Context c) {
+        Intent in = new Intent(c, AlarmReceiver.class).setAction(ACTION_STOP_ADHAN);
+        return PendingIntent.getBroadcast(c, 790, in, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+    }
+
+    static Notification.Action stopAdhanAction(Context c) {
+        return new Notification.Action.Builder(null, "🔇 Хомӯш кардани азон", stopAdhanIntent(c)).build();
     }
 
     private static Notification.Action action(Context c, String ans, String label, String title, String text,

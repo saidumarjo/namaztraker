@@ -100,6 +100,7 @@ final class Widgets {
                         case "jamaat": bg = R.drawable.w_st_jamaat; mark = "✓"; done++; break;
                         case "late": bg = R.drawable.w_st_late; mark = "!"; break;
                         case "missed": bg = R.drawable.w_st_missed; mark = "✕"; break;
+                        case "ex": bg = R.drawable.w_st_late; mark = "У"; done++; break;
                         default: bg = R.drawable.w_st_none; mark = ""; break;
                     }
                     vb.setInt(STAT[j], "setBackgroundResource", bg);
@@ -231,7 +232,7 @@ final class Widgets {
             JSONObject o = find(new JSONObject(prefs(c).getString("widget", "{}")), key.substring(0, bar), key.substring(bar + 1));
             if (o == null) return false;
             String st = o.optString("st", "");
-            return st.equals("ontime") || st.equals("late") || st.equals("jamaat");
+            return st.equals("ontime") || st.equals("late") || st.equals("jamaat") || st.equals("ex");
         } catch (Exception e) {
             return false;
         }
