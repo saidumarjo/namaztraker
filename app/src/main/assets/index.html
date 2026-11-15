@@ -1825,7 +1825,7 @@ function buildReminders(now,days){const L=loc(),out=[],lv=+S.rlevel||2,pd=prayer
       {const iq=iqamaAt(p.k,w)||jamaatAt(p.k,w),stop=w[1]-65*MINm;
         if(iq>w[0]&&iq<stop)add(iq,'Қомат · '+nm,'Намози ҷамоат сар шуд. Ба намоз шитоб кун! '+pick(RM[p.k],sd+'iq'),'miss');
         if(iq+10*MINm<stop)add(iq+10*MINm,'Намози ҷамоати '+nm+' тамом шуд','Ту ҳанӯз нахондаӣ. Ҳозир бихон, то вақташ нагузаштааст. '+pick(RM[p.k],sd+'ie'),'miss');
-        if(w[0]+30*MINm<stop)add(w[0]+30*MINm,'30 дақиқа гузашт · '+nm,'Ту '+nm+'ро ҳанӯз нахондаӣ. '+pick(RM[p.k],sd+'a'),'miss');
+        if(w[0]+30*MINm<stop&&Math.abs(w[0]+30*MINm-(iq+10*MINm))>5*MINm)add(w[0]+30*MINm,'30 дақиқа гузашт · '+nm,'Ту '+nm+'ро ҳанӯз нахондаӣ. '+pick(RM[p.k],sd+'a'),'miss');
         const rep=lv>=3?30:lv>=2?30:60,cap=Math.min(stop,w[0]+(lv>=3?6:4)*60*MINm);
         for(let t=w[0]+60*MINm,n=1;t<cap;t+=rep*MINm,n++){const h=(t-w[0])/3600000;add(t,(h%1?Math.floor(h)+' соату 30 дақиқа':h+' соат')+' гузашт · '+nm,'Ту ҳанӯз нахондаӣ. '+pick(RM[p.k],sd+'r'+n),'miss')}}
       for(const mins of [60,30]){const t=w[1]-mins*MINm;if(t>w[0]){add(t,'Намоз қазо шуда истодааст!','Ту '+nm+'ро ҳанӯз нахондаӣ. То қазо '+(mins===60?'1 соат':'30 дақиқа')+' монд ('+hm(w[1],L.tz)+'). '+pick(RM[p.k],sd+'w'+mins),'warn');const l=out[out.length-1];if(l&&l.kind==='warn'&&l.t===Math.round(t)){l.u=1;l.k=y+'|'+p.k;l.pk=p.k;l.y=y;l.nm=nm;l.mins=mins;l.end=w[1]}}}
