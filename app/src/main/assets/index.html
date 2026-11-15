@@ -1287,6 +1287,14 @@ body.iq-on .app{padding-top:calc(74px + env(safe-area-inset-top,0px))}
       <label class="switch" id="webSoundRow"><span><b>Садои огоҳӣ</b><br><span class="note">Вақте ки барнома кушода аст, дар оғози ҳар намоз садо медиҳад.</span></span><input type="checkbox" id="sound"></label>
       <button class="btn" id="testSound">Санҷиши садо</button>
     </div>
+    <h2 class="sec">Ҳадисҳо дар болои экран</h2>
+    <div class="card stack">
+      <label class="switch"><span><b>Ҳадиси кӯтоҳ ҳар чанд дақиқа</b><br><span class="note">Дар менюи болои телефон як ҳадис ё оят пайдо мешавад ва пас аз 3 дақиқа худаш нест мешавад. Шабона (дар вақти хоб ва аз 23:00 то Бомдод) намеояд.</span></span><input type="checkbox" id="hdOn"></label>
+      <div class="field"><label for="hdEvery">Ҳар чанд дақиқа</label><select id="hdEvery"><option value="15">15 дақиқа</option><option value="20">20 дақиқа</option><option value="30">30 дақиқа</option><option value="60">1 соат</option></select></div>
+      <div class="blkapps" id="hdTopics" role="group" aria-label="Мавзӯъҳо"></div>
+      <div class="row"><button class="btn" id="hdTest" type="button">Намуна</button><span class="note num" id="hdCount"></span></div>
+    </div>
+
     <h2 class="sec">Азон то қомат</h2>
     <div class="card stack">
       <label class="switch"><span><b>Ҳисоби баръакс то қомат</b><br><span class="note">Аз оғози вақт (азон) дар болои экран вақти боқимонда то қомат нишон дода мешавад.</span></span><input type="checkbox" id="iqOn"></label>
@@ -2577,6 +2585,31 @@ window.ntAdhanPicked=()=>{renderAz();toast('Файли азон интихоб �
 function renderExtraPrefs(){$('fastCard').value=S.fastCard||'ram';$('womenOn').checked=S.women===true;renderAz()}
 window.addEventListener('hashchange',()=>{if(location.hash==='#prefs')try{renderExtraPrefs()}catch(e){}});
 setTimeout(()=>{try{azPush();renderExtraPrefs();renderHayz();hayzSync();renderRam(Date.now())}catch(e){}},0);
+
+
+/* ---------- short hadith every N minutes (APK notification, gone after 3 min) ---------- */
+const HD_T=[['namaz','Намоз','#93D45C','🕌'],['zikr','Зикр','#E6BC5E','📿'],['zina','Зино','#E2725B','🛡'],['qabr','Қабр','#9FB3A8','🪦'],['marg','Марг','#B9A3F2','⏳'],['bandagi','Бандагӣ','#7CC8F2','🤲']];
+const HADITHS={
+ namaz:['«Аввалин чизе, ки рӯзи қиёмат аз банда ҳисоб гирифта мешавад, намоз аст.» (Тирмизӣ)','«Байни мард ва ширку куфр тарки намоз аст.» (Муслим)','«Маҳбубтарин амал назди Аллоҳ намоз дар вақташ аст.» (Бухорӣ)','«Намози ҷамоат аз намози танҳо 27 дараҷа афзалтар аст.» (Бухорӣ, Муслим)','«Агар дар назди дари яке аз шумо дарёе бошад ва ӯ ҳар рӯз панҷ бор дар он ғусл кунад, оё аз чиркаш чизе мемонад? Панҷ намоз ҳамин гуна гуноҳҳоро мешӯянд.» (Бухорӣ, Муслим)','«Намоз аз бадкорӣ ва зиштӣ бозмедорад.» (Анкабут, 45)','«Ҳар кӣ намози Бомдодро бихонад, дар паноҳи Аллоҳ аст.» (Муслим)','«Ҳар кӣ ду намози салқинро (Бомдод ва Аср) бихонад, ба ҷаннат дохил мешавад.» (Бухорӣ, Муслим)'],
+ zikr:['«Огоҳ бошед, ки бо ёди Аллоҳ дилҳо ором мегиранд.» (Раъд, 28)','«Маро ёд кунед, то шуморо ёд кунам.» (Бақара, 152)','«Мисоли касе, ки Парвардигорашро ёд мекунад ва касе, ки ёд намекунад, мисоли зинда ва мурда аст.» (Бухорӣ)','«Ду калима бар забон сабук, дар тарозу вазнин ва назди Раҳмон дӯстдошта: Субҳоналлоҳи ва биҳамдиҳӣ, Субҳоналлоҳил-азим.» (Бухорӣ)','«Забонат ҳамеша бо зикри Аллоҳ тар бошад.» (Тирмизӣ)','«Ҳар кӣ дар рӯз сад бор “Субҳоналлоҳи ва биҳамдиҳӣ” гӯяд, гуноҳонаш омурзида мешаванд, агарчи мисли кафки баҳр бошанд.» (Бухорӣ)','«“Ло ҳавла ва ло қуввата илло биллоҳ” ганҷе аз ганҷҳои ҷаннат аст.» (Бухорӣ, Муслим)'],
+ zina:['«Ба зино наздик нашавед, ки он кори зишт ва роҳи бад аст.» (Исро, 32)','«Зинокор дар ҳоле ки зино мекунад, мӯъмин нест.» (Бухорӣ, Муслим)','«Ҳар кӣ барои ман он чиро, ки байни ду ҷоғаш ва он чиро, ки байни ду пояш аст, кафолат диҳад, ман барояш ҷаннатро кафолат медиҳам.» (Бухорӣ)','«Ба мӯъминон бигӯ, ки чашмони худро нигоҳ доранд ва шармгоҳи худро ҳифз кунанд; ин барояшон поктар аст.» (Нур, 30)','«Чашмҳо зино мекунанд ва зинои онҳо нигоҳ кардан аст.» (Бухорӣ, Муслим)'],
+ qabr:['«Қабр аввалин манзил аз манзилҳои охират аст; агар аз он наҷот ёбад, баъдаш осонтар аст.» (Тирмизӣ)','«Аз азоби қабр ба Аллоҳ паноҳ баред.» (Муслим)','«Бештари азоби қабр аз (беэҳтиётӣ дар) пешоб аст.» (Ибни Моҷа)','«Сураи Мулк аз азоби қабр монеъ аст.» (Насоӣ)'],
+ marg:['«Ҳар нафсе чашандаи марг аст.» (Оли Имрон, 185)','«Лаззатшиканро — маргро — бисёр ёд кунед.» (Тирмизӣ)','«Дар дунё чун мусофир ё раҳгузар бош.» (Бухорӣ)','«Ҳар куҷо бошед, марг шуморо меёбад, агарчи дар қалъаҳои мустаҳкам бошед.» (Нисо, 78)','«Зирактарин мӯъмин касест, ки маргро бештар ёд мекунад ва барои баъди он беҳтар омодагӣ мебинад.» (Ибни Моҷа)','«Вақте одам мемирад, амалаш қатъ мешавад, магар аз се чиз: садақаи ҷория, илме ки аз он фоида гиранд ва фарзанди солеҳе ки барояш дуо кунад.» (Муслим)'],
+ bandagi:['«Ҷин ва инсро наофаридам, магар барои он ки Маро ибодат кунанд.» (Зориёт, 56)','«Аллоҳ ба сурат ва молҳои шумо наменигарад, балки ба дилҳо ва амалҳои шумо менигарад.» (Муслим)','«Маҳбубтарин амал назди Аллоҳ он аст, ки доимӣ бошад, агарчи кам бошад.» (Бухорӣ, Муслим)','«Аллоҳро чунон ибодат кун, ки гӯё Ӯро мебинӣ; агар ту Ӯро намебинӣ, Ӯ туро мебинад.» (Муслим)','«Амалҳо ба ниятҳост.» (Бухорӣ, Муслим)','«Пеш аз панҷ чиз панҷро ғанимат дон: ҷавониро пеш аз пирӣ, саломатиро пеш аз беморӣ, сарватро пеш аз фақр, фурсатро пеш аз машғулӣ ва зиндагиро пеш аз марг.» (Ҳоким)']};
+function hdCfg(){const h=S.hd||{};return{on:h.on===true,every:+h.every||20,topics:Object.assign({namaz:true,zikr:true,zina:true,qabr:true,marg:true,bandagi:true},h.topics||{})}}
+function hdList(c){const out=[];const tl=HD_T.filter(t=>c.topics[t[0]]);const mx=Math.max(...tl.map(t=>HADITHS[t[0]].length),0);
+  for(let i=0;i<mx;i++)tl.forEach(t=>{const a=HADITHS[t[0]];if(a[i])out.push({t:t[3]+' '+t[1],x:a[i]})});return out}
+function hdPush(){const c=hdCfg();try{NATIVE&&NATIVE.setHadith&&NATIVE.setHadith(JSON.stringify({on:c.on,every:c.every,list:hdList(c)}))}catch(e){}}
+function renderHd(){const c=hdCfg();$('hdOn').checked=c.on;$('hdEvery').value=String(c.every);
+  $('hdTopics').innerHTML=HD_T.map(([k,n,col,ic])=>'<button type="button" data-hd="'+k+'" aria-pressed="'+!!c.topics[k]+'"><i style="background:'+col+'">'+ic+'</i>'+n+'</button>').join('');
+  $('hdCount').textContent=hdList(c).length+' ҳадис ва оят'+(NATIVE&&NATIVE.setHadith?'':' · танҳо дар APK')}
+function hdSave(c){S.hd=c;save();hdPush();renderHd()}
+$('hdOn').onchange=e=>{const c=hdCfg();c.on=e.target.checked;hdSave(c);toast(c.on?'Ҳар '+c.every+' дақиқа як ҳадис дар болои экран меояд':'Ҳадисҳо хомӯш шуданд')};
+$('hdEvery').onchange=e=>{const c=hdCfg();c.every=+e.target.value;hdSave(c)};
+$('hdTopics').addEventListener('click',e=>{const b=e.target.closest('[data-hd]');if(!b)return;const c=hdCfg();c.topics[b.dataset.hd]=!c.topics[b.dataset.hd];if(!Object.values(c.topics).some(Boolean)){toast('Ақаллан як мавзӯъ лозим аст');return}hdSave(c)});
+$('hdTest').onclick=()=>{const l=hdList(hdCfg());if(!l.length)return;const h=l[Math.floor(Math.random()*l.length)];if(NATIVE&&NATIVE.testHadith)NATIVE.testHadith(h.t,h.x);else toast(h.t+': '+h.x)};
+window.addEventListener('hashchange',()=>{if(location.hash==='#prefs')try{renderHd()}catch(e){}});
+setTimeout(()=>{try{renderHd();hdPush()}catch(e){}},0);
 
 /* ---------- prefs ---------- */
 function fillPrefs(){

@@ -371,6 +371,24 @@ public class MainActivity extends Activity implements SensorEventListener {
         }
 
         @JavascriptInterface
+        public void setHadith(String json) {
+            String old = ntPrefs().getString("hadith", "");
+            if (json != null && json.equals(old)) {
+                // same settings: keep the running schedule, only make sure an alarm exists
+                android.app.PendingIntent pi = android.app.PendingIntent.getBroadcast(getApplicationContext(), 903,
+                        new Intent(getApplicationContext(), AlarmReceiver.class).setAction(Hadith.ACTION),
+                        android.app.PendingIntent.FLAG_NO_CREATE | android.app.PendingIntent.FLAG_IMMUTABLE);
+                if (pi != null) return;
+            }
+            Hadith.save(getApplicationContext(), json);
+        }
+
+        @JavascriptInterface
+        public void testHadith(String title, String text) {
+            Hadith.show(getApplicationContext(), title, text);
+        }
+
+        @JavascriptInterface
         public void setAdhan(String json) {
             try {
                 org.json.JSONObject o = new org.json.JSONObject(json);

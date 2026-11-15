@@ -8,6 +8,10 @@ public class AlarmReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context c, Intent in) {
         Widgets.updateAll(c);
+        if (Hadith.ACTION.equals(in.getAction())) {
+            Hadith.fire(c);
+            return;
+        }
         if (Notif.ACTION_STOP_ADHAN.equals(in.getAction())) {
             OverlayService.stopAdhan(c);
             return;

@@ -10,5 +10,6 @@ public class BootReceiver extends BroadcastReceiver {
         Notif.schedule(c);
         Widgets.updateAll(c);
         Block.scheduleSleep(c);
+        Hadith.schedule(c);
     }
 }
